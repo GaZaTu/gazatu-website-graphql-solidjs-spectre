@@ -1,0 +1,59 @@
+@use "spectre.css/variables" as *;
+
+// Toast variant mixin
+@mixin toast-variant($color--rgb-triplet, $color-text) {
+  background: rgba($color--rgb-triplet, .95);
+  border-color: rgb($color--rgb-triplet);
+  color: $color-text;
+
+  a {
+    color: $color-text;
+  }
+}
+
+// Toasts
+.toast {
+  @include toast-variant($gray--rgb-triplet, $gray-text);
+  border: $border-width-md solid $gray;
+  border-radius: $control-border-radius;
+  display: block;
+  padding: $layout-spacing-md;
+  width: 100%;
+
+  &.toast-primary {
+    @include toast-variant($primary--rgb-triplet, $primary-text);
+  }
+
+  &.toast-success {
+    @include toast-variant($success--rgb-triplet, $success-text);
+  }
+
+  &.toast-warning {
+    @include toast-variant($warning--rgb-triplet, $warning-text);
+  }
+
+  &.toast-failure {
+    @include toast-variant($failure--rgb-triplet, $failure-text);
+  }
+
+  a {
+    text-decoration: underline;
+
+    &:focus,
+    &:hover,
+    &:active,
+    &.active {
+      opacity: .75;
+    }
+  }
+
+  .btn-clear {
+    margin: $unit-h;
+  }
+
+  p {
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+}

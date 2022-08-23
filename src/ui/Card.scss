@@ -1,0 +1,47 @@
+@use "spectre.css/variables" as *;
+
+// Cards
+.card {
+  background: transparent;
+  // border: $border-width solid $border-color;
+  border: unset;
+  box-shadow: 0 0.25rem 1rem rgba($body-fg--rgb-triplet, 0.15);
+  border-radius: $control-border-radius;
+  display: flex;
+  flex-direction: column;
+
+  .card-header,
+  .card-body,
+  .card-footer {
+    padding: $layout-spacing-lg;
+    padding-bottom: 0;
+
+    &:last-child {
+      padding-bottom: $layout-spacing-lg;
+    }
+  }
+
+  .card-body {
+    flex: 1 1 auto;
+  }
+
+  .card-image {
+    padding-top: $layout-spacing-lg;
+
+    &:first-child {
+      padding-top: 0;
+
+      img {
+        border-top-left-radius: $control-border-radius;
+        border-top-right-radius: $control-border-radius;
+      }
+    }
+
+    &:last-child {
+      img {
+        border-bottom-left-radius: $control-border-radius;
+        border-bottom-right-radius: $control-border-radius;
+      }
+    }
+  }
+}

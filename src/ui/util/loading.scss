@@ -1,0 +1,48 @@
+@use "../spectre.css/variables" as *;
+
+@keyframes loading {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+// Loading
+.loading {
+  color: transparent !important;
+  min-height: $unit-4;
+  pointer-events: none;
+  position: relative;
+  &::after {
+    animation: loading 500ms infinite linear;
+    background: transparent;
+    border: $border-width-lg solid $primary;
+    border-radius: 50%;
+    border-right-color: transparent;
+    border-top-color: transparent;
+    content: "";
+    display: block;
+    height: $unit-4;
+    left: 50%;
+    margin-left: calc($unit-2 * -1);
+    margin-top: calc($unit-2 * -1);
+    opacity: 1;
+    padding: 0;
+    position: absolute;
+    top: 50%;
+    width: $unit-4;
+    z-index: $zindex-0;
+  }
+
+  &-lg {
+    min-height: $unit-10;
+    &::after {
+      height: $unit-8;
+      margin-left: calc($unit-4 * -1);
+      margin-top: calc($unit-4 * -1);
+      width: $unit-8;
+    }
+  }
+}

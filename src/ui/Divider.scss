@@ -1,0 +1,52 @@
+@use "spectre.css/variables" as *;
+
+// Divider
+.divider,
+.divider-vert {
+  display: block;
+  position: relative;
+
+  &[data-content]::after {
+    background: $body-bg-monochrome;
+    color: lightgray;
+    content: attr(data-content);
+    display: inline-block;
+    font-size: $font-size-sm;
+    padding: 0 $unit-2;
+    transform: translateY(calc(($font-size-sm * -1) + $border-width-md));
+  }
+}
+
+.divider {
+  border-top: $border-width-md solid lightgray;
+  height: $border-width-md;
+  margin: $unit-2 0;
+
+  &[data-content] {
+    margin: $unit-4 0;
+  }
+}
+
+.divider-vert {
+  display: block;
+  padding: $unit-4;
+
+  &::before {
+    border-left: $border-width-md solid lightgray;
+    bottom: $unit-2;
+    content: "";
+    display: block;
+    left: 50%;
+    position: absolute;
+    top: $unit-2;
+    transform: translateX(-50%);
+  }
+
+  &[data-content]::after {
+    left: 50%;
+    padding: $unit-1 0;
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+  }
+}

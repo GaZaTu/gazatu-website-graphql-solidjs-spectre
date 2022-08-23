@@ -1,0 +1,46 @@
+@use "variables" as *;
+
+// Base
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+}
+
+html {
+  box-sizing: border-box;
+  font-size: $html-font-size;
+  line-height: $html-line-height;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  background: $body-bg;
+  color: $body-fg;
+  font-family: $body-font-family;
+  font-size: $font-size-md;
+  overflow-x: hidden;
+  text-rendering: optimizeLegibility;
+}
+
+a {
+  color: $link;
+  outline: none;
+  text-decoration: none;
+
+  &:focus {
+    box-shadow: 0 0 0 .1rem rgba($link-monochrome--rgb-triplet, .2);
+  }
+
+  &:focus,
+  &:hover,
+  &:active,
+  &.active {
+    color: $link-monochrome;
+    text-decoration: underline;
+  }
+
+  &:visited {
+    color: $link-monochrome;
+  }
+}

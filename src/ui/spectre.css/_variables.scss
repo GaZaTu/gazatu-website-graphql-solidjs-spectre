@@ -1,0 +1,143 @@
+// Core colors
+$primary--rgb-triplet: var(--primary--rgb-triplet);
+$primary: var(--primary);
+$primary-monochrome--rgb-triplet: var(--primary-monochrome--rgb-triplet);
+$primary-monochrome: var(--primary-monochrome);
+$primary-text--rgb-triplet: var(--primary-text--rgb-triplet);
+$primary-text: var(--primary-text);
+
+$secondary--rgb-triplet: var(--secondary--rgb-triplet);
+$secondary: var(--secondary);
+$secondary-monochrome--rgb-triplet: var(--secondary-monochrome--rgb-triplet);
+$secondary-monochrome: var(--secondary-monochrome);
+$secondary-text--rgb-triplet: var(--secondary-text--rgb-triplet);
+$secondary-text: var(--secondary-text);
+
+$body-bg--rgb-triplet: var(--body-bg--rgb-triplet);
+$body-bg: var(--body-bg);
+$body-bg-monochrome--rgb-triplet: var(--body-bg-monochrome--rgb-triplet);
+$body-bg-monochrome: var(--body-bg-monochrome);
+$body-fg--rgb-triplet: var(--body-fg--rgb-triplet);
+$body-fg: var(--body-fg);
+$body-fg-monochrome--rgb-triplet: var(--body-fg-monochrome--rgb-triplet);
+$body-fg-monochrome: var(--body-fg-monochrome);
+
+// Control colors
+$success--rgb-triplet: var(--success--rgb-triplet);
+$success: var(--success);
+$success-monochrome--rgb-triplet: var(--success-monochrome--rgb-triplet);
+$success-monochrome: var(--success-monochrome);
+$success-text--rgb-triplet: var(--success-text--rgb-triplet);
+$success-text: var(--success-text);
+$warning--rgb-triplet: var(--warning--rgb-triplet);
+$warning: var(--warning);
+$warning-monochrome--rgb-triplet: var(--warning-monochrome--rgb-triplet);
+$warning-monochrome: var(--warning-monochrome);
+$warning-text--rgb-triplet: var(--warning-text--rgb-triplet);
+$warning-text: var(--warning-text);
+$failure--rgb-triplet: var(--failure--rgb-triplet);
+$failure: var(--failure);
+$failure-monochrome--rgb-triplet: var(--failure-monochrome--rgb-triplet);
+$failure-monochrome: var(--failure-monochrome);
+$failure-text--rgb-triplet: var(--failure-text--rgb-triplet);
+$failure-text: var(--failure-text);
+
+// Other colors
+$link--rgb-triplet: var(--link--rgb-triplet);
+$link: var(--link);
+$link-monochrome--rgb-triplet: var(--link-monochrome--rgb-triplet);
+$link-monochrome: var(--link-monochrome);
+$link-text--rgb-triplet: var(--link-text--rgb-triplet);
+$link-text: var(--link-text);
+
+$highlight--rgb-triplet: var(--highlight--rgb-triplet);
+$highlight: var(--highlight);
+$highlight-text--rgb-triplet: var(--highlight-text--rgb-triplet);
+$highlight-text: var(--highlight-text);
+
+$gray--rgb-triplet: var(--gray--rgb-triplet);
+$gray: var(--gray);
+$gray-text--rgb-triplet: var(--gray-text--rgb-triplet);
+$gray-text: var(--gray-text);
+
+// Fonts
+// Credit: https://www.smashingmagazine.com/2015/11/using-system-ui-fonts-practical-guide/
+$base-font-family: var(--base-font-family);
+$mono-font-family: var(--mono-font-family);
+$fallback-font-family: var(--fallback-font-family);
+$body-font-family: var(--body-font-family);
+
+// Unit sizes
+$unit-o: var(--unit-o);
+$unit-h: var(--unit-h);
+$unit-1: var(--unit-1);
+$unit-2: var(--unit-2);
+$unit-3: var(--unit-3);
+$unit-4: var(--unit-4);
+$unit-5: var(--unit-5);
+$unit-6: var(--unit-6);
+$unit-7: var(--unit-7);
+$unit-8: var(--unit-8);
+$unit-9: var(--unit-9);
+$unit-10: var(--unit-10);
+$unit-12: var(--unit-12);
+$unit-16: var(--unit-16);
+
+// Font sizes
+$html-font-size: var(--html-font-size);
+$html-line-height: var(--html-line-height);
+$font-size-sm: var(--font-size-sm);
+$font-size-md: var(--font-size-md);
+$font-size-lg: var(--font-size-lg);
+$line-height: var(--line-height);
+
+// Sizes
+$layout-spacing-sm: var(--layout-spacing-sm);
+$layout-spacing-md: var(--layout-spacing-md);
+$layout-spacing-lg: var(--layout-spacing-lg);
+$border-width-sm: var(--border-width-sm);
+$border-width-md: var(--border-width-md);
+$border-width-lg: var(--border-width-lg);
+$border-radius-xs: var(--border-radius-xs);
+$border-radius-sm: var(--border-radius-sm);
+$border-radius-md: var(--border-radius-md);
+$border-radius-lg: var(--border-radius-lg);
+$border-radius-xl: var(--border-radius-xl);
+$control-height-sm: var(--control-height-sm);
+$control-height-md: var(--control-height-md);
+$control-height-lg: var(--control-height-lg);
+$control-padding-x-sm: var(--control-padding-x-sm);
+$control-padding-x-md: var(--control-padding-x-md);
+$control-padding-x-lg: var(--control-padding-x-lg);
+$control-padding-y-sm: var(--control-padding-y-sm);
+$control-padding-y-md: var(--control-padding-y-md);
+$control-padding-y-lg: var(--control-padding-y-lg);
+$control-icon-size: var(--control-icon-size);
+$control-border-radius: var(--control-border-radius);
+
+$control-width-xs: var(--control-width-xs);
+$control-width-sm: var(--control-width-sm);
+$control-width-md: var(--control-width-md);
+$control-width-lg: var(--control-width-lg);
+$control-width-xl: var(--control-width-xl);
+
+// Responsive breakpoints
+$size-xs: 480px; // var(--size-xs);
+$size-sm: 600px; // var(--size-sm);
+$size-md: 840px; // var(--size-md);
+$size-lg: 960px; // var(--size-lg);
+$size-xl: 1280px; // var(--size-xl);
+$size-xxl: 1440px; // var(--size-xxl);
+
+$responsive-breakpoint: var(--responsive-breakpoint);
+
+// Z-index
+$zindex-0: var(--zindex-0);
+$zindex-1: var(--zindex-1);
+$zindex-2: var(--zindex-2);
+$zindex-3: var(--zindex-3);
+$zindex-4: var(--zindex-4);
+
+// Icon variables
+$icon-border-width: $border-width-lg;
+$icon-prefix: "spectre-icon";

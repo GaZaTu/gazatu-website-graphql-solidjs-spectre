@@ -1,0 +1,28 @@
+@use '../spectre.css/variables' as *;
+@use '../spectre.css/mixins/text' as *;
+
+// Text colors
+@include text-color-variant(".text-primary", $primary);
+
+@include text-color-variant(".text-secondary", $secondary);
+
+@include text-color-variant(".text-success", $success);
+
+@include text-color-variant(".text-warning", $warning);
+
+@include text-color-variant(".text-failure", $failure);
+
+@include text-color-variant(".text-gray", $gray);
+
+// Background colors
+@include bg-color-variant(".bg-primary", $primary);
+
+@include bg-color-variant(".bg-secondary", $secondary);
+
+@include bg-color-variant(".bg-success", $success);
+
+@include bg-color-variant(".bg-warning", $warning);
+
+@include bg-color-variant(".bg-failure", $failure);
+
+@include bg-color-variant(".bg-gray", $gray);

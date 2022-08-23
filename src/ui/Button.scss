@@ -1,0 +1,275 @@
+@use "spectre.css/variables" as *;
+@use "spectre.css/mixins/button" as *;
+
+// Button variant mixin
+@mixin button-variant($color--rgb-triplet, $color-monochrome, $color-text) {
+  background: rgb($color--rgb-triplet);
+  border-color: $color-monochrome;
+  color: $color-text;
+
+  &:focus {
+    box-shadow: 0 0 0 .1rem rgba($color--rgb-triplet, .2);
+  }
+
+  &:focus, // idk man
+  &:hover {
+    background: $color-monochrome;
+    border-color: $color-monochrome;
+    color: $color-text;
+  }
+
+  &:active,
+  &.active {
+    background: $color-monochrome;
+    border-color: $color-monochrome;
+    color: $color-text;
+  }
+
+  &.loading {
+    &::after {
+      border-bottom-color: $color-text;
+      border-left-color: $color-text;
+    }
+  }
+}
+
+@mixin button-outline-variant($color--rgb-triplet, $color-monochrome, $color-text) {
+  background: transparent;
+  border-color: rgb($color--rgb-triplet);
+  color: rgb($color--rgb-triplet);
+  font-weight: bold;
+
+  &:focus {
+    box-shadow: 0 0 0 .1rem rgba($color--rgb-triplet, .2);
+  }
+
+  &:focus,
+  &:hover {
+    background: rgb($color--rgb-triplet);
+    border-color: $color-monochrome;
+    color: $color-text;
+  }
+
+  &:active,
+  &.active {
+    background: rgb($color--rgb-triplet);
+    border-color: $color-monochrome;
+    color: $color-text;
+  }
+
+  &.loading {
+    &::after {
+      border-bottom-color: rgb($color--rgb-triplet);
+      border-left-color: rgb($color--rgb-triplet);
+    }
+  }
+}
+
+// Buttons
+.btn {
+  appearance: none;
+  background: $body-bg-monochrome;
+  border: $border-width-md solid $primary;
+  border-radius: $control-border-radius;
+  color: $body-fg;
+  cursor: pointer;
+  display: inline-block;
+  font-size: $font-size-md;
+  height: $control-height-md;
+  line-height: $line-height;
+  outline: none;
+  padding: $control-padding-y-md $control-padding-x-md;
+  text-align: center;
+  text-decoration: none;
+  transition: background .2s, border .2s, box-shadow .2s, color .2s;
+  user-select: none;
+  vertical-align: middle;
+  white-space: nowrap;
+  &:focus {
+    box-shadow: 0 0 0 .1rem rgba($primary, .2);
+  }
+  &:focus,
+  &:hover {
+    background: rgba($primary--rgb-triplet, 0.05);
+    border-color: $primary-monochrome;
+    color: $body-fg;
+    text-decoration: none;
+  }
+  &:active,
+  &.active {
+    background: $primary-monochrome;
+    border-color: $primary-monochrome;
+    color: $primary-text;
+    text-decoration: none;
+    &.loading {
+      &::after {
+        border-bottom-color: $primary-text;
+        border-left-color: $primary-text;
+      }
+    }
+  }
+  &[disabled],
+  &:disabled,
+  &.disabled {
+    cursor: default;
+    opacity: .5;
+    pointer-events: none;
+  }
+
+  // Button Colors
+  &.btn-primary {
+    @include button-variant($primary--rgb-triplet, $primary-monochrome, $primary-text);
+
+    &.btn-outlined {
+      @include button-outline-variant($primary--rgb-triplet, $primary-monochrome, $primary-text);
+    }
+  }
+
+  // &.btn-secondary {
+  //   @include button-variant($secondary--rgb-triplet, $secondary-monochrome, $secondary-text);
+
+  //   &.btn-outlined {
+  //     @include button-outline-variant($secondary--rgb-triplet, $secondary-monochrome, $secondary-text);
+  //   }
+  // }
+
+  &.btn-success {
+    @include button-variant($success--rgb-triplet, $success-monochrome, $success-text);
+
+    &.btn-outlined {
+      @include button-outline-variant($success--rgb-triplet, $success-monochrome, $success-text);
+    }
+  }
+
+  &.btn-warning {
+    @include button-variant($warning--rgb-triplet, $warning-monochrome, $warning-text);
+
+    &.btn-outlined {
+      @include button-outline-variant($warning--rgb-triplet, $warning-monochrome, $warning-text);
+    }
+  }
+
+  &.btn-failure {
+    @include button-variant($failure--rgb-triplet, $failure-monochrome, $failure-text);
+
+    &.btn-outlined {
+      @include button-outline-variant($failure--rgb-triplet, $failure-monochrome, $failure-text);
+    }
+  }
+
+  // Button Link
+  &.btn-link {
+    background: transparent;
+    border-color: transparent;
+    color: $link;
+    &:focus,
+    &:hover,
+    &:active,
+    &.active {
+      color: $link-monochrome;
+    }
+  }
+
+  // Button Sizes
+  &.btn-sm,
+  .btn-group-sm & {
+    font-size: $font-size-sm;
+    height: $control-height-sm;
+    padding: $control-padding-y-sm $control-padding-x-sm;
+  }
+
+  &.btn-lg,
+  .btn-group-lg & {
+    font-size: $font-size-lg;
+    height: $control-height-lg;
+    padding: $control-padding-y-lg $control-padding-x-lg;
+  }
+
+  // Button Block
+  &.btn-block {
+    display: block;
+    width: 100%;
+  }
+
+  // Button Action
+  &.btn-action {
+    width: $control-height-md;
+    padding-left: 0;
+    padding-right: 0;
+
+    &.btn-sm {
+      width: $control-height-sm;
+    }
+
+    &.btn-lg {
+      width: $control-height-lg;
+    }
+  }
+
+  // Button Clear
+  &.btn-clear {
+    background: transparent;
+    border: 0;
+    color: currentColor;
+    height: $unit-5;
+    line-height: $unit-4;
+    margin-left: $unit-1;
+    margin-right: -2px;
+    opacity: 1;
+    padding: $unit-h;
+    text-decoration: none;
+    width: $unit-5;
+
+    &:focus,
+    &:hover {
+      background: rgba($body-bg--rgb-triplet, .5);
+      opacity: .95;
+    }
+
+    &::before {
+      content: "\2715";
+    }
+  }
+
+  &.btn-rounded,
+  .btn-group-rounded & {
+    border-radius: 50%;
+  }
+}
+
+// Button groups
+.btn-group {
+  display: inline-flex;
+  flex-wrap: wrap;
+
+  .btn {
+    flex: 1 0 auto;
+    &:first-child:not(:last-child) {
+      border-bottom-right-radius: 0;
+      border-top-right-radius: 0;
+    }
+    &:not(:first-child):not(:last-child) {
+      border-radius: 0;
+      margin-left: calc($border-width-md * -1);
+    }
+    &:last-child:not(:first-child) {
+      border-bottom-left-radius: 0;
+      border-top-left-radius: 0;
+      margin-left: calc($border-width-md * -1);
+    }
+    &:focus,
+    &:hover,
+    &:active,
+    &.active {
+      z-index: $zindex-0;
+    }
+  }
+
+  &.btn-group-block {
+    display: flex;
+
+    .btn {
+      flex: 1 0 0;
+    }
+  }
+}

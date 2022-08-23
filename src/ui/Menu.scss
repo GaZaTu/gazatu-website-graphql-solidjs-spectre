@@ -1,0 +1,68 @@
+@use "spectre.css/variables" as *;
+
+// Menus
+.menu {
+  box-shadow: 0 $unit-o calc(($unit-o + $unit-o) * 2) rgba($body-fg-monochrome--rgb-triplet, .3);
+  background: $body-bg;
+  border-radius: $control-border-radius;
+  list-style: none;
+  margin: 0;
+  min-width: $control-width-xs;
+  padding: $unit-2;
+  transform: translateY($layout-spacing-sm);
+  z-index: $zindex-3;
+
+  &.menu-nav {
+    background: transparent;
+    box-shadow: none;
+  }
+
+  .menu-item {
+    margin-top: 0;
+    padding: 0 $unit-2;
+    position: relative;
+    text-decoration: none;
+
+    & > a {
+      border-radius: $control-border-radius;
+      color: inherit;
+      display: block;
+      margin: 0 calc($unit-2 * -1);
+      padding: $unit-1 $unit-2;
+      text-decoration: none;
+      &:focus,
+      &:hover {
+        background: rgba($primary--rgb-triplet, 0.20);
+        // color: $primary;
+      }
+      &:active,
+      &.active {
+        background: rgba($primary--rgb-triplet, 0.20);
+        // color: $primary;
+      }
+    }
+
+    .form-checkbox,
+    .form-radio,
+    .form-switch {
+      margin: $unit-h 0;
+    }
+
+    & + .menu-item {
+      margin-top: $unit-1;
+    }
+  }
+
+  .menu-badge {
+    align-items: center;
+    display: flex;
+    height: 100%;
+    position: absolute;
+    right: 0;
+    top: 0;
+
+    .label {
+      margin-right: $unit-2;
+    }
+  }
+}

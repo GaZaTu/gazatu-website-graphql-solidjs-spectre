@@ -1,0 +1,36 @@
+@use "spectre.css/variables" as *;
+
+// Navs
+.nav {
+  display: flex;
+  flex-direction: column;
+  list-style: none;
+  margin: $unit-1 0;
+
+  .nav-item {
+    a {
+      color: $body-fg-monochrome;
+      padding: $unit-1 $unit-2;
+      text-decoration: none;
+      &:focus,
+      &:hover {
+        color: $primary-color;
+      }
+    }
+    &.active {
+      & > a {
+        color: $body-fg;
+        font-weight: bold;
+        &:focus,
+        &:hover {
+          color: $primary;
+        }
+      }
+    }
+  }
+
+  & .nav {
+    margin-bottom: $unit-2;
+    margin-left: $unit-4;
+  }
+}

@@ -1,0 +1,57 @@
+{
+  "root": true,
+  "parser": "@typescript-eslint/parser",
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:solid/typescript"
+  ],
+  "plugins": [
+    "@typescript-eslint",
+    "solid"
+  ],
+  "rules": {
+    "semi": [
+      "error",
+      "never"
+    ],
+    "quotes": [
+      "error",
+      "double"
+    ],
+    "jsx-quotes": "error",
+    "consistent-return": "error",
+    "eqeqeq": "error",
+    "comma-dangle": [
+      "error",
+      "always-multiline"
+    ],
+    "no-multiple-empty-lines": [
+      "error",
+      {
+        "max": 1,
+        "maxEOF": 1
+      }
+    ],
+    "@typescript-eslint/ban-types": [
+      "error",
+      {
+        "types": {
+          "{}": false
+        }
+      }
+    ],
+    "@typescript-eslint/no-unused-vars": [
+      "warn",
+      {
+        "args": "none"
+      }
+    ],
+    "solid/reactivity": "off"
+  },
+  "ignorePatterns": [
+    "node_modules/",
+    "dist/",
+    ".vite-ssg-temp/"
+  ]
+}

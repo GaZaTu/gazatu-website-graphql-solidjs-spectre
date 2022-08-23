@@ -1,0 +1,73 @@
+@use "spectre.css/variables" as *;
+
+// Bars
+.bar {
+  background: $body-bg-monochrome;
+  border-radius: $control-border-radius;
+  display: flex;
+  flex-wrap: nowrap;
+  height: $unit-4;
+  width: 100%;
+
+  &.bar-sm {
+    height: $unit-1;
+  }
+
+  // TODO: attr() support
+  .bar-section {
+    background: $primary;
+    color: $primary-text;
+    display: block;
+    font-size: $font-size-sm;
+    flex-shrink: 0;
+    line-height: $unit-4;
+    height: 100%;
+    position: relative;
+    text-align: center;
+    width: 0;
+
+    &:first-child {
+      border-bottom-left-radius: $control-border-radius;
+      border-top-left-radius: $control-border-radius;
+    }
+    &:last-child {
+      border-bottom-right-radius: $control-border-radius;
+      border-top-right-radius: $control-border-radius;
+      flex-shrink: 1;
+    }
+  }
+}
+
+// Slider bar
+.bar-slider {
+  height: $border-width-lg;
+  margin: $layout-spacing-md 0;
+  position: relative;
+
+  .bar-section {
+    left: 0;
+    padding: 0;
+    position: absolute;
+    &:not(:last-child):first-child {
+      background: $body-bg-monochrome;
+      z-index: $zindex-0;
+    }
+  }
+
+  .bar-slider-btn {
+    background: $primary;
+    border: 0;
+    border-radius: 50%;
+    height: $unit-3;
+    padding: 0;
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translate(50%, -50%);
+    width: $unit-3;
+
+    &:active {
+      box-shadow: 0 0 0 $control-border-radius $primary;
+    }
+  }
+}

@@ -1,0 +1,18 @@
+@use "../../spectre.css/variables" as *;
+
+.icon-arrow-down,
+.icon-arrow-left,
+.icon-arrow-right,
+.icon-arrow-up,
+.icon-downward,
+.icon-back,
+.icon-forward,
+.icon-upward {
+  &::before {
+    border: $icon-border-width solid currentColor;
+    border-bottom: 0;
+    border-right: 0;
+    height: .65em;
+    width: .65em;
+  }
+}

@@ -1,0 +1,58 @@
+.form-group {
+  &:not(:last-child) {
+    margin-bottom: $layout-spacing-md;
+  }
+}
+
+.form-label {
+  display: block;
+  line-height: $line-height;
+  padding: $control-padding-y + $border-width-md 0;
+
+  &.label-sm,
+  .form-group-sm & {
+    font-size: $font-size-sm;
+    padding: $control-padding-y-sm + $border-width-md 0;
+  }
+
+  &.label-lg,
+  .form-group-lg & {
+    font-size: $font-size-lg;
+    padding: $control-padding-y-lg + $border-width-md 0;
+  }
+}
+
+.form-input-hint {
+  color: $gray;
+  font-size: $font-size-sm;
+  margin-top: $unit-1;
+
+  .has-success &,
+  .is-success + & {
+    color: $success-color;
+  }
+
+  .has-error &,
+  .is-error + & {
+    color: $failure;
+  }
+}
+
+.form-horizontal {
+  padding: $layout-spacing 0;
+
+  .form-group {
+    display: flex;
+    flex-wrap: wrap;
+  }
+}
+
+fieldset {
+  margin-bottom: $layout-spacing-lg;
+}
+
+legend {
+  font-size: $font-size-lg;
+  font-weight: 500;
+  margin-bottom: $layout-spacing-lg;
+}

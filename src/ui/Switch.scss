@@ -1,0 +1,54 @@
+.form-switch {
+  padding-left: ($unit-8 + $control-padding-x);
+
+  .form-icon {
+    background: $gray-color;
+    background-clip: padding-box;
+    border-radius: $unit-2 + $border-width-md;
+    height: $unit-4 + $border-width-md * 2;
+    left: 0;
+    top: ($control-height-sm - $unit-4) / 2 - $border-width-md;
+    width: $unit-8;
+    &::before {
+      background: $bg-color-light;
+      border-radius: 50%;
+      content: "";
+      display: block;
+      height: $unit-4;
+      left: 0;
+      position: absolute;
+      top: 0;
+      transition: background .2s, border .2s, box-shadow .2s, color .2s, left .2s;
+      width: $unit-4;
+    }
+  }
+
+  input {
+    &:checked + .form-icon {
+      &::before {
+        left: 14px;
+      }
+    }
+    &:active + .form-icon {
+      &::before {
+        background: $bg-color;
+      }
+    }
+  }
+
+  &.form-inline {
+    display: inline-block;
+  }
+}
+
+// Form validation states
+.form-switch {
+  input {
+    &:disabled,
+    &.disabled {
+      & + .form-icon::before {
+        background: $bg-color-light;
+      }
+    }
+  }
+}

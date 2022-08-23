@@ -1,0 +1,50 @@
+@use "spectre.css/variables" as *;
+
+@keyframes dropdown-slide-down {
+  0% {
+    opacity: 0;
+    transform: translateY(calc($unit-8 * -1));
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Dropdown
+.dropdown {
+  display: inline-block;
+  position: relative;
+
+  .menu {
+    animation: dropdown-slide-down .15s ease 1;
+    display: none;
+    left: 0;
+    max-height: 50vh;
+    overflow-y: auto;
+    position: absolute;
+    top: 100%;
+  }
+
+  &.dropdown-right {
+    .menu {
+      left: auto;
+      right: 0;
+    }
+  }
+
+  &.active .menu,
+  .dropdown-toggle:focus + .menu,
+  &.dropdown-use-hover .dropdown-toggle:hover + .menu,
+  .menu:hover {
+    display: block;
+  }
+
+  // Fix dropdown-toggle border radius in button groups
+  .btn-group {
+    .dropdown-toggle:nth-last-child(2) {
+      border-bottom-right-radius: $control-border-radius;
+      border-top-right-radius: $control-border-radius;
+    }
+  }
+}

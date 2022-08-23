@@ -1,0 +1,23 @@
+@use "../spectre.css/variables" as *;
+
+// Shapes
+.s-rounded-xs {
+  border-radius: $border-radius-xs;
+}
+
+.s-rounded-sm {
+  border-radius: $border-radius-sm;
+}
+
+.s-rounded-md {
+  border-radius: $border-radius-md;
+}
+
+.s-rounded-lg {
+  border-radius: $border-radius-lg;
+}
+
+.s-rounded-xl,
+.s-circle {
+  border-radius: 50%;
+}

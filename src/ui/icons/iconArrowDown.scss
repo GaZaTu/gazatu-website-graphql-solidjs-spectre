@@ -1,0 +1,5 @@
+.icon-arrow-down {
+  &::before {
+    transform: translate(-50%, -75%) rotate(225deg);
+  }
+}

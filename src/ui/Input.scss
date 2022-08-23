@@ -1,0 +1,139 @@
+@use "spectre.css/variables" as *;
+
+// Form element: Input
+.form-input {
+  appearance: none;
+  background: $body-bg;
+  background-image: none;
+  border: $border-width-md solid gray;
+  border-radius: $control-border-radius;
+  color: $body-fg;
+  display: block;
+  font-size: $font-size-md;
+  height: $control-height-md;
+  line-height: $line-height;
+  max-width: 100%;
+  outline: none;
+  padding: $control-padding-y $control-padding-x;
+  position: relative;
+  transition: background .2s, border .2s, box-shadow .2s, color .2s;
+  width: 100%;
+  &:focus {
+    @include control-shadow();
+    border-color: $primary;
+  }
+  &::placeholder {
+    color: rgba($body-fg--rgb-triplet, 0.69);
+  }
+
+  // Input sizes
+  &.input-sm {
+    font-size: $font-size-sm;
+    height: $control-height-sm;
+    padding: $control-padding-y-sm $control-padding-x-sm;
+  }
+
+  &.input-lg {
+    font-size: $font-size-lg;
+    height: $control-height-lg;
+    padding: $control-padding-y-lg $control-padding-x-lg;
+  }
+
+  &.input-inline {
+    display: inline-block;
+    vertical-align: middle;
+    width: auto;
+  }
+
+  // Input types
+  &[type="file"] {
+    height: auto;
+  }
+
+  &.form-inline {
+    display: inline-block;
+  }
+}
+
+// Form element: Textarea
+textarea.form-input {
+  &,
+  &.input-lg,
+  &.input-sm {
+    height: auto;
+  }
+}
+
+// Form Icons
+.has-icon-left,
+.has-icon-right {
+  position: relative;
+
+  &.form-inline {
+    display: inline-block;
+  }
+
+  .form-icon {
+    height: $control-icon-size;
+    margin: 0 $control-padding-y;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: $control-icon-size;
+    z-index: $zindex-0 + 1;
+  }
+}
+
+.has-icon-left {
+  .form-icon {
+    left: $border-width-md;
+  }
+
+  .form-input {
+    padding-left: $control-icon-size + $control-padding-y * 2;
+  }
+}
+
+.has-icon-right {
+  .form-icon {
+    right: $border-width-md;
+  }
+
+  .form-input {
+    padding-right: $control-icon-size + $control-padding-y * 2;
+  }
+}
+
+// validation based on :placeholder-shown (Edge doesn't support it yet)
+.form-input {
+  &:not(:placeholder-shown) {
+    &:invalid {
+      border-color: $error-color;
+      &:focus {
+        @include control-shadow($error-color);
+        background: lighten($error-color, 53%);
+      }
+
+      & + .form-input-hint {
+        color: $error-color;
+      }
+    }
+  }
+}
+
+.form-input {
+  &[readonly] {
+    background-color: $bg-color;
+  }
+}
+
+input {
+  &:disabled,
+  &.disabled {
+    & + .form-icon {
+      background: $bg-color-dark;
+      cursor: not-allowed;
+      opacity: .5;
+    }
+  }
+}

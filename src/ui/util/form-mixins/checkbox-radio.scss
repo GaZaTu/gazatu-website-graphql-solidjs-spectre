@@ -1,0 +1,16 @@
+.form-checkbox,
+.form-radio {
+  .form-icon {
+    background: $bg-color-light;
+    height: $control-icon-size;
+    left: 0;
+    top: ($control-height-sm - $control-icon-size) / 2;
+    width: $control-icon-size;
+  }
+
+  input {
+    &:active + .form-icon {
+      background: $bg-color-dark;
+    }
+  }
+}
