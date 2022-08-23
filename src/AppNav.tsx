@@ -41,22 +41,22 @@ const AppNav: Component = () => {
             </Navbar.Brand.A>
 
             <Dropdown toggle={(
-              <Button color="link">
+              <Button.A color="link" match={{ href: "/trivia" }}>
                 <span>Trivia</span>
                 <Icon src={iconArrowDown} />
-              </Button>
+              </Button.A>
             )}>
               <Menu>
                 <Menu.Item>
-                  <A href="/questions/questions">Questions</A>
+                  <A href="/trivia/questions" match={{ exact: "withQuery" }}>Questions</A>
                 </Menu.Item>
                 <Menu.Item>
-                  <A href="/questions/categories">Categories</A>
+                  <A href="/trivia/categories">Categories</A>
                 </Menu.Item>
               </Menu>
             </Dropdown>
 
-            <Button.A href="/questions/questions">Questions</Button.A>
+            <Button.A href="/trivia/questions" params={{ test: 123 }} match={{ exact: "withQuery" }}>Questions</Button.A>
           </Navbar.Section>
 
           <Navbar.Section>

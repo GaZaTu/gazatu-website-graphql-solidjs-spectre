@@ -19,7 +19,7 @@
   }
 
   &:active,
-  &.active {
+  &.btn-active {
     background: $color-monochrome;
     border-color: $color-monochrome;
     color: $color-text;
@@ -51,7 +51,7 @@
   }
 
   &:active,
-  &.active {
+  &.btn-active {
     background: rgb($color--rgb-triplet);
     border-color: $color-monochrome;
     color: $color-text;
@@ -96,7 +96,7 @@
     text-decoration: none;
   }
   &:active,
-  &.active {
+  &.btn-active {
     background: $primary-monochrome;
     border-color: $primary-monochrome;
     color: $primary-text;
@@ -165,7 +165,7 @@
     &:focus,
     &:hover,
     &:active,
-    &.active {
+    &.btn-active {
       color: $link-monochrome;
     }
   }
@@ -260,7 +260,7 @@
     &:focus,
     &:hover,
     &:active,
-    &.active {
+    &.btn-active {
       z-index: $zindex-0;
     }
   }

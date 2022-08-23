@@ -1,5 +1,6 @@
-import { children, ComponentProps } from "solid-js"
+import { ComponentProps, For } from "solid-js"
 import "./Breadcrumbs.scss"
+import childrenArray from "./util/childrenArray"
 import createHTMLMemoHook from "./util/createHTMLMemoHook"
 
 type Props = {
@@ -16,20 +17,15 @@ const createProps = createHTMLMemoHook((props: Props) => {
 function Breadcrumbs(props: Props & ComponentProps<"ul">) {
   const [_props, _children] = createProps(props)
 
-  const resolvedChildren = children(_children)
+  const resolvedChildren = childrenArray(_children)
 
   return (
     <ul {..._props}>
-      {(() => {
-        let children = resolvedChildren()
-        if (!Array.isArray(children)) {
-          children = [children]
-        }
-
-        return children.map(child => (
+      <For each={resolvedChildren()}>
+        {child => (
           <li class="breadcrumb-item">{child}</li>
-        ))
-      })()}
+        )}
+      </For>
     </ul>
   )
 }

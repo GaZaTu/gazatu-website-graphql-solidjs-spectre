@@ -27,7 +27,7 @@ const createProps = createHTMLMemoHook((props: Props) => {
       "btn-block": props.block,
       "btn-clear": props.clear,
       "btn-outlined": props.outlined,
-      "active": props.active,
+      "btn-active": props.active,
     },
   }
 })
