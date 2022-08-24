@@ -32,9 +32,9 @@ const AppNav: Component = () => {
   // useIsRouting()
 
   return (
-    <Container style={{ position: "sticky" }}>
+    <Container size="xl" style={{ position: "sticky" }}>
       {showAppNav() && (
-        <Navbar style={{ "min-height": "60px" }}>
+        <Navbar style={{ "min-height": "64px" }} filled>
           <Navbar.Section>
             <Navbar.Brand.A href="/" classList={{ ...centerChildren(true) }}>
               <Img src="/static/gazatu-xyz.nofont.min.svg" alt="gazatu.xyz logo" height={42} />

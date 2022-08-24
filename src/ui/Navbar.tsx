@@ -5,12 +5,16 @@ import NavbarSection from "./Navbar.Section"
 import createHTMLMemoHook from "./util/createHTMLMemoHook"
 
 type Props = {
+  compact?: boolean
+  filled?: boolean
 }
 
 const createProps = createHTMLMemoHook((props: Props) => {
   return {
     classList: {
       "navbar": true,
+      "navbar-compact": props.compact,
+      "navbar-filled": props.filled,
     },
   }
 })

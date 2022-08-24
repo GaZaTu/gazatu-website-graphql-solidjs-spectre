@@ -6,7 +6,7 @@ import { setColorScheme } from "../ui/util/colorScheme"
 
 const Home: Component = () => {
   return (
-    <Container>
+    <Container size="xl">
       <Button.Group>
         <Button onclick={() => setColorScheme("dark")}>Dark</Button>
         <Button onclick={() => setColorScheme("light")}>Light</Button>

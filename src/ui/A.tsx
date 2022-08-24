@@ -132,7 +132,7 @@ const createProps = (_props: Props) => {
     const { asHref, isExternal } = url()
 
     setDerivedProps(props => ({
-      href: asHref,
+      href: asHref ?? "#",
       target: isExternal ? "_blank" : undefined,
       rel: isExternal ? "noopener noreferrer" : undefined,
       classList: {
@@ -164,7 +164,7 @@ export default Object.assign(A, {
   Context: AnchorContext,
 })
 
-const DUMMY_ORIGIN = "http://dummy"
+const DUMMY_ORIGIN = "http://__dummy__"
 
 const hrefToURL = (href?: string) => {
   if (!href) {
