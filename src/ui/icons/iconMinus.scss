@@ -1,0 +1,11 @@
+@use "../spectre.css/variables" as *;
+
+.icon-minus,
+.icon-plus,
+.icon-cross {
+  &::before {
+    background: currentColor;
+    height: $icon-border-width;
+    width: 100%;
+  }
+}

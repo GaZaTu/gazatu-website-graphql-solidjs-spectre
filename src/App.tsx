@@ -1,7 +1,8 @@
 import { Router, useLocation, useNavigate } from "@solidjs/router"
 import { Component } from "solid-js"
+import AppFooter from "./AppFooter"
+import AppHeader from "./AppHeader"
 import AppMain from "./AppMain"
-import AppNav from "./AppNav"
 import A from "./ui/A"
 import { useColorSchemeEffect } from "./ui/util/colorScheme"
 
@@ -17,8 +18,9 @@ const App: Component<Props> = props => {
 
   return (
     <Router url={props.url}>
-      <AppNav />
+      <AppHeader />
       <AppMain />
+      <AppFooter />
     </Router>
   )
 }

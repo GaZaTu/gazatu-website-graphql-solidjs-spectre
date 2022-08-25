@@ -1,30 +1,29 @@
 import { ComponentProps } from "solid-js"
-import "./Navbar.scss"
+import "./Table.scss"
 import createHTMLMemoHook from "./util/createHTMLMemoHook"
 
 type Props = {
-  // center?: boolean
+  active?: boolean
 }
 
 const createProps = createHTMLMemoHook((props: Props) => {
   return {
     classList: {
-      "navbar-section": true,
-      // "navbar-center": props.center,
+      "active": props.active,
     },
   }
 })
 
-function NavbarSection(props: Props & ComponentProps<"section">) {
+function TableRow(props: Props & ComponentProps<"tr">) {
   const [_props, _children] = createProps(props)
 
   return (
-    <section {..._props}>
+    <tr {..._props}>
       {_children()}
-    </section>
+    </tr>
   )
 }
 
-export default Object.assign(NavbarSection, {
+export default Object.assign(TableRow, {
   createProps,
 })

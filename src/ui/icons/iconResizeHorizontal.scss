@@ -1,0 +1,8 @@
+.icon-resize-horiz {
+  &::before {
+    transform: translate(-90%, -50%) rotate(-45deg);
+  }
+  &::after {
+    transform: translate(-10%, -50%) rotate(135deg);
+  }
+}

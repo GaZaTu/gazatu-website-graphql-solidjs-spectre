@@ -1,22 +1,85 @@
 import { Component } from "solid-js"
-import { setShowAppNav } from "../AppNav"
+import { setShowAppHeader, showAppHeader } from "../AppHeader"
 import Button from "../ui/Button"
-import Container from "../ui/Container"
-import { setColorScheme } from "../ui/util/colorScheme"
+import Column from "../ui/Column"
+import Navbar from "../ui/Navbar"
+import Section from "../ui/Section"
+import { colorScheme, setColorScheme } from "../ui/util/colorScheme"
+import { centerChildren } from "../ui/util/position"
 
 const Home: Component = () => {
-  return (
-    <Container size="xl">
-      <Button.Group>
-        <Button onclick={() => setColorScheme("dark")}>Dark</Button>
-        <Button onclick={() => setColorScheme("light")}>Light</Button>
-      </Button.Group>
+  // useAppFooter({
+  //   position: "sticky",
+  //   left: (
+  //     <Column.Row>
+  //       <Column classList={{ ...centerChildren(true) }}>
+  //         <Button.Group>
+  //           <Button onclick={() => setShowAppHeader(true)} active={showAppHeader()}>Show AppNav</Button>
+  //           <Button onclick={() => setShowAppHeader(false)} active={!showAppHeader()}>Hide AppNav</Button>
+  //         </Button.Group>
+  //       </Column>
+  //     </Column.Row>
+  //   ),
+  // })
 
-      <Button.Group>
-        <Button onclick={() => setShowAppNav(true)}>Show AppNav</Button>
-        <Button onclick={() => setShowAppNav(false)}>Hide AppNav</Button>
-      </Button.Group>
-    </Container>
+  return (
+    <>
+      <Section size="xl" marginTop>
+        <Button.Group>
+          <Button onclick={() => setColorScheme(null)} active={colorScheme() === null}>System</Button>
+          <Button onclick={() => setColorScheme("dark")} active={colorScheme() === "dark"}>Dark</Button>
+          <Button onclick={() => setColorScheme("light")} active={colorScheme() === "light"}>Light</Button>
+        </Button.Group>
+
+        <Button.Group>
+          <Button onclick={() => setShowAppHeader(true)} active={showAppHeader()}>Show AppNav</Button>
+          <Button onclick={() => setShowAppHeader(false)} active={!showAppHeader()}>Hide AppNav</Button>
+        </Button.Group>
+
+        <p>test</p>
+        <p>test</p>
+        <p>test</p>
+        <p>test</p>
+        <p>test</p>
+        <p>test</p>
+        <p>test</p>
+        <p>test</p>
+        <p>test</p>
+        <p>test</p>
+        <p>test</p>
+        <p>test</p>
+        <p>test</p>
+        <p>test</p>
+        <p>test</p>
+        <p>test</p>
+        <p>test</p>
+        <p>test</p>
+        <p>test</p>
+        <p>test</p>
+        <p>test</p>
+        <p>test</p>
+        <p>test</p>
+        <p>test</p>
+        <p>test</p>
+        <p>test</p>
+        <p>test</p>
+      </Section>
+
+      <Navbar.AsFooter size="sm" style={{ position: "sticky", bottom: 0 }} filled padded>
+        <Section size="xl">
+          <Navbar.Section>
+            <Column.Row>
+              <Column classList={{ ...centerChildren(true) }}>
+                <Button.Group>
+                  <Button onclick={() => setShowAppHeader(true)} active={showAppHeader()}>Show AppNav</Button>
+                  <Button onclick={() => setShowAppHeader(false)} active={!showAppHeader()}>Hide AppNav</Button>
+                </Button.Group>
+              </Column>
+            </Column.Row>
+          </Navbar.Section>
+        </Section>
+      </Navbar.AsFooter>
+    </>
   )
 }
 

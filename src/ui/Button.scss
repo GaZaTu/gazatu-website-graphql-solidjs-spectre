@@ -1,5 +1,4 @@
 @use "spectre.css/variables" as *;
-@use "spectre.css/mixins/button" as *;
 
 // Button variant mixin
 @mixin button-variant($color--rgb-triplet, $color-monochrome, $color-text) {
@@ -257,12 +256,12 @@
       border-top-left-radius: 0;
       margin-left: calc($border-width-md * -1);
     }
-    &:focus,
-    &:hover,
-    &:active,
-    &.btn-active {
-      z-index: $zindex-0;
-    }
+    // &:focus,
+    // &:hover,
+    // &:active,
+    // &.btn-active {
+    //   z-index: $zindex-0;
+    // }
   }
 
   &.btn-group-block {

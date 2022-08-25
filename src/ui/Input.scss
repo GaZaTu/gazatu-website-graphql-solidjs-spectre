@@ -19,7 +19,7 @@
   transition: background .2s, border .2s, box-shadow .2s, color .2s;
   width: 100%;
   &:focus {
-    @include control-shadow();
+    box-shadow: 0 0 0 .1rem rgba($primary--rgb-triplet, .2);
     border-color: $primary;
   }
   &::placeholder {
@@ -108,14 +108,14 @@ textarea.form-input {
 .form-input {
   &:not(:placeholder-shown) {
     &:invalid {
-      border-color: $error-color;
+      border-color: $failure;
       &:focus {
-        @include control-shadow($error-color);
-        background: lighten($error-color, 53%);
+        box-shadow: 0 0 0 .1rem rgba($failure--rgb-triplet, .2);
+        background: lighten($failure, 53%);
       }
 
       & + .form-input-hint {
-        color: $error-color;
+        color: $failure;
       }
     }
   }

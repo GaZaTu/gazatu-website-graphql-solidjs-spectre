@@ -2,11 +2,11 @@ import { usePrefersDark } from "@solid-primitives/media"
 import { createStorageSignal } from "@solid-primitives/storage"
 import { createEffect, createMemo } from "solid-js"
 
-export type ColorScheme = "light" | "dark"
+export type ColorScheme = "light" | "dark" | null
 
 const prefersDark = usePrefersDark(true)
 
-const [storedColorScheme, setColorScheme] = createStorageSignal<ColorScheme>("color-scheme", undefined, {
+const [colorScheme, setColorScheme] = createStorageSignal<ColorScheme>("color-scheme", null, {
   api: (() => {
     if (typeof window === "undefined") {
       return undefined
@@ -16,8 +16,8 @@ const [storedColorScheme, setColorScheme] = createStorageSignal<ColorScheme>("co
   })(),
 })
 
-const colorScheme = createMemo(() => {
-  let scheme = storedColorScheme()
+const resolvedColorScheme = createMemo(() => {
+  let scheme = colorScheme()
   if (scheme) {
     return scheme
   }
@@ -32,7 +32,7 @@ const useColorSchemeEffect = () => {
       return
     }
 
-    const scheme = colorScheme()
+    const scheme = resolvedColorScheme()
     window.document.documentElement.className = scheme
   })
 }
@@ -40,5 +40,6 @@ const useColorSchemeEffect = () => {
 export {
   colorScheme,
   setColorScheme,
+  resolvedColorScheme,
   useColorSchemeEffect,
 }

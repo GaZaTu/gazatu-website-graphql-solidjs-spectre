@@ -1,5 +1,5 @@
 @use '../spectre.css/variables' as *;
-@use '../spectre.css/mixins/text' as *;
+@use '../spectre.css/mixins/color' as *;
 
 // Text colors
 @include text-color-variant(".text-primary", $primary);

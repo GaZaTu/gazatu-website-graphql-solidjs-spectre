@@ -23,9 +23,9 @@ const useBreakpoints = () => {
     mediaFeature: "min-width",
     fallbackState: {
       xs: true,
-      sm: true,
-      md: true,
-      lg: true,
+      sm: false,
+      md: false,
+      lg: false,
       xl: false,
       xxl: false,
     },

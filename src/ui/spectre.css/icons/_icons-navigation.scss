@@ -16,30 +16,6 @@
   }
 }
 
-.icon-arrow-down {
-  &::before {
-    transform: translate(-50%, -75%) rotate(225deg);
-  }
-}
-
-.icon-arrow-left {
-  &::before {
-    transform: translate(-25%, -50%) rotate(-45deg);
-  }
-}
-
-.icon-arrow-right {
-  &::before {
-    transform: translate(-75%, -50%) rotate(135deg);
-  }
-}
-
-.icon-arrow-up {
-  &::before {
-    transform: translate(-50%, -25%) rotate(45deg);
-  }
-}
-
 .icon-back,
 .icon-forward {
   &::after {
@@ -103,16 +79,6 @@
     height: 0;
     transform: translate(-50%, -25%);
     width: 0;
-  }
-}
-
-// Icon menu
-.icon-menu {
-  &::before {
-    background: currentColor;
-    box-shadow: 0 -.35em, 0 .35em;
-    height: $icon-border-width;
-    width: 100%;
   }
 }
 

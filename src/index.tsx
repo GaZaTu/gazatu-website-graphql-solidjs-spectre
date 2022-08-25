@@ -1,4 +1,5 @@
 import "modern-normalize/modern-normalize.css"
+import { __ssrLoadedModules } from "vite-ssg-but-for-everyone"
 import type { EntryFileExports } from "vite-ssg-but-for-everyone/node"
 import App from "./App"
 import "./index.scss"
@@ -24,26 +25,34 @@ export const prerender: EntryFileExports["prerender"] = async context => {
 
   const { renderToStringAsync, generateHydrationScript } = await import("solid-js/web")
   return {
-    root: ROOT_ELEMENT_ID,
     html: await renderToStringAsync(main),
     head: {
       elements: [
         generateHydrationScript(),
       ],
     },
+    preload: __ssrLoadedModules.slice(),
   }
 }
 
-export const getRoutesToPrerender: EntryFileExports["getRoutesToPrerender"] = async () => {
+export const setupPrerender: EntryFileExports["setupPrerender"] = async () => {
   const { default: routes } = await import("./routes")
 
-  return routes
-    .map(r => {
-      if (r.path === "**") {
-        return "__404"
-      }
+  return {
+    root: ROOT_ELEMENT_ID,
+    routes: routes
+      .map(r => {
+        if (r.path === "**") {
+          return "__404"
+        }
 
-      return String(r.path)
-    })
-    .filter(i => !i.includes(":") && !i.includes("*"))
+        return String(r.path)
+      })
+      .filter(i => !i.includes(":") && !i.includes("*")),
+    csp: {
+      template: "script-src 'self' {{INLINE_SCRIPT_HASHES}}; object-src 'none'; frame-ancestors 'self'; base-uri 'self'; form-action 'self'; worker-src 'self' blob:; trusted-types *;",
+      fileName: "csp.conf",
+      fileType: "nginx-conf",
+    },
+  }
 }

@@ -6,7 +6,7 @@ const AppMain: Component = () => {
   const Route = useRoutes(routes)
 
   return (
-    <main>
+    <main id="AppMain">
       <Suspense>
         <Route />
       </Suspense>

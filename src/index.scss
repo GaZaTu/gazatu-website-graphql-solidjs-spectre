@@ -158,6 +158,36 @@ html {
   // &.dark {}
 }
 
+html,
+body,
 #root {
-  min-height: 100vh;
+  min-height: 100%;
+}
+
+#root,
+#AppMain {
+  display: flex;
+  flex-direction: column;
+}
+
+#AppMain {
+  flex-grow: 1;
+}
+
+@media (min-width: 1024px) {
+  *::-webkit-scrollbar {
+    width: 10px;
+  }
+
+  *::-webkit-scrollbar-track {
+    background: #f1f1f1;
+  }
+
+  *::-webkit-scrollbar-thumb {
+    background: #888;
+  }
+
+  *::-webkit-scrollbar-thumb:hover {
+    background: #555;
+  }
 }

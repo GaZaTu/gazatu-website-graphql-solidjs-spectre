@@ -6,7 +6,7 @@
     background: lighten($success-color, 53%);
     border-color: $success-color;
     &:focus {
-      @include control-shadow($success-color);
+      box-shadow: 0 0 0 .1rem rgba($success--rgb-triplet, .2);
     }
   }
 
@@ -15,7 +15,7 @@
     background: lighten($error-color, 53%);
     border-color: $error-color;
     &:focus {
-      @include control-shadow($error-color);
+      box-shadow: 0 0 0 .1rem rgba($failure--rgb-triplet, .2);
     }
   }
 }

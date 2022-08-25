@@ -1,5 +1,12 @@
 @use "../spectre.css/variables" as *;
-@use "../spectre.css/mixins/clearfix" as *;
+
+@mixin clearfix() {
+  &::after {
+    clear: both;
+    content: "";
+    display: table;
+  }
+}
 
 // Margin utility mixin
 @mixin margin-variant($id, $size) {

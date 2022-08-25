@@ -17,7 +17,7 @@
     position: absolute;
     width: 1px;
     &:focus + .form-icon {
-      @include control-shadow();
+      box-shadow: 0 0 0 .1rem rgba($primary--rgb-triplet, .2);
       border-color: $primary-color;
     }
     &:checked + .form-icon {
@@ -65,7 +65,7 @@
       }
 
       &:focus + .form-icon {
-        @include control-shadow($failure);
+        box-shadow: 0 0 0 .1rem rgba($failure--rgb-triplet, .2);
         border-color: $failure;
       }
     }

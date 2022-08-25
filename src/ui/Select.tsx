@@ -23,7 +23,7 @@ function Select(props: Props & ComponentProps<"select">) {
   const [_props, _children] = createProps(props)
 
   return (
-    <select {...props}>
+    <select {..._props}>
       {_children()}
     </select>
   )

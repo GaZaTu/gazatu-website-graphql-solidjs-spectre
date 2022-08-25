@@ -1,5 +1,4 @@
 import { ComponentProps } from "solid-js"
-import A from "./A"
 import "./Navbar.scss"
 import createHTMLMemoHook from "./util/createHTMLMemoHook"
 
@@ -17,24 +16,20 @@ const createProps = createHTMLMemoHook((props: Props) => {
 function NavbarBrand(props: Props & ComponentProps<"span">) {
   const [_props, _children] = createProps(props)
 
+  // const context = useContext(NavbarContext)
+
   return (
     <span {..._props}>
       {_children()}
+
+      {/* <NavbarBurger expanded={context.expanded()} onclick={() => {
+        console.log("wtfrlick")
+        context.setExpanded(p => !p)
+      }} /> */}
     </span>
-  )
-}
-
-function NavbarBrandAnchor(props: Props & ComponentProps<typeof A>) {
-  const [_props, _children] = createProps(props)
-
-  return (
-    <A {..._props}>
-      {_children()}
-    </A>
   )
 }
 
 export default Object.assign(NavbarBrand, {
   createProps,
-  A: NavbarBrandAnchor,
 })

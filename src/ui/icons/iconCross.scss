@@ -1,0 +1,14 @@
+@use "../spectre.css/variables" as *;
+
+.icon-cross {
+  &::before {
+    width: 100%;
+  }
+  &::after {
+    height: 100%;
+  }
+  &::before,
+  &::after {
+    transform: translate(-50%, -50%) rotate(45deg);
+  }
+}
