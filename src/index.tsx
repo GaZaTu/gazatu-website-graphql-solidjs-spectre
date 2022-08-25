@@ -50,9 +50,9 @@ export const setupPrerender: EntryFileExports["setupPrerender"] = async () => {
       })
       .filter(i => !i.includes(":") && !i.includes("*")),
     csp: {
-      template: "script-src 'self' {{INLINE_SCRIPT_HASHES}}; object-src 'none'; frame-ancestors 'self'; base-uri 'self'; form-action 'self'; worker-src 'self' blob:; trusted-types *;",
       fileName: "csp.conf",
       fileType: "nginx-conf",
+      template: "script-src 'self' {{INLINE_SCRIPT_HASHES}}; object-src 'none'; frame-ancestors 'self'; base-uri 'self'; form-action 'self'; worker-src 'self' blob:; trusted-types *;",
     },
   }
 }

@@ -1,3 +1,4 @@
+import classnames from "classnames"
 import { ComponentProps } from "solid-js"
 import "./Label.scss"
 import createHTMLMemoHook from "./util/createHTMLMemoHook"
@@ -10,10 +11,12 @@ type Props = {
 
 const createProps = createHTMLMemoHook((props: Props) => {
   return {
-    classList: {
-      "label": true,
-      [`label-${props.color}`]: !!props.color,
-      "label-rounded": props.rounded,
+    get class() {
+      return classnames({
+        "label": true,
+        [`label-${props.color}`]: !!props.color,
+        "label-rounded": props.rounded,
+      })
     },
   }
 })

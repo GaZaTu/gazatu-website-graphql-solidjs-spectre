@@ -1,3 +1,4 @@
+import classnames from "classnames"
 import { ComponentProps, For } from "solid-js"
 import "./Breadcrumbs.scss"
 import childrenArray from "./util/childrenArray"
@@ -8,8 +9,10 @@ type Props = {
 
 const createProps = createHTMLMemoHook((props: Props) => {
   return {
-    classList: {
-      "breadcrumbs": true,
+    get class() {
+      return classnames({
+        "breadcrumbs": true,
+      })
     },
   }
 })

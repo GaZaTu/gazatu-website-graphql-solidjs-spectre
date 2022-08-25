@@ -1,3 +1,4 @@
+import classnames from "classnames"
 import { ComponentProps } from "solid-js"
 import "./Select.scss"
 import createHTMLMemoHook from "./util/createHTMLMemoHook"
@@ -11,10 +12,12 @@ type Props = {
 
 const createProps = createHTMLMemoHook((props: Props) => {
   return {
-    classList: {
-      "form-select": true,
-      [`select-${props.size}`]: !!props.size,
-      "is-error": props.hasError,
+    get class() {
+      return classnames({
+        "form-select": true,
+        [`select-${props.size}`]: !!props.size,
+        "is-error": props.hasError,
+      })
     },
   }
 })

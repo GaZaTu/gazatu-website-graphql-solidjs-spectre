@@ -1,3 +1,4 @@
+import classnames from "classnames"
 import { ComponentProps } from "solid-js"
 import A from "./A"
 import ModalBody from "./Modal.Body"
@@ -18,10 +19,12 @@ type Props = {
 
 const createProps = createHTMLMemoHook((props: Props) => {
   return {
-    classList: {
-      "modal": true,
-      [`modal-${props.size}`]: !!props.size,
-      "active": props.active,
+    get class() {
+      return classnames({
+        "modal": true,
+        [`modal-${props.size}`]: !!props.size,
+        "active": props.active,
+      })
     },
   }
 })

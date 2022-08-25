@@ -1,3 +1,4 @@
+import classnames from "classnames"
 import { ComponentProps, splitProps } from "solid-js"
 import "./Autocomplete.scss"
 import Input from "./Input"
@@ -14,8 +15,10 @@ type Props = {
 
 const createProps = createHTMLMemoHook((props: Props) => {
   return {
-    classList: {
-      "form-autocomplete": true,
+    get class() {
+      return classnames({
+        "form-autocomplete": true,
+      })
     },
   }
 })

@@ -1,18 +1,18 @@
 import { combineProps } from "@solid-primitives/props"
-import { createMemo, JSX, mergeProps, splitProps } from "solid-js"
-import createMemoStore from "./createMemoStore"
+import { createMemo, JSX, splitProps } from "solid-js"
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const createHTMLMemoHook = <P, R extends JSX.HTMLAttributes<any>>(fn: (props: P) => R) => {
   return function <PP extends P>(props: PP, defaults: Partial<PP> = {}) {
-    // eslint-disable-next-line solid/reactivity
-    const propsWithDefaults = mergeProps(defaults, props) as PP
-    const propsForControl = createMemoStore(() => fn(propsWithDefaults))
-    const propsCombined = combineProps(propsForControl, propsWithDefaults)
-    const [xd, propsCombinedWithoutChildren] = splitProps(propsCombined, ["children"])
-    const children = createMemo(() => (xd as { children?: JSX.Element }).children)
+    const [fml, propsWithoutChildren] = splitProps(props as { children?: JSX.Element }, ["children"])
+    const children = createMemo(() => fml.children)
 
-    return [propsCombinedWithoutChildren, children] as const
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const propsWithDefaults: PP = combineProps(defaults, propsWithoutChildren) as any
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const propsCombined: PP = combineProps(fn(propsWithDefaults), propsWithDefaults) as any
+
+    return [propsCombined, children] as const
   }
 }
 

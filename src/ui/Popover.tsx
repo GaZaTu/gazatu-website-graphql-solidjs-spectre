@@ -1,3 +1,4 @@
+import classnames from "classnames"
 import { ComponentProps, JSX } from "solid-js"
 import CardBody from "./Card.Body"
 import CardFooter from "./Card.Footer"
@@ -13,9 +14,11 @@ type Props = {
 
 const createProps = createHTMLMemoHook((props: Props) => {
   return {
-    classList: {
-      "popover": true,
-      [`popover-${props.direction}`]: !!props.direction,
+    get class() {
+      return classnames({
+        "popover": true,
+        [`popover-${props.direction}`]: !!props.direction,
+      })
     },
   }
 })

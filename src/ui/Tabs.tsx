@@ -1,3 +1,4 @@
+import classnames from "classnames"
 import { ComponentProps } from "solid-js"
 import TabsItem from "./Tabs.Item"
 import TabsRadioGroup from "./Tabs.RadioGroup"
@@ -9,8 +10,10 @@ type Props = {
 
 const createProps = createHTMLMemoHook((props: Props) => {
   return {
-    classList: {
-      "tabs": true,
+    get class() {
+      return classnames({
+        "tabs": true,
+      })
     },
   }
 })

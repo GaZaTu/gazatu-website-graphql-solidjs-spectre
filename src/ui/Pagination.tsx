@@ -1,3 +1,4 @@
+import classnames from "classnames"
 import { ComponentProps } from "solid-js"
 import PaginationItem from "./Pagination.Item"
 import "./Pagination.scss"
@@ -8,8 +9,10 @@ type Props = {
 
 const createProps = createHTMLMemoHook((props: Props) => {
   return {
-    classList: {
-      "pagination": true,
+    get class() {
+      return classnames({
+        "pagination": true,
+      })
     },
   }
 })

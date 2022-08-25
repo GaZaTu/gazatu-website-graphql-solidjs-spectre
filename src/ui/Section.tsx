@@ -1,3 +1,4 @@
+import classnames from "classnames"
 import { ComponentProps } from "solid-js"
 import "./Column.scss"
 import createHTMLMemoHook from "./util/createHTMLMemoHook"
@@ -11,11 +12,13 @@ type Props = {
 
 const createProps = createHTMLMemoHook((props: Props) => {
   return {
-    classList: {
-      "container": true,
-      "container-left": props.left,
-      [`grid-${props.size}`]: !!props.size,
-      "container-margin-top": props.marginTop,
+    get class() {
+      return classnames({
+        "container": true,
+        "container-left": props.left,
+        [`grid-${props.size}`]: !!props.size,
+        "container-margin-top": props.marginTop,
+      })
     },
   }
 })

@@ -1,4 +1,5 @@
-import { children, ComponentProps, createEffect, JSX } from "solid-js"
+import classnames from "classnames"
+import { children, ComponentProps, createEffect, JSX, splitProps } from "solid-js"
 import "./Dropdown.scss"
 import Menu from "./Menu"
 import createHTMLMemoHook from "./util/createHTMLMemoHook"
@@ -13,11 +14,13 @@ type Props = {
 
 const createProps = createHTMLMemoHook((props: Props) => {
   return {
-    classList: {
-      "dropdown": true,
-      "dropdown-right": props.right,
-      "active": props.active,
-      "dropdown-use-hover": props.useHover,
+    get class() {
+      return classnames({
+        "dropdown": true,
+        "dropdown-right": props.right,
+        "active": props.active,
+        "dropdown-use-hover": props.useHover,
+      })
     },
   }
 })
@@ -25,16 +28,23 @@ const createProps = createHTMLMemoHook((props: Props) => {
 function Dropdown(props: Props & ComponentProps<"div">) {
   const [_props, _children] = createProps(props)
 
-  const resolvedToggle = children(() => props.toggle)
+  const [toggleProps, dropdownProps] = splitProps(_props, [
+    "toggle",
+  ])
+
+  const resolvedToggle = children(() => toggleProps.toggle)
   createEffect(() => {
     const toggle = resolvedToggle() as HTMLElement
+    if (!toggle) {
+      return
+    }
 
     toggle.tabIndex = 0
-    toggle.classList.add("dropdown-toggle")
+    toggle.dataset.dropdownToggle = "true"
   })
 
   return (
-    <div {..._props}>
+    <div {...dropdownProps}>
       {resolvedToggle()}
       {_children()}
     </div>

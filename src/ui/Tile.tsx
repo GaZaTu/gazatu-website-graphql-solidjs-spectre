@@ -1,3 +1,4 @@
+import classnames from "classnames"
 import { ComponentProps } from "solid-js"
 import TileAction from "./Tile.Action"
 import TileBody from "./Tile.Body"
@@ -13,9 +14,11 @@ type Props = {
 
 const createProps = createHTMLMemoHook((props: Props) => {
   return {
-    classList: {
-      "tile": true,
-      "tile-centered": props.compact,
+    get class() {
+      return classnames({
+        "tile": true,
+        "tile-centered": props.compact,
+      })
     },
   }
 })

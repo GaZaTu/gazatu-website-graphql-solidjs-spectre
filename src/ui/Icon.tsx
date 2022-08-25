@@ -1,3 +1,4 @@
+import classnames from "classnames"
 import { ComponentProps } from "solid-js"
 import "./Icon.scss"
 import createHTMLMemoHook from "./util/createHTMLMemoHook"
@@ -9,10 +10,12 @@ type Props = {
 
 const createProps = createHTMLMemoHook((props: Props) => {
   return {
-    classList: {
-      "spectre-icon": true,
-      [props.src]: true,
-      [`icon-${props.size}`]: !!props.size,
+    get class() {
+      return classnames({
+        "spectre-icon": true,
+        [props.src]: true,
+        [`icon-${props.size}`]: !!props.size,
+      })
     },
   }
 })

@@ -1,3 +1,4 @@
+import classnames from "classnames"
 import { ComponentProps } from "solid-js"
 import "./Divider.scss"
 import createHTMLMemoHook from "./util/createHTMLMemoHook"
@@ -12,10 +13,12 @@ type Props = {
 
 const createProps = createHTMLMemoHook((props: Props) => {
   return {
-    classList: {
-      "divider": !props.vertical,
-      "divider-vert": props.vertical,
-      ...text(props.textCenter ? "center" : undefined),
+    get class() {
+      return classnames({
+        "divider": !props.vertical,
+        "divider-vert": props.vertical,
+        ...text(props.textCenter ? "center" : undefined),
+      })
     },
   }
 })

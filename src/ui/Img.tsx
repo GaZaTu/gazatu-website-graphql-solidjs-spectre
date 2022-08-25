@@ -1,3 +1,4 @@
+import classnames from "classnames"
 import { ComponentProps } from "solid-js"
 import "./Img.scss"
 import createHTMLMemoHook from "./util/createHTMLMemoHook"
@@ -9,9 +10,11 @@ type Props = {
 
 const createProps = createHTMLMemoHook((props: Props) => {
   return {
-    classList: {
-      "img-responsive": props.responsive,
-      [`img-fit-${props.fit}`]: !!props.fit,
+    get class() {
+      return classnames({
+        "img-responsive": props.responsive,
+        [`img-fit-${props.fit}`]: !!props.fit,
+      })
     },
   }
 })

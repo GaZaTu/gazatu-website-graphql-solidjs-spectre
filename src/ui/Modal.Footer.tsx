@@ -1,3 +1,4 @@
+import classnames from "classnames"
 import { ComponentProps } from "solid-js"
 import "./Modal.scss"
 import createHTMLMemoHook from "./util/createHTMLMemoHook"
@@ -7,8 +8,10 @@ type Props = {
 
 const createProps = createHTMLMemoHook((props: Props) => {
   return {
-    classList: {
-      "modal-footer": true,
+    get class() {
+      return classnames({
+        "modal-footer": true,
+      })
     },
   }
 })

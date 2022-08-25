@@ -1,3 +1,4 @@
+import classnames from "classnames"
 import { ComponentProps } from "solid-js"
 import StepsItem from "./Steps.Item"
 import "./Steps.scss"
@@ -8,8 +9,10 @@ type Props = {
 
 const createProps = createHTMLMemoHook((props: Props) => {
   return {
-    classList: {
-      "steps": true,
+    get class() {
+      return classnames({
+        "steps": true,
+      })
     },
   }
 })

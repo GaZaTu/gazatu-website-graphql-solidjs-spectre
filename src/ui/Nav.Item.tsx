@@ -1,3 +1,4 @@
+import classnames from "classnames"
 import { ComponentProps } from "solid-js"
 import "./Nav.scss"
 import createHTMLMemoHook from "./util/createHTMLMemoHook"
@@ -8,9 +9,11 @@ type Props = {
 
 const createProps = createHTMLMemoHook((props: Props) => {
   return {
-    classList: {
-      "nav-item": true,
-      "active": props.active,
+    get class() {
+      return classnames({
+        "nav-item": true,
+        "active": props.active,
+      })
     },
   }
 })

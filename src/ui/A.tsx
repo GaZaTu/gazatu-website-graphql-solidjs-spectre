@@ -1,3 +1,4 @@
+import classnames from "classnames"
 import { combineProps } from "@solid-primitives/props"
 import { ComponentProps, createEffect, createMemo, splitProps } from "solid-js"
 import { createStore } from "solid-js/store"
@@ -131,15 +132,17 @@ const createProps = (_props: Props) => {
   createEffect(() => {
     const { asHref, isExternal } = url()
 
+    const _active = active()
+    const _onclick = onclick()
+
     setDerivedProps(props => ({
       href: asHref ?? "#",
       target: isExternal ? "_blank" : undefined,
       rel: isExternal ? "noopener noreferrer" : undefined,
-      classList: {
-        ...props.classList,
-        [AnchorContext.activeClass]: active(),
-      },
-      onclick: onclick(),
+      class: classnames({
+        [AnchorContext.activeClass]: _active,
+      }),
+      onclick: _onclick,
     }))
   })
 

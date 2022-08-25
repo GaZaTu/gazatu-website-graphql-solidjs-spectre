@@ -1,3 +1,4 @@
+import classnames from "classnames"
 import { ComponentProps } from "solid-js"
 import ColumnRow from "./Column.Row"
 import "./Column.scss"
@@ -10,15 +11,17 @@ type Props = {
 
 const createProps = createHTMLMemoHook((props: Props) => {
   return {
-    classList: {
-      "column": true,
-      [`col-${props.offset}-auto`]: !!props.offset,
-      [`col-xs-${props.xs}`]: !!props.xs,
-      [`col-sm-${props.sm}`]: !!props.sm,
-      [`col-md-${props.md}`]: !!props.md,
-      [`col-lg-${props.lg}`]: !!props.lg,
-      [`col-xl-${props.xl}`]: !!props.xl,
-      [`col-${props.xxl}`]: !!props.xxl,
+    get class() {
+      return classnames({
+        "column": true,
+        [`col-${props.offset}-auto`]: !!props.offset,
+        [`col-xs-${props.xs}`]: !!props.xs,
+        [`col-sm-${props.sm}`]: !!props.sm,
+        [`col-md-${props.md}`]: !!props.md,
+        [`col-lg-${props.lg}`]: !!props.lg,
+        [`col-xl-${props.xl}`]: !!props.xl,
+        [`col-${props.xxl}`]: !!props.xxl,
+      })
     },
   }
 })

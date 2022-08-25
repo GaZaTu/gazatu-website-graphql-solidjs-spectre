@@ -1,3 +1,4 @@
+import classnames from "classnames"
 import { ComponentProps, Show } from "solid-js"
 import Icon from "./Icon"
 import "./Input.scss"
@@ -16,11 +17,13 @@ type Props = {
 
 const createProps = createHTMLMemoHook((props: Props) => {
   return {
-    classList: {
-      "form-input": true,
-      "input-inline": props.inline,
-      [`input-${props.size}`]: !!props.size,
-      "is-error": props.hasError,
+    get class() {
+      return classnames({
+        "form-input": true,
+        "input-inline": props.inline,
+        [`input-${props.size}`]: !!props.size,
+        "is-error": props.hasError,
+      })
     },
   }
 })

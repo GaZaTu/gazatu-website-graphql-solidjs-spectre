@@ -1,3 +1,4 @@
+import classnames from "classnames"
 import { ComponentProps } from "solid-js"
 import "./Label.scss"
 import createHTMLMemoHook from "./util/createHTMLMemoHook"
@@ -9,9 +10,11 @@ type Props = {
 
 const createProps = createHTMLMemoHook((props: Props) => {
   return {
-    classList: {
-      "input-group-addon": true,
-      [`addon-${props.size}`]: !!props.size,
+    get class() {
+      return classnames({
+        "input-group-addon": true,
+        [`addon-${props.size}`]: !!props.size,
+      })
     },
   }
 })

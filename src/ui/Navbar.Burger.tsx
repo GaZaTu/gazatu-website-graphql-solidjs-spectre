@@ -1,3 +1,4 @@
+import classnames from "classnames"
 import { ComponentProps, createMemo } from "solid-js"
 import Button from "./Button"
 import Icon from "./Icon"
@@ -12,8 +13,10 @@ type Props = {
 
 const createProps = createHTMLMemoHook((props: Props) => {
   return {
-    classList: {
-      "navbar-burger": true,
+    get class() {
+      return classnames({
+        "navbar-burger": true,
+      })
     },
   }
 })

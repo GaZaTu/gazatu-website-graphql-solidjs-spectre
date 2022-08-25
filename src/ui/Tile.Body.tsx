@@ -1,3 +1,4 @@
+import classnames from "classnames"
 import { ComponentProps } from "solid-js"
 import "./Tile.scss"
 import createHTMLMemoHook from "./util/createHTMLMemoHook"
@@ -7,9 +8,10 @@ type Props = {
 
 const createProps = createHTMLMemoHook((props: Props) => {
   return {
-    classList: {
-      "tile-body": true,
-      "xd": false,
+    get class() {
+      return classnames({
+        "tile-body": true,
+      })
     },
   }
 })

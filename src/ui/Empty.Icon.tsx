@@ -1,3 +1,4 @@
+import classnames from "classnames"
 import { ComponentProps } from "solid-js"
 import "./Empty.scss"
 import Icon from "./Icon"
@@ -10,8 +11,10 @@ type Props = {
 
 const createProps = createHTMLMemoHook((props: Props) => {
   return {
-    classList: {
-      "empty-icon": true,
+    get class() {
+      return classnames({
+        "empty-icon": true,
+      })
     },
   }
 })

@@ -1,3 +1,4 @@
+import classnames from "classnames"
 import { ComponentProps, useContext } from "solid-js"
 import Button from "./Button"
 import ModalContext from "./Modal.Context"
@@ -10,8 +11,10 @@ type Props = {
 
 const createProps = createHTMLMemoHook((props: Props) => {
   return {
-    classList: {
-      "modal-header": true,
+    get class() {
+      return classnames({
+        "modal-header": true,
+      })
     },
   }
 })

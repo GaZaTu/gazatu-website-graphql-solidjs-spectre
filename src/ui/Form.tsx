@@ -1,3 +1,4 @@
+import classnames from "classnames"
 import { ComponentProps } from "solid-js"
 import FormGroup from "./Form.Group"
 import "./Label.scss"
@@ -9,9 +10,11 @@ type Props = {
 
 const createProps = createHTMLMemoHook((props: Props) => {
   return {
-    classList: {
-      "form": true,
-      "form-horizontal": props.horizontal,
+    get class() {
+      return classnames({
+        "form": true,
+        "form-horizontal": props.horizontal,
+      })
     },
   }
 })

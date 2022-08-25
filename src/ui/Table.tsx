@@ -1,3 +1,4 @@
+import classnames from "classnames"
 import { ComponentProps } from "solid-js"
 import TableRow from "./Table.Row"
 import "./Table.scss"
@@ -11,11 +12,13 @@ type Props = {
 
 const createProps = createHTMLMemoHook((props: Props) => {
   return {
-    classList: {
-      "table": true,
-      "table-striped": props.striped,
-      "table-hover": props.hoverable,
-      "table-scroll": props.scrollable,
+    get class() {
+      return classnames({
+        "table": true,
+        "table-striped": props.striped,
+        "table-hover": props.hoverable,
+        "table-scroll": props.scrollable,
+      })
     },
   }
 })

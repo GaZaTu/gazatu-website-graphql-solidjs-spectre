@@ -1,3 +1,4 @@
+import classnames from "classnames"
 import { ComponentProps } from "solid-js"
 import "./Navbar.scss"
 import createHTMLMemoHook from "./util/createHTMLMemoHook"
@@ -8,9 +9,11 @@ type Props = {
 
 const createProps = createHTMLMemoHook((props: Props) => {
   return {
-    classList: {
-      "navbar-section": true,
-      // "navbar-center": props.center,
+    get class() {
+      return classnames({
+        "navbar-section": true,
+        // "navbar-center": props.center,
+      })
     },
   }
 })

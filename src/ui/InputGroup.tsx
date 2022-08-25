@@ -1,3 +1,4 @@
+import classnames from "classnames"
 import { ComponentProps } from "solid-js"
 import InputGroupAddon from "./InputGroup.Addon"
 import "./Label.scss"
@@ -10,9 +11,11 @@ type Props = {
 
 const createProps = createHTMLMemoHook((props: Props) => {
   return {
-    classList: {
-      "input-group": true,
-      [`input-group-${props.size}`]: !!props.size,
+    get class() {
+      return classnames({
+        "input-group": true,
+        [`input-group-${props.size}`]: !!props.size,
+      })
     },
   }
 })

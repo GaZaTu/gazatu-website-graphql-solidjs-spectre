@@ -129,7 +129,7 @@
           > .btn-link,
           .column > .btn-link,
           .dropdown,
-          .dropdown-toggle {
+          [data-dropdown-toggle] {
             width: 100%;
             justify-content: flex-start;
             margin-top: $unit-2;

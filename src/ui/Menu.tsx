@@ -1,3 +1,4 @@
+import classnames from "classnames"
 import { ComponentProps } from "solid-js"
 import MenuItem from "./Menu.Item"
 import "./Menu.scss"
@@ -9,9 +10,11 @@ type Props = {
 
 const createProps = createHTMLMemoHook((props: Props) => {
   return {
-    classList: {
-      "menu": true,
-      "menu-nav": props.transparent,
+    get class() {
+      return classnames({
+        "menu": true,
+        "menu-nav": props.transparent,
+      })
     },
   }
 })

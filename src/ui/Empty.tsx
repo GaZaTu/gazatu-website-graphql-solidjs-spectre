@@ -1,3 +1,4 @@
+import classnames from "classnames"
 import { ComponentProps } from "solid-js"
 import EmptyAction from "./Empty.Action"
 import EmptyHeader from "./Empty.Header"
@@ -10,8 +11,10 @@ type Props = {
 
 const createProps = createHTMLMemoHook((props: Props) => {
   return {
-    classList: {
-      "empty": true,
+    get class() {
+      return classnames({
+        "empty": true,
+      })
     },
   }
 })

@@ -1,3 +1,4 @@
+import classnames from "classnames"
 import { ComponentProps } from "solid-js"
 import { Dynamic } from "solid-js/web"
 import "./Label.scss"
@@ -11,8 +12,10 @@ type Props = {
 
 const createProps = createHTMLMemoHook((props: Props) => {
   return {
-    classList: {
-      "code": props.snippet,
+    get class() {
+      return classnames({
+        "code": props.snippet,
+      })
     },
   }
 })

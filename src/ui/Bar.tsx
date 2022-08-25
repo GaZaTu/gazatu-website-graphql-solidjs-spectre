@@ -1,3 +1,4 @@
+import classnames from "classnames"
 import { ComponentProps } from "solid-js"
 import "./Bar.scss"
 import BarSection from "./Bar.Section"
@@ -12,10 +13,12 @@ type Props = {
 
 const createProps = createHTMLMemoHook((props: Props) => {
   return {
-    classList: {
-      "bar": true,
-      "bar-slider": props.slider,
-      [`bar-${props.size}`]: !!props.size,
+    get class() {
+      return classnames({
+        "bar": true,
+        "bar-slider": props.slider,
+        [`bar-${props.size}`]: !!props.size,
+      })
     },
   }
 })

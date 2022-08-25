@@ -1,3 +1,4 @@
+import classnames from "classnames"
 import { ComponentProps } from "solid-js"
 import NavbarBrand from "./Navbar.Brand"
 import NavbarBurger from "./Navbar.Burger"
@@ -16,13 +17,15 @@ type Props = {
 
 const createProps = createHTMLMemoHook((props: Props) => {
   return {
-    classList: {
-      "navbar": true,
-      [`navbar-${props.size}`]: !!props.size,
-      "navbar-filled": props.filled,
-      "navbar-padded": props.padded,
-      "navbar-responsive": props.responsive,
-      "navbar-expanded": props.expanded,
+    get class() {
+      return classnames({
+        "navbar": true,
+        [`navbar-${props.size}`]: !!props.size,
+        "navbar-filled": props.filled,
+        "navbar-padded": props.padded,
+        "navbar-responsive": props.responsive,
+        "navbar-expanded": props.expanded,
+      })
     },
   }
 })

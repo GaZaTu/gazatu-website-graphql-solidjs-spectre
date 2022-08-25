@@ -1,3 +1,4 @@
+import classnames from "classnames"
 import { ComponentProps } from "solid-js"
 import "./Card.scss"
 import Img from "./Img"
@@ -10,8 +11,10 @@ type Props = {
 
 const createProps = createHTMLMemoHook((props: Props) => {
   return {
-    classList: {
-      "card-image": true,
+    get class() {
+      return classnames({
+        "card-image": true,
+      })
     },
   }
 })

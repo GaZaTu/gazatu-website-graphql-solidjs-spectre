@@ -1,3 +1,4 @@
+import classnames from "classnames"
 import { ComponentProps, JSX } from "solid-js"
 import AccordionRadioGroup from "./Accordion.RadioGroup"
 import "./Accordion.scss"
@@ -19,10 +20,12 @@ type Props = {
 
 const createProps = createHTMLMemoHook((props: Props) => {
   return {
-    classList: {
-      "accordion": !props.vertical,
-      "divider-vert": props.vertical,
-      ...text("center"),
+    get class() {
+      return classnames({
+        "accordion": !props.vertical,
+        "divider-vert": props.vertical,
+        ...text("center"),
+      })
     },
   }
 })
@@ -35,7 +38,7 @@ function Accordion(props: Props & ComponentProps<"details">) {
 
   return (
     <details {..._props}>
-      <summary class="accordion-header" style={{"cursor":"pointer"}}>
+      <summary class="accordion-header" style={{ "cursor": "pointer" }}>
         {props.headerIcon && (
           <Icon src={props.open ? iconArrowDown : iconArrowRight} classList={{ ...marginR(1), ...float(props.headerIconFloatRight ? "right" : undefined) }} />
         )}

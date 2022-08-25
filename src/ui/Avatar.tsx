@@ -1,3 +1,4 @@
+import classnames from "classnames"
 import { ComponentProps } from "solid-js"
 import "./Avatar.scss"
 import createHTMLMemoHook from "./util/createHTMLMemoHook"
@@ -16,9 +17,11 @@ type Props = {
 
 const createProps = createHTMLMemoHook((props: Props) => {
   return {
-    classList: {
-      "avatar": true,
-      [`avatar-${props.size}`]: !!props.size,
+    get class() {
+      return classnames({
+        "avatar": true,
+        [`avatar-${props.size}`]: !!props.size,
+      })
     },
   }
 })

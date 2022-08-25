@@ -1,3 +1,4 @@
+import classnames from "classnames"
 import { ComponentProps } from "solid-js"
 import "./Button.scss"
 import createHTMLMemoHook from "./util/createHTMLMemoHook"
@@ -11,11 +12,13 @@ type Props = {
 
 const createProps = createHTMLMemoHook((props: Props) => {
   return {
-    classList: {
-      "btn-group": true,
-      [`btn-group-${props.size}`]: !!props.size,
-      [`btn-group-rounded-${props.rounded}`]: !!props.rounded,
-      "btn-group-block": props.block,
+    get class() {
+      return classnames({
+        "btn-group": true,
+        [`btn-group-${props.size}`]: !!props.size,
+        [`btn-group-rounded-${props.rounded}`]: !!props.rounded,
+        "btn-group-block": props.block,
+      })
     },
   }
 })
