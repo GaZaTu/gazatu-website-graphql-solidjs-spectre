@@ -5,6 +5,8 @@ import createHTMLMemoHook from "./util/createHTMLMemoHook"
 
 type Props = {
   active?: boolean
+  disabled?: boolean
+  focused?: boolean
   badge?: JSX.Element
 }
 
@@ -14,6 +16,8 @@ const createProps = createHTMLMemoHook((props: Props) => {
       return classnames({
         "menu-item": true,
         "active": props.active,
+        "disabled": props.disabled,
+        "focused": props.focused,
       })
     },
   }

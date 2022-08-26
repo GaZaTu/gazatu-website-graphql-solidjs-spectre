@@ -3,14 +3,18 @@ import A from "./ui/A"
 import Avatar from "./ui/Avatar"
 import Button from "./ui/Button"
 import Column from "./ui/Column"
-import Img from "./ui/Img"
+import ImgWithPlaceholder from "./ui/ImgWithPlaceholder"
+import Label from "./ui/Label"
 import Menu from "./ui/Menu"
 import Navbar from "./ui/Navbar"
+import GlobalProgress from "./ui/Progress.Global"
 import Section from "./ui/Section"
+import Switch from "./ui/Switch"
 import { badge } from "./ui/util/badge"
+import { resolvedColorScheme, setColorScheme } from "./ui/util/colorScheme"
 
 const [showAppHeader, setShowAppHeader] = createSignal(true)
-const useShowAppNavEffect = (show: boolean) => {
+const useShowAppHeaderEffect = (show: boolean) => {
   createEffect(() => {
     setShowAppHeader(show)
 
@@ -23,30 +27,30 @@ const useShowAppNavEffect = (show: boolean) => {
 export {
   showAppHeader,
   setShowAppHeader,
-  useShowAppNavEffect,
+  useShowAppHeaderEffect,
 }
 
 const AppNav: Component = () => {
   const [expanded, setExpanded] = createSignal(false)
 
-  // useIsRouting()
-
   return (
-    <Navbar id="AppHeader" class="testxd" size="lg" filled style={{ display: !showAppHeader() ? "none" : undefined }} responsive expanded={expanded()}>
-      <Section size="xl" style={{ position: "sticky" }}>
+    <Navbar id="AppHeader" size="lg" filled style={{ display: !showAppHeader() ? "none" : undefined }} responsive expanded={expanded()}>
+      <GlobalProgress />
+
+      <Section size="xl">
         <Navbar.Section>
           <Navbar.Brand>
             <A href="/">
-              <Img src="/static/gazatu-xyz.nofont.min.svg" alt="gazatu.xyz logo" height={36} />
+              <ImgWithPlaceholder src="/static/gazatu-xyz.nofont.min.svg" alt="gazatu.xyz logo" width={173} height={36} />
             </A>
 
-            <Navbar.Burger class="test" expanded={expanded()} onclick={() => setExpanded(v => !v)} />
+            <Navbar.Burger expanded={expanded()} onclick={() => setExpanded(v => !v)} aria-label="navigation" />
           </Navbar.Brand>
 
-          <Navbar.Dropdown toggle={<span {...badge(1)}>Trivia</span>} matchHref="/trivia">
+          <Navbar.Dropdown toggle={<span {...badge(123)}>Trivia</span>} matchHref="/trivia">
             <Menu>
-              <Menu.Item>
-                <A href="/trivia/questions" match>Questions</A>
+              <Menu.Item badge={<Label color="primary">12</Label>}>
+                <A href="/trivia/questions" match {...badge(1)}>Questions</A>
               </Menu.Item>
               <Menu.Item>
                 <A href="/trivia/categories" match>Categories</A>
@@ -62,6 +66,10 @@ const AppNav: Component = () => {
           <Column.Row>
             <Column>
               <Button.A href="http://github.com/GaZaTu" color="primary" outlined>GitHub</Button.A>
+            </Column>
+
+            <Column>
+              <Switch checked={resolvedColorScheme() === "dark"} onclick={() => setColorScheme((resolvedColorScheme() === "dark") ? "light" : "dark")} />
             </Column>
 
             <Column>

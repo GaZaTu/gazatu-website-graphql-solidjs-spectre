@@ -4,6 +4,7 @@ import "./Progress.scss"
 import createHTMLMemoHook from "./util/createHTMLMemoHook"
 
 type Props = {
+  fixedTop?: boolean
 }
 
 const createProps = createHTMLMemoHook((props: Props) => {
@@ -11,6 +12,7 @@ const createProps = createHTMLMemoHook((props: Props) => {
     get class() {
       return classnames({
         "progress": true,
+        "progress-fixed-top": props.fixedTop,
       })
     },
   }

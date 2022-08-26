@@ -6,7 +6,7 @@ export const badge = (text?: string | number | true) => {
   }
 
   if (typeof text === "number") {
-    text = String(text)
+    text = `${Math.min(text, 99)}${text > 99 ? "+" : ""}`
   }
 
   return {

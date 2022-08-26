@@ -49,7 +49,7 @@
       .menu {
         top: 92%;
 
-        border-top: 1px solid $body-bg-monochrome;
+        // border-top: 2px solid $body-bg-monochrome;
         border-top-left-radius: 0;
         border-top-right-radius: 0;
         border-bottom-left-radius: $border-radius-sm;
@@ -104,9 +104,10 @@
 
   .navbar-burger {
     margin-left: auto;
+    display: none;
 
-    @media (min-width: $size-md) {
-      display: none;
+    @media (max-width: $size-md) {
+      display: block;
     }
   }
 
@@ -149,6 +150,7 @@
               overflow-y: unset;
               box-shadow: unset;
               border-radius: unset;
+              background: transparent;
               padding: 0 0 $unit-2 0;
 
               .menu-item {

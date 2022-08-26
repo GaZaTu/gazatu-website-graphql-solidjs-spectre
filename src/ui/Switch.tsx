@@ -2,7 +2,7 @@ import classnames from "classnames"
 import { ComponentProps, splitProps } from "solid-js"
 import "./Switch.scss"
 import createHTMLMemoHook from "./util/createHTMLMemoHook"
-import "./util/form-mixins/checkbox-radio-switch"
+import "./util/form-mixins/checkbox-radio-switch.scss"
 import { ThemeSize } from "./util/theming"
 
 type Props = {

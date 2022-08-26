@@ -1,12 +1,14 @@
+@use "../../spectre.css/variables" as *;
+
 // Form element: Checkbox and Radio
 .form-checkbox,
 .form-radio,
 .form-switch {
   display: block;
   line-height: $line-height;
-  margin: ($control-height - $control-height-sm) / 2 0;
+  margin: calc(($control-height-md - $control-height-sm) / 2) 0;
   min-height: $control-height-sm;
-  padding: (($control-height-sm - $line-height) / 2) $control-padding-x (($control-height-sm - $line-height) / 2) ($control-icon-size + $control-padding-x);
+  padding: calc(($control-height-sm - $line-height) / 2) $control-padding-x-md calc(($control-height-sm - $line-height) / 2) calc($control-icon-size + $control-padding-x-md);
   position: relative;
 
   input {
@@ -18,16 +20,16 @@
     width: 1px;
     &:focus + .form-icon {
       box-shadow: 0 0 0 .1rem rgba($primary--rgb-triplet, .2);
-      border-color: $primary-color;
+      border-color: $primary;
     }
     &:checked + .form-icon {
-      background: $primary-color;
-      border-color: $primary-color;
+      background: $primary;
+      border-color: $primary;
     }
   }
 
   .form-icon {
-    border: $border-width-md solid $border-color-dark;
+    border: $border-width-md solid $body-bg-monochrome;
     cursor: pointer;
     display: inline-block;
     position: absolute;

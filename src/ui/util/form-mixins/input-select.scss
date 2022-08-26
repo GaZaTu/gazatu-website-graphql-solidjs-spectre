@@ -1,10 +1,12 @@
+@use "../../spectre.css/variables" as *;
+
 // Form validation states
 .form-input,
 .form-select {
   .has-success &,
   &.is-success {
-    background: lighten($success-color, 53%);
-    border-color: $success-color;
+    background: rgba($success--rgb-triplet, .5);
+    border-color: $success;
     &:focus {
       box-shadow: 0 0 0 .1rem rgba($success--rgb-triplet, .2);
     }
@@ -12,8 +14,8 @@
 
   .has-error &,
   &.is-error {
-    background: lighten($error-color, 53%);
-    border-color: $error-color;
+    background: rgba($failure--rgb-triplet, .5);
+    border-color: $failure;
     &:focus {
       box-shadow: 0 0 0 .1rem rgba($failure--rgb-triplet, .2);
     }
@@ -25,7 +27,7 @@
 .form-select {
   &:disabled,
   &.disabled {
-    background-color: $bg-color-dark;
+    background-color: $body-bg-monochrome;
     cursor: not-allowed;
     opacity: .5;
   }

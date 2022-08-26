@@ -14,7 +14,7 @@
   line-height: $line-height;
   max-width: 100%;
   outline: none;
-  padding: $control-padding-y $control-padding-x;
+  padding: $control-padding-y-md $control-padding-x-md;
   position: relative;
   transition: background .2s, border .2s, box-shadow .2s, color .2s;
   width: 100%;
@@ -75,7 +75,7 @@ textarea.form-input {
 
   .form-icon {
     height: $control-icon-size;
-    margin: 0 $control-padding-y;
+    margin: 0 $control-padding-y-md;
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
@@ -90,7 +90,7 @@ textarea.form-input {
   }
 
   .form-input {
-    padding-left: $control-icon-size + $control-padding-y * 2;
+    padding-left: calc($control-icon-size + $control-padding-y-md * 2);
   }
 }
 
@@ -100,7 +100,7 @@ textarea.form-input {
   }
 
   .form-input {
-    padding-right: $control-icon-size + $control-padding-y * 2;
+    padding-right: calc($control-icon-size + $control-padding-y-md * 2);
   }
 }
 
@@ -111,7 +111,7 @@ textarea.form-input {
       border-color: $failure;
       &:focus {
         box-shadow: 0 0 0 .1rem rgba($failure--rgb-triplet, .2);
-        background: lighten($failure, 53%);
+        background: rgba($failure--rgb-triplet, .5);
       }
 
       & + .form-input-hint {
@@ -123,7 +123,7 @@ textarea.form-input {
 
 .form-input {
   &[readonly] {
-    background-color: $bg-color;
+    background-color: $body-bg;
   }
 }
 
@@ -131,7 +131,7 @@ input {
   &:disabled,
   &.disabled {
     & + .form-icon {
-      background: $bg-color-dark;
+      background: $body-bg-monochrome;
       cursor: not-allowed;
       opacity: .5;
     }

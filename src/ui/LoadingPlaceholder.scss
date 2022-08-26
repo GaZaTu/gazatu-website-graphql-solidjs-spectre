@@ -1,0 +1,31 @@
+@use "spectre.css/variables" as *;
+
+@keyframes placeHolderShimmer {
+  0% {
+    background-position: -750px 0
+  }
+
+  100% {
+    background-position: 750px 0
+  }
+}
+
+.loading-placeholder {
+  margin: 0 auto;
+  background-color: rgba($body-bg-monochrome--rgb-triplet, 0.2);
+  border-radius: $control-border-radius;
+  overflow: hidden;
+}
+
+.loading-placeholder-gradient {
+  animation-duration: 1.25s;
+  animation-fill-mode: forwards;
+  animation-iteration-count: infinite;
+  animation-name: placeHolderShimmer;
+  animation-timing-function: linear;
+  background: rgba($body-bg-monochrome--rgb-triplet, 0.5);
+  background: linear-gradient(to right, rgba($body-bg-monochrome--rgb-triplet, 0.2) 10%, rgba($body-bg-monochrome--rgb-triplet, 0.8) 18%, rgba($body-bg-monochrome--rgb-triplet, 0.2) 33%);
+  background-size: 100em 104px;
+  height: 100px;
+  position: relative;
+}

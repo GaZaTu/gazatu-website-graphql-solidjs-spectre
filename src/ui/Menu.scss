@@ -2,7 +2,7 @@
 
 // Menus
 .menu {
-  box-shadow: 0 $unit-o calc(($unit-o + $unit-o) * 2) rgba($body-fg-monochrome--rgb-triplet, .3);
+  box-shadow: 0 $unit-h calc(($unit-o + $unit-o) * 2) rgba($body-fg-monochrome--rgb-triplet, .2);
   background: $body-bg;
   border-radius: $control-border-radius;
   list-style: none;
@@ -31,15 +31,40 @@
       padding: $unit-1 $unit-4;
       text-decoration: none;
       &:focus,
-      &:hover {
+      &:hover,
+      &.focused,
+      .menu-item.focused & {
         background: rgba($body-bg-monochrome--rgb-triplet, 0.69);
         // color: $primary;
       }
       &:active,
-      &.active {
+      &.active,
+      .menu-item.active & {
         background: rgba($primary--rgb-triplet, 0.20);
         // color: $primary;
       }
+      &[disabled],
+      &:disabled,
+      &.disabled,
+      .menu-item.disabled & {
+        cursor: default;
+        opacity: .5;
+        pointer-events: none;
+      }
+    }
+
+    &.menu-item.focused > a {
+      background: rgba($body-bg-monochrome--rgb-triplet, 0.69);
+      // color: $primary;
+    }
+    &.menu-item.active > a {
+      background: rgba($primary--rgb-triplet, 0.20);
+      // color: $primary;
+    }
+    &.menu-item.disabled > a {
+      cursor: default;
+      opacity: .5;
+      pointer-events: none;
     }
 
     .form-checkbox,

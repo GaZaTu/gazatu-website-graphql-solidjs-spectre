@@ -1,9 +1,12 @@
 import { Component } from "solid-js"
 import { setShowAppHeader, showAppHeader } from "../AppHeader"
+import Autocomplete from "../ui/Autocomplete"
 import Button from "../ui/Button"
 import Column from "../ui/Column"
+import LoadingPlaceholder from "../ui/LoadingPlaceholder"
 import Navbar from "../ui/Navbar"
 import Section from "../ui/Section"
+import { badge } from "../ui/util/badge"
 import { colorScheme, setColorScheme } from "../ui/util/colorScheme"
 import { centerChildren } from "../ui/util/position"
 
@@ -22,19 +25,31 @@ const Home: Component = () => {
   //   ),
   // })
 
+  const filterable = Autocomplete.createOptions(["apple", "banana", "pear", "pineapple", "kiwi", "test1", "test2", "test3", "test4", "test5", "test6", "test7", "test8", "test9", "test10", "test11", "test12", "test13", "test14", "test15", "test16"], {
+    filterable: true,
+    createable: true,
+    disable: o => o.value === "banana",
+  })
+
   return (
     <>
       <Section size="xl" marginTop>
         <Button.Group>
           <Button onclick={() => setColorScheme(null)} active={colorScheme() === null}>System</Button>
           <Button onclick={() => setColorScheme("dark")} active={colorScheme() === "dark"}>Dark</Button>
-          <Button onclick={() => setColorScheme("light")} active={colorScheme() === "light"}>Light</Button>
+          <Button onclick={() => setColorScheme("light")} active={colorScheme() === "light"} {...badge(5)}>Light</Button>
         </Button.Group>
 
         <Button.Group>
           <Button onclick={() => setShowAppHeader(true)} active={showAppHeader()}>Show AppNav</Button>
           <Button onclick={() => setShowAppHeader(false)} active={!showAppHeader()}>Hide AppNav</Button>
         </Button.Group>
+
+        <Autocomplete {...filterable} multiple placeholder="test..." />
+
+        <p>
+          <LoadingPlaceholder height={"16px"} />
+        </p>
 
         <p>test</p>
         <p>test</p>

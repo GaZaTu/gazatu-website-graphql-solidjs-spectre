@@ -35,6 +35,22 @@
       background: transparent;
     }
   }
+
+  &.progress-fixed-top {
+    position: fixed;
+    top: 0;
+    height: 2px;
+    z-index: 44;
+    border-radius: 0;
+
+    &:indeterminate {
+      background: transparent linear-gradient(to right, $primary 30%, transparent 30%) top left / 150% 150% no-repeat;
+    }
+
+    &[value] {
+      height: 4px;
+    }
+  }
 }
 
 @keyframes progress-indeterminate {

@@ -3,7 +3,7 @@ import { ComponentProps, Show } from "solid-js"
 import Icon from "./Icon"
 import "./Input.scss"
 import createHTMLMemoHook from "./util/createHTMLMemoHook"
-import "./util/form-mixins/input-select"
+import "./util/form-mixins/input-select.scss"
 import { ThemeSize } from "./util/theming"
 
 type Props = {
@@ -13,6 +13,7 @@ type Props = {
 
   iconSrc?: string
   iconLocation?: "left" | "right"
+  loading?: boolean
 }
 
 const createProps = createHTMLMemoHook((props: Props) => {
@@ -33,9 +34,10 @@ function Input(props: Props & ComponentProps<"input">) {
 
   return (
     <>
-      <Show when={props.iconSrc}>
-        <span class={`has-icon-${props.iconLocation ?? "left"}`}>
-          <Icon src={props.iconSrc!} />
+      <Show when={props.loading || props.iconSrc}>
+        <span class={`has-icon-${props.iconLocation ?? "right"}`}>
+          {/* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */}
+          <Icon src={props.loading ? "loading" : props.iconSrc!} />
           <input {..._props} />
           {_children()}
         </span>
