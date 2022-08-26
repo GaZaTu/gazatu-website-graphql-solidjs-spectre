@@ -23,12 +23,12 @@ if (typeof window !== "undefined") {
 export const prerender: EntryFileExports["prerender"] = async context => {
   const main = () => <App url={context.route} />
 
-  const { renderToStringAsync, generateHydrationScript } = await import("solid-js/web")
+  const { renderToStringAsync, getHydrationScript } = await import("solid-js/web")
   return {
     html: await renderToStringAsync(main),
     head: {
       elements: [
-        generateHydrationScript(),
+        getHydrationScript(),
       ],
     },
     preload: __ssrLoadedModules.slice(),
