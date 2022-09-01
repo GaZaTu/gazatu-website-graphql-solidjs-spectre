@@ -1,18 +1,16 @@
+@use "spectre.css/variables" as *;
+
 // Tables
 .table {
   border-collapse: collapse;
   border-spacing: 0;
   width: 100%;
-  @if $rtl == true {
-    text-align: right;
-  } @else {
-    text-align: left;
-  }
+  text-align: left;
 
   &.table-striped {
     tbody {
       tr:nth-of-type(odd) {
-        background: $bg-color;
+        background: rgba($body-bg-monochrome--rgb-triplet, 0.25);
       }
     }
   }
@@ -22,36 +20,38 @@
     tbody {
       tr {
         &.active {
-          background: $bg-color-dark;
+          background: $body-bg-monochrome;
         }
       }
     }
   }
 
-  &.table-hover {
+  &.table-hover:not(.table-loading) {
     tbody {
       tr {
         &:hover {
-          background: $bg-color-dark;
+          background: rgba($body-bg-monochrome--rgb-triplet, 0.75);
         }
       }
     }
-  }
-
-  // Scollable tables
-  &.table-scroll {
-    display: block;
-    overflow-x: auto;
-    padding-bottom: .75rem;
-    white-space: nowrap;
   }
 
   td,
   th {
-    border-bottom: $border-width-md solid $border-color;
+    border-bottom: $border-width-md solid rgba($body-fg-monochrome--rgb-triplet, 0.85);
     padding: $unit-3 $unit-2;
   }
   th {
     border-bottom-width: $border-width-lg;
   }
+
+  &.table-loading {
+    td {
+      border-color: transparent;
+    }
+  }
+}
+
+.table-scroll-container {
+  overflow-x: auto;
 }

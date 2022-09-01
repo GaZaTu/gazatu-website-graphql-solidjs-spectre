@@ -73,7 +73,7 @@ textarea.form-input {
     display: inline-block;
   }
 
-  .form-icon {
+  .#{$icon-prefix} {
     height: $control-icon-size;
     margin: 0 $control-padding-y-md;
     position: absolute;
@@ -85,22 +85,22 @@ textarea.form-input {
 }
 
 .has-icon-left {
-  .form-icon {
-    left: $border-width-md;
+  .#{$icon-prefix} {
+    left: calc($border-width-md * 6);
   }
 
   .form-input {
-    padding-left: calc($control-icon-size + $control-padding-y-md * 2);
+    padding-left: calc($control-icon-size + $control-padding-y-md * 3);
   }
 }
 
 .has-icon-right {
-  .form-icon {
-    right: $border-width-md;
+  .#{$icon-prefix} {
+    right: calc($border-width-md * 6);
   }
 
   .form-input {
-    padding-right: calc($control-icon-size + $control-padding-y-md * 2);
+    padding-right: calc($control-icon-size + $control-padding-y-md * 3);
   }
 }
 

@@ -105,16 +105,16 @@
 }
 
 .p-centered {
-  display: block;
-  float: none;
-  margin-left: auto;
-  margin-right: auto;
+  display: block !important;
+  float: none !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
 }
 
 .flex-centered {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
 }
 
 // Spacing

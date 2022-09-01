@@ -2,13 +2,15 @@ import classnames from "classnames"
 import { ComponentProps, splitProps } from "solid-js"
 import "./Checkbox.scss"
 import createHTMLMemoHook from "./util/createHTMLMemoHook"
-import "./util/form-mixins/checkbox-radio"
-import "./util/form-mixins/checkbox-radio-switch"
+import "./util/form-mixins/checkbox-radio.scss"
+import "./util/form-mixins/checkbox-radio-switch.scss"
 import { ThemeSize } from "./util/theming"
 
 type Props = {
   size?: ThemeSize
   hasError?: boolean
+
+  indeterminate?: boolean
 }
 
 const createProps = createHTMLMemoHook((props: Props) => {

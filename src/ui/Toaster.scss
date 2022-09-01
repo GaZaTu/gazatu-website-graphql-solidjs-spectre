@@ -1,0 +1,26 @@
+@use "spectre.css/variables" as *;
+
+@keyframes toaster-slide-up {
+  0% {
+    opacity: 0;
+    transform: translateY(calc($unit-8));
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.toaster {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  padding-right: $unit-2;
+  overflow: hidden;
+
+  .toast {
+    margin: $unit-2;
+    min-width: 12rem;
+    animation: toaster-slide-up .15s ease 1;
+  }
+}

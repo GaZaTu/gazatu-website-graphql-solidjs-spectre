@@ -9,12 +9,14 @@ const routes: RouteDefinitionExt[] = [
   {
     path: "/",
     component: lazy(() => import("./pages/Home")),
-    moduleId: "src/pages/Home.tsx",
+  },
+  {
+    path: "/trivia/categories",
+    component: lazy(() => import("./pages/trivia/TriviaCategoryList")),
   },
   {
     path: "**",
     component: lazy(() => import("./pages/Http404")),
-    moduleId: "src/pages/Http404.tsx",
   },
 ]
 

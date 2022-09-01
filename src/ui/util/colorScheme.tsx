@@ -16,7 +16,7 @@ const [colorScheme, setColorScheme] = createStorageSignal<ColorScheme>("color-sc
   })(),
 })
 
-const resolvedColorScheme = createMemo(() => {
+const computedColorScheme = createMemo(() => {
   let scheme = colorScheme()
   if (scheme) {
     return scheme
@@ -32,7 +32,7 @@ const useColorSchemeEffect = () => {
       return
     }
 
-    const scheme = resolvedColorScheme()
+    const scheme = computedColorScheme()
     window.document.documentElement.className = scheme
   })
 }
@@ -40,6 +40,6 @@ const useColorSchemeEffect = () => {
 export {
   colorScheme,
   setColorScheme,
-  resolvedColorScheme,
+  computedColorScheme,
   useColorSchemeEffect,
 }

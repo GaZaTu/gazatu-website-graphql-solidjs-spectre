@@ -1,4 +1,4 @@
-import { Component, createEffect, createSignal } from "solid-js"
+import { Component, createEffect, createSignal, onCleanup } from "solid-js"
 import A from "./ui/A"
 import Avatar from "./ui/Avatar"
 import Button from "./ui/Button"
@@ -11,16 +11,16 @@ import GlobalProgress from "./ui/Progress.Global"
 import Section from "./ui/Section"
 import Switch from "./ui/Switch"
 import { badge } from "./ui/util/badge"
-import { resolvedColorScheme, setColorScheme } from "./ui/util/colorScheme"
+import { computedColorScheme, setColorScheme } from "./ui/util/colorScheme"
 
 const [showAppHeader, setShowAppHeader] = createSignal(true)
 const useShowAppHeaderEffect = (show: boolean) => {
   createEffect(() => {
     setShowAppHeader(show)
+  })
 
-    return () => {
-      setShowAppHeader(true)
-    }
+  onCleanup(() => {
+    setShowAppHeader(true)
   })
 }
 
@@ -69,7 +69,7 @@ const AppNav: Component = () => {
             </Column>
 
             <Column>
-              <Switch checked={resolvedColorScheme() === "dark"} onclick={() => setColorScheme((resolvedColorScheme() === "dark") ? "light" : "dark")} />
+              <Switch checked={computedColorScheme() === "dark"} onclick={() => setColorScheme((computedColorScheme() === "dark") ? "light" : "dark")} />
             </Column>
 
             <Column>

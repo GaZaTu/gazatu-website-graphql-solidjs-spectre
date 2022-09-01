@@ -1,4 +1,6 @@
+import { renderTags } from "@solidjs/meta"
 import "modern-normalize/modern-normalize.css"
+import { ComponentProps } from "solid-js"
 import { __ssrLoadedModules } from "vite-ssg-but-for-everyone"
 import type { EntryFileExports } from "vite-ssg-but-for-everyone/node"
 import App from "./App"
@@ -21,14 +23,16 @@ if (typeof window !== "undefined") {
 }
 
 export const prerender: EntryFileExports["prerender"] = async context => {
-  const main = () => <App url={context.route} />
+  const head = [] as ComponentProps<typeof App>["head"]
+  const main = () => <App url={context.route} head={head} />
 
-  const { renderToStringAsync, getHydrationScript } = await import("solid-js/web")
+  const { renderToStringAsync, generateHydrationScript } = await import("solid-js/web")
   return {
     html: await renderToStringAsync(main),
     head: {
       elements: [
-        getHydrationScript(),
+        generateHydrationScript(),
+        renderTags(head ?? []),
       ],
     },
     preload: __ssrLoadedModules.slice(),

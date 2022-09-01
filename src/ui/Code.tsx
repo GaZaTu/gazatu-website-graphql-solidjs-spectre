@@ -24,7 +24,7 @@ function Code(props: Props & ComponentProps<"code" | "pre">) {
   const [_props, _children] = createProps(props)
 
   return (
-    <Dynamic component={props.snippet ? "pre" : "code"} {...props} data-lang={props.lang}>
+    <Dynamic component={_props.snippet ? "pre" : "code"} {..._props} data-lang={_props.lang}>
       {_children()}
     </Dynamic>
   )

@@ -1,0 +1,28 @@
+@use "../spectre.css/variables" as *;
+
+// Icon open
+.#{$icon-prefix}.icon-open {
+  border: $icon-border-width solid currentColor;
+  border-radius: $border-radius-xs;
+  border-right: 0;
+  border-top: 0;
+  &::before {
+    border: $icon-border-width solid currentColor;
+    border-left: 0;
+    border-top: 0;
+    height: .4em;
+    left: 100%;
+    top: .25em;
+    transform: translate(-135%, -30%) rotate(-90deg);
+    width: .4em;
+  }
+  &::after {
+    border: $icon-border-width solid currentColor;
+    border-bottom: 0;
+    border-right: 0;
+    border-left: 0;
+    height: .5em;
+    width: .6em;
+    transform: translate(-30%, -20%) rotate(-50deg);
+  }
+}

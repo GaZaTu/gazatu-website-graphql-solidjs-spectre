@@ -1,0 +1,21 @@
+@use "../spectre.css/variables" as *;
+
+// Icon delete
+.#{$icon-prefix}.icon-delete {
+  &::before {
+    border: $icon-border-width solid currentColor;
+    border-bottom-left-radius: $border-radius-xs;
+    border-bottom-right-radius: $border-radius-xs;
+    border-top: 0;
+    height: .75em;
+    top: 60%;
+    width: .75em;
+  }
+  &::after {
+    background: currentColor;
+    box-shadow: -.25em .2em, .25em .2em;
+    height: $icon-border-width;
+    top: calc($icon-border-width / 2);
+    width: .5em;
+  }
+}

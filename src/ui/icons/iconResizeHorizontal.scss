@@ -1,4 +1,6 @@
-.icon-resize-horiz {
+@use "../spectre.css/variables" as *;
+
+.#{$icon-prefix}.icon-resize-horiz {
   &::before {
     transform: translate(-90%, -50%) rotate(-45deg);
   }

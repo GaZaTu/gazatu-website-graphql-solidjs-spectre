@@ -1,14 +1,18 @@
-import { Component } from "solid-js"
+import { Component, createEffect, createSignal } from "solid-js"
 import { setShowAppHeader, showAppHeader } from "../AppHeader"
 import Autocomplete from "../ui/Autocomplete"
 import Button from "../ui/Button"
 import Column from "../ui/Column"
 import LoadingPlaceholder from "../ui/LoadingPlaceholder"
 import Navbar from "../ui/Navbar"
+import Pagination from "../ui/Pagination"
 import Section from "../ui/Section"
+import Toaster from "../ui/Toaster"
 import { badge } from "../ui/util/badge"
 import { colorScheme, setColorScheme } from "../ui/util/colorScheme"
 import { centerChildren } from "../ui/util/position"
+
+const counter = { xd: 0 }
 
 const Home: Component = () => {
   // useAppFooter({
@@ -31,6 +35,11 @@ const Home: Component = () => {
     disable: o => o.value === "banana",
   })
 
+  const [pageIndex, setPageIndex] = createSignal(0)
+  createEffect(() => {
+    console.log("pageIndex", pageIndex())
+  })
+
   return (
     <>
       <Section size="xl" marginTop>
@@ -45,11 +54,25 @@ const Home: Component = () => {
           <Button onclick={() => setShowAppHeader(false)} active={!showAppHeader()}>Hide AppNav</Button>
         </Button.Group>
 
+        <Button.Group>
+          <Button onclick={() => { throw new Error("Test") }}>Throw</Button>
+          <Button onclick={() => Toaster.push({ children: `Hello World! ${counter.xd++}`, color: "success" })}>Toast</Button>
+        </Button.Group>
+
         <Autocomplete {...filterable} multiple placeholder="test..." />
 
         <p>
           <LoadingPlaceholder height={"16px"} />
         </p>
+
+        <Pagination
+          pageIndex={pageIndex()}
+          pageCount={20}
+          // hasNext={__.context?.state.getCanNextPage() ?? false}
+          // hasPrev={__.context?.state.getCanPreviousPage() ?? false}
+          onPageIndexChange={page => setPageIndex(page)}
+          // loading={tableProps.loading}
+        />
 
         <p>test</p>
         <p>test</p>

@@ -15,6 +15,10 @@
   background-color: rgba($body-bg-monochrome--rgb-triplet, 0.2);
   border-radius: $control-border-radius;
   overflow: hidden;
+
+  &.inline {
+    display: inline-block;
+  }
 }
 
 .loading-placeholder-gradient {
@@ -26,6 +30,14 @@
   background: rgba($body-bg-monochrome--rgb-triplet, 0.5);
   background: linear-gradient(to right, rgba($body-bg-monochrome--rgb-triplet, 0.2) 10%, rgba($body-bg-monochrome--rgb-triplet, 0.8) 18%, rgba($body-bg-monochrome--rgb-triplet, 0.2) 33%);
   background-size: 100em 104px;
-  height: 100px;
+  height: 100%;
   position: relative;
+  display: flex;
+  align-items: center;
+
+  .spectre-icon {
+    margin-left: auto;
+    margin-right: auto;
+    color: rgba($body-fg-monochrome--rgb-triplet, 0.75);
+  }
 }

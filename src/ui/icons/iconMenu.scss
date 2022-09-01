@@ -1,6 +1,6 @@
 @use "../spectre.css/variables" as *;
 
-.icon-menu {
+.#{$icon-prefix}.icon-menu {
   &::before {
     background: currentColor;
     box-shadow: 0 -.35em, 0 .35em;

@@ -1,7 +1,9 @@
+@use "../../spectre.css/variables" as *;
+
 .form-checkbox,
 .form-radio {
   .form-icon {
-    background: $bg-color-light;
+    background: $body-bg;
     height: $control-icon-size;
     left: 0;
     top: ($control-height-sm - $control-icon-size) / 2;
@@ -10,7 +12,7 @@
 
   input {
     &:active + .form-icon {
-      background: $bg-color-dark;
+      background: $body-bg;
     }
   }
 }

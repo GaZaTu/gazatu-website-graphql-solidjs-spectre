@@ -1,4 +1,6 @@
-.icon-arrow-down {
+@use "../spectre.css/variables" as *;
+
+.#{$icon-prefix}.icon-arrow-down {
   &::before {
     transform: translate(-50%, -75%) rotate(225deg);
   }

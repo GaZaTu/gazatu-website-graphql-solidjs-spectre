@@ -1,7 +1,7 @@
 @use "../spectre.css/variables" as *;
 
-.icon-plus,
-.icon-cross {
+.#{$icon-prefix}.icon-plus,
+.#{$icon-prefix}.icon-cross {
   &::after {
     background: currentColor;
     height: 100%;

@@ -1,51 +1,5 @@
 @use "spectre.css/variables" as *;
 
-// Layout
-.container {
-  margin-left: auto;
-  margin-right: auto;
-  padding-left: $layout-spacing-md;
-  padding-right: $layout-spacing-md;
-  width: 100%;
-
-  &.container-margin-top {
-    margin-top: $unit-4;
-  }
-
-  &.container-left {
-    margin-left: 0;
-  }
-
-  &.grid-xl {
-    max-width: calc(($layout-spacing-md * 2) + $size-xl);
-  }
-
-  &.grid-lg {
-    max-width: calc(($layout-spacing-md * 2) + $size-lg);
-  }
-
-  &.grid-md {
-    max-width: calc(($layout-spacing-md * 2) + $size-md);
-  }
-
-  &.grid-sm {
-    max-width: calc(($layout-spacing-md * 2) + $size-sm);
-  }
-
-  &.grid-xs {
-    max-width: calc(($layout-spacing-md * 2) + $size-xs);
-  }
-}
-
-// Responsive breakpoint system
-.show-xs,
-.show-sm,
-.show-md,
-.show-lg,
-.show-xl {
-  display: none !important;
-}
-
 // Responsive grid system
 .cols,
 .columns {
@@ -202,12 +156,6 @@
   .col-xl-auto {
     width: auto;
   }
-  .hide-xl {
-    display: none !important;
-  }
-  .show-xl {
-    display: block !important;
-  }
 }
 @media (max-width: $size-lg) {
   .col-lg-12,
@@ -263,12 +211,6 @@
   }
   .col-lg-auto {
     width: auto;
-  }
-  .hide-lg {
-    display: none !important;
-  }
-  .show-lg {
-    display: block !important;
   }
 }
 @media (max-width: $size-md) {
@@ -326,12 +268,6 @@
   .col-md-auto {
     width: auto;
   }
-  .hide-md {
-    display: none !important;
-  }
-  .show-md {
-    display: block !important;
-  }
 }
 @media (max-width: $size-sm) {
   .col-sm-12,
@@ -388,12 +324,6 @@
   .col-sm-auto {
     width: auto;
   }
-  .hide-sm {
-    display: none !important;
-  }
-  .show-sm {
-    display: block !important;
-  }
 }
 @media (max-width: $size-xs) {
   .col-xs-12,
@@ -449,11 +379,5 @@
   }
   .col-xs-auto {
     width: auto;
-  }
-  .hide-xs {
-    display: none !important;
-  }
-  .show-xs {
-    display: block !important;
   }
 }

@@ -1,12 +1,12 @@
 import classnames from "classnames"
 import { ComponentProps } from "solid-js"
-import "./Column.scss"
+import "./Section.scss"
 import createHTMLMemoHook from "./util/createHTMLMemoHook"
-import { createUtility, ThemeBreakpoint, ThemeSize2 } from "./util/theming"
+import { createUtility, ThemeBreakpoint } from "./util/theming"
 
 type Props = {
   left?: boolean
-  size?: ThemeSize2
+  size?: ThemeBreakpoint
   marginTop?: boolean
 }
 

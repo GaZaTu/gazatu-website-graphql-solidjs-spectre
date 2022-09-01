@@ -4,9 +4,9 @@ import "./LoadingPlaceholder.scss"
 import createHTMLMemoHook from "./util/createHTMLMemoHook"
 
 type Props = {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  inline?: boolean
+
   width?: string | number
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   height?: string | number
 }
 
@@ -15,6 +15,7 @@ const createProps = createHTMLMemoHook((props: Props) => {
     get class() {
       return classnames({
         "loading-placeholder": true,
+        "inline": props.inline,
       })
     },
     get style() {

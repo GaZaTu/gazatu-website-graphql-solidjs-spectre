@@ -11,7 +11,7 @@ type Props = {
   disabled?: boolean
 
   href?: ComponentProps<typeof A>["href"]
-  onclick?: ComponentProps<typeof A>["onclick"]
+  // onclick?: ComponentProps<typeof A>["onclick"]
 }
 
 const createProps = createHTMLMemoHook((props: Props) => {
@@ -21,6 +21,8 @@ const createProps = createHTMLMemoHook((props: Props) => {
         "page-item": true,
         "page-prev": props.isPrev,
         "page-next": props.isNext,
+        "active": props.active,
+        "disabled": props.disabled,
       })
     },
   }
@@ -32,10 +34,11 @@ function PaginationItem(props: Props & ComponentProps<"li">) {
   return (
     <li {..._props} onClick={undefined}>
       {(props.href || props.onclick) && (
-        <A href={props.href} onclick={props.onclick} tabIndex={props.disabled ? -1 : undefined}>{_children()}</A>
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        <A href={props.href} onclick={props.onclick as any} tabIndex={props.disabled ? -1 : undefined}>{_children()}</A>
       )}
       {(!props.href && !props.onclick) && (
-        _children()
+        <span>{_children()}</span>
       )}
     </li>
   )

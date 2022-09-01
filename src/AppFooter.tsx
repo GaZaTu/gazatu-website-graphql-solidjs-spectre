@@ -12,10 +12,10 @@ import Section from "./ui/Section"
 // const useAppFooter = (config: typeof appFooterConfig) => {
 //   createEffect(() => {
 //     setAppFooterConfig(config)
+//   })
 
-//     return () => {
-//       setAppFooterConfig({})
-//     }
+//   onCleanup(() => {
+//     setAppFooterConfig({})
 //   })
 // }
 

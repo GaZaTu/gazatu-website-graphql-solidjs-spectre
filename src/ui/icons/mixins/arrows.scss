@@ -1,13 +1,13 @@
 @use "../../spectre.css/variables" as *;
 
-.icon-arrow-down,
-.icon-arrow-left,
-.icon-arrow-right,
-.icon-arrow-up,
-.icon-downward,
-.icon-back,
-.icon-forward,
-.icon-upward {
+.#{$icon-prefix}.icon-arrow-down,
+.#{$icon-prefix}.icon-arrow-left,
+.#{$icon-prefix}.icon-arrow-right,
+.#{$icon-prefix}.icon-arrow-up,
+.#{$icon-prefix}.icon-downward,
+.#{$icon-prefix}.icon-back,
+.#{$icon-prefix}.icon-forward,
+.#{$icon-prefix}.icon-upward {
   &::before {
     border: $icon-border-width solid currentColor;
     border-bottom: 0;

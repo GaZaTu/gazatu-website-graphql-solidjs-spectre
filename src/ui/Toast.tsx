@@ -13,7 +13,7 @@ const createProps = createHTMLMemoHook((props: Props) => {
     get class() {
       return classnames({
         "toast": true,
-        [`label-${props.color}`]: !!props.color,
+        [`toast-${props.color}`]: !!props.color,
       })
     },
   }

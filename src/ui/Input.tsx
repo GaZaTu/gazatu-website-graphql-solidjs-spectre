@@ -36,9 +36,9 @@ function Input(props: Props & ComponentProps<"input">) {
     <>
       <Show when={props.loading || props.iconSrc}>
         <span class={`has-icon-${props.iconLocation ?? "right"}`}>
+          <input {..._props} />
           {/* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */}
           <Icon src={props.loading ? "loading" : props.iconSrc!} />
-          <input {..._props} />
           {_children()}
         </span>
       </Show>

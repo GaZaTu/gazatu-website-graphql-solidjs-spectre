@@ -1,6 +1,6 @@
 @use "../spectre.css/variables" as *;
 
-.icon-cross {
+.#{$icon-prefix}.icon-cross {
   &::before {
     width: 100%;
   }

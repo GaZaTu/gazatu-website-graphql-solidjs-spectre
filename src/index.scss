@@ -182,22 +182,31 @@ body,
 
 #AppMain {
   flex-grow: 1;
+
+  > noscript {
+    padding: var(--unit-4);
+    background: var(--warning);
+    color: var(--warning-text);
+    font-weight: bold;
+    text-align: center;
+  }
 }
 
 @media (min-width: $size-md) {
   *::-webkit-scrollbar {
-    width: 10px;
+    width: 8px;
   }
 
   *::-webkit-scrollbar-track {
-    background: #f1f1f1;
+    background: rgba(var(--body-bg-monochrome--rgb-triplet), .5);
   }
 
   *::-webkit-scrollbar-thumb {
-    background: #888;
+    background: rgba(var(--body-fg-monochrome--rgb-triplet), .6);
+    border-radius: 16px;
   }
 
   *::-webkit-scrollbar-thumb:hover {
-    background: #555;
+    background: rgba(var(--body-fg-monochrome--rgb-triplet), .4);
   }
 }

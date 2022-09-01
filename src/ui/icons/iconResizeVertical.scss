@@ -1,7 +1,7 @@
 @use "../spectre.css/variables" as *;
 
-.icon-resize-vert,
-.icon-resize-horiz {
+.#{$icon-prefix}.icon-resize-vert,
+.#{$icon-prefix}.icon-resize-horiz {
   &::before,
   &::after {
     border: $icon-border-width solid currentColor;

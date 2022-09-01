@@ -17,6 +17,7 @@ type Props = ComponentProps<"a"> & {
   match?: true | { href?: string, exact?: true | "withQuery" }
   external?: boolean
   disabled?: boolean
+  keepExistingParams?: boolean
 }
 
 const createProps = (_props: Props) => {
@@ -34,6 +35,7 @@ const createProps = (_props: Props) => {
     "match",
     "external",
     "disabled",
+    "keepExistingParams",
   ])
 
   const location = AnchorContext.useLocation()
@@ -58,6 +60,12 @@ const createProps = (_props: Props) => {
     })()
 
     if (asURL) {
+      if (componentProps.keepExistingParams) {
+        for (const [key, value] of Object.entries(location?.query ?? {})) {
+          asURL.searchParams.append(key, value)
+        }
+      }
+
       for (const [key, value] of Object.entries(componentProps.params ?? {})) {
         asURL.searchParams.append(key, value)
       }

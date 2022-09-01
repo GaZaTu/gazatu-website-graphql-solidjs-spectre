@@ -1,4 +1,4 @@
-import { createEffect } from "solid-js"
+import { Accessor, createEffect, onCleanup } from "solid-js"
 import { createStore } from "solid-js/store"
 import { isServer } from "solid-js/web"
 import Progress from "./Progress"
@@ -9,19 +9,26 @@ const globalProgressStateDefaults = {
   max: undefined as number | undefined,
 }
 
-const [globalProgressState, setGlobalProgressState] = createStore(globalProgressStateDefaults)
-const createResetGlobalProgressStateEffect = () => {
+const [globalProgressState, setGlobalProgressState] = createStore({ ...globalProgressStateDefaults })
+const createGlobalProgressStateEffect = (getVisible: Accessor<boolean>) => {
   createEffect(() => {
-    return () => {
-      setGlobalProgressState(globalProgressStateDefaults)
-    }
+    const visible = getVisible()
+
+    setGlobalProgressState(state => ({
+      ...state,
+      visible,
+    }))
+  })
+
+  onCleanup(() => {
+    setGlobalProgressState({ ...globalProgressStateDefaults })
   })
 }
 
 export {
   globalProgressState,
   setGlobalProgressState,
-  createResetGlobalProgressStateEffect,
+  createGlobalProgressStateEffect,
 }
 
 function GlobalProgress() {

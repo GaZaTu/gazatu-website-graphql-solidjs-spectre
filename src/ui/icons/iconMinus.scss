@@ -1,8 +1,8 @@
 @use "../spectre.css/variables" as *;
 
-.icon-minus,
-.icon-plus,
-.icon-cross {
+.#{$icon-prefix}.icon-minus,
+.#{$icon-prefix}.icon-plus,
+.#{$icon-prefix}.icon-cross {
   &::before {
     background: currentColor;
     height: $icon-border-width;

@@ -1,16 +1,24 @@
+import { MetaProvider, Title } from "@solidjs/meta"
 import { Router, useLocation, useNavigate } from "@solidjs/router"
-import { Component } from "solid-js"
+import { Component, ComponentProps, ErrorBoundary } from "solid-js"
 import AppFooter from "./AppFooter"
 import AppHeader from "./AppHeader"
 import AppMain from "./AppMain"
+import { setDefaultFetchInfo } from "./lib/fetchFromApi"
+import { setGraphqlEndpoint } from "./lib/fetchGraphQL"
 import A from "./ui/A"
+import Toaster from "./ui/Toaster"
 import { useColorSchemeEffect } from "./ui/util/colorScheme"
 
 A.Context.useLocation = useLocation
 A.Context.useNavigate = useNavigate
 
+setDefaultFetchInfo("https://api.gazatu.xyz")
+setGraphqlEndpoint("https://api.gazatu.xyz/graphql")
+
 type Props = {
   url?: string
+  head?: ComponentProps<typeof MetaProvider>["tags"]
 }
 
 const App: Component<Props> = props => {
@@ -18,9 +26,19 @@ const App: Component<Props> = props => {
 
   return (
     <Router url={props.url}>
-      <AppHeader />
-      <AppMain />
-      <AppFooter />
+      <MetaProvider tags={props.head}>
+        <Title>gazatu.xyz</Title>
+
+        <AppHeader />
+
+        <ErrorBoundary fallback={Toaster.pushError}>
+          <AppMain />
+        </ErrorBoundary>
+
+        <AppFooter />
+
+        <Toaster />
+      </MetaProvider>
     </Router>
   )
 }

@@ -1,4 +1,6 @@
 import { ComponentProps, createSignal, Show } from "solid-js"
+import Icon from "./Icon"
+import iconPhoto from "./icons/iconPhoto"
 import Img from "./Img"
 import LoadingPlaceholder from "./LoadingPlaceholder"
 
@@ -8,7 +10,9 @@ function ImgWithPlaceholder(props: ComponentProps<typeof Img>) {
   return (
     <>
       <Show when={loading()}>
-        <LoadingPlaceholder width={props.width} height={props.height} />
+        <LoadingPlaceholder width={props.width} height={props.height}>
+          <Icon src={iconPhoto} />
+        </LoadingPlaceholder>
       </Show>
 
       <Img {...props} onload={() => setLoading(false)} style={{ display: loading() ? "none" : undefined }} />

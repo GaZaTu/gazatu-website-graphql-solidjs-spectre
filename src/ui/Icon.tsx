@@ -4,7 +4,7 @@ import "./Icon.scss"
 import createHTMLMemoHook from "./util/createHTMLMemoHook"
 
 type Props = {
-  src: string
+  src?: string
   size?: "1x" | "2x" | "3x" | "4x"
 }
 
@@ -13,7 +13,7 @@ const createProps = createHTMLMemoHook((props: Props) => {
     get class() {
       return classnames({
         "spectre-icon": true,
-        [props.src]: true,
+        [props.src ?? ""]: true,
         [`icon-${props.size}`]: !!props.size,
       })
     },

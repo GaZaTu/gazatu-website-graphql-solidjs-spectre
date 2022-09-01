@@ -47,7 +47,9 @@
         "args": "none"
       }
     ],
-    "solid/reactivity": "off"
+    "@typescript-eslint/no-non-null-assertion": "off",
+    "solid/reactivity": "off",
+    "solid/event-handlers": "off"
   },
   "ignorePatterns": [
     "node_modules/",

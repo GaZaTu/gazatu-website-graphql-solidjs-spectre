@@ -9,14 +9,8 @@ export {
   defaultFetchInit,
   setDefaultFetchInit,
 }
-export {
-  fetch,
-}
 
-const mergeFetchParams = (...[info, init]: Parameters<typeof window.fetch>) => {
-  const defaultInfo = defaultFetchInfo()
-  const defaultInit = defaultFetchInit()
-
+const mergeFetchParams = ([info, init]: Parameters<typeof fetch>, [defaultInfo, defaultInit]: Partial<Parameters<typeof fetch>>) => {
   if (info instanceof URL) {
     info = String(info)
   }
@@ -39,6 +33,11 @@ const mergeFetchParams = (...[info, init]: Parameters<typeof window.fetch>) => {
   return [info, init] as const
 }
 
-const fetch: (typeof window.fetch) = (info, init) => {
-  return window.fetch(...mergeFetchParams(info, init))
+const fetchFromApi: (typeof fetch) = (info, init) => {
+  const defaultInfo = defaultFetchInfo()
+  const defaultInit = defaultFetchInit()
+
+  return fetch(...mergeFetchParams([info, init], [defaultInfo, defaultInit]))
 }
+
+export default fetchFromApi
