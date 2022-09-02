@@ -1,5 +1,5 @@
 import classnames from "classnames"
-import { ComponentProps } from "solid-js"
+import { ComponentProps, splitProps } from "solid-js"
 import "./Avatar.scss"
 import createHTMLMemoHook from "./util/createHTMLMemoHook"
 import { ThemeSize2 } from "./util/theming"
@@ -27,7 +27,8 @@ const createProps = createHTMLMemoHook((props: Props) => {
 })
 
 function Avatar(props: Props & ComponentProps<"figure">) {
-  const [_props, _children] = createProps(props)
+  const [fml] = splitProps(props, ["children"])
+  const [_props] = createProps(props)
 
   return (
     <figure {..._props} data-initials={props.initials}>
@@ -40,7 +41,7 @@ function Avatar(props: Props & ComponentProps<"figure">) {
       {props.presence && (
         <i class={`avatar-presence ${props.presence}`} />
       )}
-      {_children()}
+      {fml.children}
     </figure>
   )
 }

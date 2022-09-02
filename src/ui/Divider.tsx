@@ -1,5 +1,5 @@
 import classnames from "classnames"
-import { ComponentProps } from "solid-js"
+import { ComponentProps, splitProps } from "solid-js"
 import "./Divider.scss"
 import createHTMLMemoHook from "./util/createHTMLMemoHook"
 import { text } from "./util/text"
@@ -24,11 +24,12 @@ const createProps = createHTMLMemoHook((props: Props) => {
 })
 
 function Divider(props: Props & ComponentProps<"div">) {
-  const [_props, _children] = createProps(props)
+  const [fml] = splitProps(props, ["children"])
+  const [_props] = createProps(props)
 
   return (
     <div {..._props} data-content={props.label}>
-      {_children()}
+      {fml.children}
     </div>
   )
 }

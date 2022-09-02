@@ -1,5 +1,5 @@
 import classnames from "classnames"
-import { ComponentProps } from "solid-js"
+import { ComponentProps, splitProps } from "solid-js"
 import "./Icon.scss"
 import createHTMLMemoHook from "./util/createHTMLMemoHook"
 
@@ -21,11 +21,12 @@ const createProps = createHTMLMemoHook((props: Props) => {
 })
 
 function Icon(props: Props & ComponentProps<"i">) {
-  const [_props, _children] = createProps(props)
+  const [fml] = splitProps(props, ["children"])
+  const [_props] = createProps(props)
 
   return (
     <i {..._props}>
-      {_children()}
+      {fml.children}
     </i>
   )
 }

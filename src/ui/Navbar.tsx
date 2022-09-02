@@ -1,5 +1,5 @@
 import classnames from "classnames"
-import { ComponentProps } from "solid-js"
+import { ComponentProps, splitProps } from "solid-js"
 import NavbarBrand from "./Navbar.Brand"
 import NavbarBurger from "./Navbar.Burger"
 import NavbarDropdown from "./Navbar.Dropdown"
@@ -51,23 +51,25 @@ function Navbar(props: Props & ComponentProps<"header">) {
   //   return undefined as any
   // }
 
-  const [_props, _children] = createProps(props)
+  const [fml] = splitProps(props, ["children"])
+  const [_props] = createProps(props)
 
   return (
     <header {..._props}>
       {/* <NavbarContext.Provider value={{ expanded: () => context.expanded, setExpanded }}> */}
-        {_children()}
+        {fml.children}
       {/* </NavbarContext.Provider> */}
     </header>
   )
 }
 
 function NavbarFooter(props: Props & ComponentProps<"footer">) {
-  const [_props, _children] = createProps(props)
+  const [fml] = splitProps(props, ["children"])
+  const [_props] = createProps(props)
 
   return (
     <footer {..._props}>
-      {_children()}
+      {fml.children}
     </footer>
   )
 }

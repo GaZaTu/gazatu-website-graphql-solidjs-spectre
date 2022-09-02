@@ -26,7 +26,8 @@ const createProps = createHTMLMemoHook((props: Props) => {
 })
 
 function Dropdown(props: Props & ComponentProps<"div">) {
-  const [_props, _children] = createProps(props)
+  const [fml] = splitProps(props, ["children"])
+  const [_props] = createProps(props)
 
   const [toggleProps, dropdownProps] = splitProps(_props, [
     "toggle",
@@ -46,7 +47,7 @@ function Dropdown(props: Props & ComponentProps<"div">) {
   return (
     <div {...dropdownProps}>
       {resolvedToggle()}
-      {_children()}
+      {fml.children}
     </div>
   )
 }

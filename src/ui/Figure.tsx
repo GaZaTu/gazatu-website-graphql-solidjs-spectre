@@ -18,11 +18,12 @@ const createProps = createHTMLMemoHook((props: Props) => {
 })
 
 function Figure(props: Props & ComponentProps<"figure">) {
-  const [_props, _children] = createProps(props)
+  const [fml] = splitProps(props, ["children"])
+  const [_props] = createProps(props)
 
   return (
     <figure {..._props}>
-      {_children()}
+      {fml.children}
     </figure>
   )
 }

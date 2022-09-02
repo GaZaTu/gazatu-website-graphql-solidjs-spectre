@@ -51,7 +51,7 @@ const createProps = createHTMLMemoHook((props: Props<any, any>) => {
 })
 
 function Autocomplete<V, O>(props: Props<V, O> & ComponentProps<"div">) {
-  const [_props, _children] = createProps(props, {
+  const [_props] = createProps(props, {
     format: v => JSON.stringify(v),
   })
 
@@ -125,8 +125,6 @@ function Autocomplete<V, O>(props: Props<V, O> & ComponentProps<"div">) {
           </Show>
         </Menu>
       </Show>
-
-      {_children()}
     </div>
   )
 }

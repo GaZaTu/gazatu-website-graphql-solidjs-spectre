@@ -161,11 +161,12 @@ const createProps = (_props: Props) => {
 }
 
 function A(props: Props) {
-  const [_props, _children] = createProps(props)
+  const [fml] = splitProps(props, ["children"])
+  const [_props] = createProps(props)
 
   return (
     <a {..._props}>
-      {_children()}
+      {fml.children}
     </a>
   )
 }

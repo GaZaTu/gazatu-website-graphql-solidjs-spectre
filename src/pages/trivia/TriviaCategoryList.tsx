@@ -13,7 +13,7 @@ import Table from "../../ui/Table"
 import { createTableState, tableColumnLink, tableColumnSelect, tableDateCell, tableOnGlobalFilterChange, tableOnPaginationChange, tableOnSortingChange } from "../../ui/Table.Helpers"
 import { centerSelf } from "../../ui/util/position"
 
-const TriviaCategoryList: Component = () => {
+const TriviaCategoryListView: Component = () => {
   const categories = createGraphQLResource<Query>({
     query: gql`
       query Query($isTriviaAdmin: Boolean!, $verified: Boolean, $disabled: Boolean) {
@@ -107,4 +107,4 @@ const TriviaCategoryList: Component = () => {
   )
 }
 
-export default TriviaCategoryList
+export default TriviaCategoryListView

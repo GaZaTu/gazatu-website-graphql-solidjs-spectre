@@ -1,5 +1,5 @@
 import classnames from "classnames"
-import { ComponentProps } from "solid-js"
+import { ComponentProps, splitProps } from "solid-js"
 import A from "./A"
 import "./Pagination.scss"
 import createHTMLMemoHook from "./util/createHTMLMemoHook"
@@ -29,16 +29,17 @@ const createProps = createHTMLMemoHook((props: Props) => {
 })
 
 function PaginationItem(props: Props & ComponentProps<"li">) {
-  const [_props, _children] = createProps(props)
+  const [fml] = splitProps(props, ["children"])
+  const [_props] = createProps(props)
 
   return (
     <li {..._props} onClick={undefined}>
       {(props.href || props.onclick) && (
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        <A href={props.href} onclick={props.onclick as any} tabIndex={props.disabled ? -1 : undefined}>{_children()}</A>
+        <A href={props.href} onclick={props.onclick as any} tabIndex={props.disabled ? -1 : undefined}>{fml.children}</A>
       )}
       {(!props.href && !props.onclick) && (
-        <span>{_children()}</span>
+        <span>{fml.children}</span>
       )}
     </li>
   )

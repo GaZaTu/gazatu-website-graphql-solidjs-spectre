@@ -1,5 +1,5 @@
 import classnames from "classnames"
-import { ComponentProps } from "solid-js"
+import { ComponentProps, splitProps } from "solid-js"
 import { Dynamic } from "solid-js/web"
 import "./Label.scss"
 import createHTMLMemoHook from "./util/createHTMLMemoHook"
@@ -21,11 +21,12 @@ const createProps = createHTMLMemoHook((props: Props) => {
 })
 
 function Code(props: Props & ComponentProps<"code" | "pre">) {
-  const [_props, _children] = createProps(props)
+  const [fml] = splitProps(props, ["children"])
+  const [_props] = createProps(props)
 
   return (
     <Dynamic component={_props.snippet ? "pre" : "code"} {..._props} data-lang={_props.lang}>
-      {_children()}
+      {fml.children}
     </Dynamic>
   )
 }

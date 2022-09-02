@@ -1,5 +1,5 @@
 import classnames from "classnames"
-import { ComponentProps } from "solid-js"
+import { ComponentProps, splitProps } from "solid-js"
 import Icon from "./Icon"
 import "./Tile.scss"
 import createHTMLMemoHook from "./util/createHTMLMemoHook"
@@ -19,7 +19,8 @@ const createProps = createHTMLMemoHook((props: Props) => {
 })
 
 function TileIcon(props: Props & ComponentProps<"section">) {
-  const [_props, _children] = createProps(props)
+  const [fml] = splitProps(props, ["children"])
+  const [_props] = createProps(props)
 
   return (
     <section {..._props}>
@@ -28,7 +29,7 @@ function TileIcon(props: Props & ComponentProps<"section">) {
           <Icon src={props.iconSrc} />
         </div>
       )}
-      {_children()}
+      {fml.children}
     </section>
   )
 }

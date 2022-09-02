@@ -14,7 +14,7 @@ import { centerChildren } from "../ui/util/position"
 
 const counter = { xd: 0 }
 
-const Home: Component = () => {
+const HomeView: Component = () => {
   // useAppFooter({
   //   position: "sticky",
   //   left: (
@@ -121,4 +121,4 @@ const Home: Component = () => {
   )
 }
 
-export default Home
+export default HomeView

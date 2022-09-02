@@ -1,5 +1,5 @@
 import classnames from "classnames"
-import { ComponentProps } from "solid-js"
+import { ComponentProps, splitProps } from "solid-js"
 import "./Tabs.scss"
 import createHTMLMemoHook from "./util/createHTMLMemoHook"
 
@@ -21,14 +21,15 @@ const createProps = createHTMLMemoHook((props: Props) => {
 })
 
 function TabsItem(props: Props & ComponentProps<"li">) {
-  const [_props, _children] = createProps(props)
+  const [fml] = splitProps(props, ["children"])
+  const [_props] = createProps(props)
 
   // TODO: const radioGroup = useContext(TabsRadioGroup)
   // TODO: isDefault
 
   return (
     <li {..._props}>
-      {_children()}
+      {fml.children}
     </li>
   )
 }

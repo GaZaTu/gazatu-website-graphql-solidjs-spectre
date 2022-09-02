@@ -1,7 +1,7 @@
 import { Component } from "solid-js"
 import Empty from "../ui/Empty"
 
-const Http404: Component = () => {
+const Http404View: Component = () => {
   return (
     <Empty>
       <Empty.Header>
@@ -11,4 +11,4 @@ const Http404: Component = () => {
   )
 }
 
-export default Http404
+export default Http404View

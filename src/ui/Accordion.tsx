@@ -1,5 +1,5 @@
 import classnames from "classnames"
-import { ComponentProps, JSX } from "solid-js"
+import { ComponentProps, JSX, splitProps } from "solid-js"
 import AccordionRadioGroup from "./Accordion.RadioGroup"
 import "./Accordion.scss"
 import Icon from "./Icon"
@@ -31,7 +31,8 @@ const createProps = createHTMLMemoHook((props: Props) => {
 })
 
 function Accordion(props: Props & ComponentProps<"details">) {
-  const [_props, _children] = createProps(props)
+  const [fml] = splitProps(props, ["children"])
+  const [_props] = createProps(props)
 
   // TODO: const radioGroup = useContext(AccordionRadioGroup)
   // TODO: isDefault
@@ -45,7 +46,7 @@ function Accordion(props: Props & ComponentProps<"details">) {
         {props.header}
       </summary>
       <div class="accordion-body">
-        {_children()}
+        {fml.children}
       </div>
     </details>
   )

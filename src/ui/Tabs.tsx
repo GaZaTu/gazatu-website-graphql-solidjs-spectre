@@ -1,5 +1,5 @@
 import classnames from "classnames"
-import { ComponentProps } from "solid-js"
+import { ComponentProps, splitProps } from "solid-js"
 import TabsItem from "./Tabs.Item"
 import TabsRadioGroup from "./Tabs.RadioGroup"
 import "./Tabs.scss"
@@ -19,11 +19,12 @@ const createProps = createHTMLMemoHook((props: Props) => {
 })
 
 function Steps(props: Props & ComponentProps<"ul">) {
-  const [_props, _children] = createProps(props)
+  const [fml] = splitProps(props, ["children"])
+  const [_props] = createProps(props)
 
   return (
     <ul {..._props}>
-      {_children()}
+      {fml.children}
     </ul>
   )
 }

@@ -19,11 +19,12 @@ const createProps = createHTMLMemoHook((props: Props) => {
 })
 
 function NavItem(props: Props & ComponentProps<"li">) {
-  const [_props, _children] = createProps(props)
+  const [fml] = splitProps(props, ["children"])
+  const [_props] = createProps(props)
 
   return (
     <li {..._props}>
-      {_children()}
+      {fml.children}
     </li>
   )
 }

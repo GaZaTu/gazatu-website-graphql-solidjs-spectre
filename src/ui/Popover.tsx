@@ -1,5 +1,5 @@
 import classnames from "classnames"
-import { ComponentProps, JSX } from "solid-js"
+import { ComponentProps, JSX, splitProps } from "solid-js"
 import CardBody from "./Card.Body"
 import CardFooter from "./Card.Footer"
 import CardImage from "./Card.Image"
@@ -24,13 +24,14 @@ const createProps = createHTMLMemoHook((props: Props) => {
 })
 
 function Popover(props: Props & ComponentProps<"div">) {
-  const [_props, _children] = createProps(props)
+  const [fml] = splitProps(props, ["children"])
+  const [_props] = createProps(props)
 
   return (
     <div {..._props}>
       {props.toggle}
       <div class="popover-container">
-        {_children()}
+        {fml.children}
       </div>
     </div>
   )

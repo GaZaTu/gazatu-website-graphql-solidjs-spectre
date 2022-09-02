@@ -1,5 +1,5 @@
 import classnames from "classnames"
-import { ComponentProps } from "solid-js"
+import { ComponentProps, splitProps } from "solid-js"
 import "./Img.scss"
 import createHTMLMemoHook from "./util/createHTMLMemoHook"
 
@@ -20,11 +20,12 @@ const createProps = createHTMLMemoHook((props: Props) => {
 })
 
 function Img(props: Props & ComponentProps<"img">) {
-  const [_props, _children] = createProps(props)
+  const [fml] = splitProps(props, ["children"])
+  const [_props] = createProps(props)
 
   return (
     <img {..._props}>
-      {_children()}
+      {fml.children}
     </img>
   )
 }

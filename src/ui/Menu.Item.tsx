@@ -1,5 +1,5 @@
 import classnames from "classnames"
-import { ComponentProps, JSX } from "solid-js"
+import { ComponentProps, JSX, splitProps } from "solid-js"
 import "./Menu.scss"
 import createHTMLMemoHook from "./util/createHTMLMemoHook"
 
@@ -24,11 +24,12 @@ const createProps = createHTMLMemoHook((props: Props) => {
 })
 
 function MenuItem(props: Props & ComponentProps<"li">) {
-  const [_props, _children] = createProps(props)
+  const [fml] = splitProps(props, ["children"])
+  const [_props] = createProps(props)
 
   return (
     <li {..._props}>
-      {_children()}
+      {fml.children}
       {props.badge && (
         <span class="menu-badge">{props.badge}</span>
       )}

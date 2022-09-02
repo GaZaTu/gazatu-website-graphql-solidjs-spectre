@@ -17,11 +17,12 @@ const createProps = createHTMLMemoHook((props: Props) => {
 })
 
 function ModalFooter(props: Props & ComponentProps<"section">) {
-  const [_props, _children] = createProps(props)
+  const [fml] = splitProps(props, ["children"])
+  const [_props] = createProps(props)
 
   return (
     <section {..._props}>
-      {_children()}
+      {fml.children}
     </section>
   )
 }

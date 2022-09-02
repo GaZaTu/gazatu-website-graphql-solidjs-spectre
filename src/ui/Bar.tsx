@@ -1,5 +1,5 @@
 import classnames from "classnames"
-import { ComponentProps } from "solid-js"
+import { ComponentProps, splitProps } from "solid-js"
 import "./Bar.scss"
 import BarSection from "./Bar.Section"
 import createHTMLMemoHook from "./util/createHTMLMemoHook"
@@ -24,11 +24,12 @@ const createProps = createHTMLMemoHook((props: Props) => {
 })
 
 function Bar(props: Props & ComponentProps<"div">) {
-  const [_props, _children] = createProps(props)
+  const [fml] = splitProps(props, ["children"])
+  const [_props] = createProps(props)
 
   return (
     <div {..._props}>
-      {_children()}
+      {fml.children}
     </div>
   )
 }

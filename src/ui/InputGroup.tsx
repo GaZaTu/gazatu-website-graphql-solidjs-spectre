@@ -21,11 +21,12 @@ const createProps = createHTMLMemoHook((props: Props) => {
 })
 
 function InputGroup(props: Props & ComponentProps<"div">) {
-  const [_props, _children] = createProps(props)
+  const [fml] = splitProps(props, ["children"])
+  const [_props] = createProps(props)
 
   return (
     <div {..._props}>
-      {_children()}
+      {fml.children}
     </div>
   )
 }

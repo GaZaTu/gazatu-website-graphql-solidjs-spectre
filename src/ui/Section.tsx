@@ -1,5 +1,5 @@
 import classnames from "classnames"
-import { ComponentProps } from "solid-js"
+import { ComponentProps, splitProps } from "solid-js"
 import "./Section.scss"
 import createHTMLMemoHook from "./util/createHTMLMemoHook"
 import { createUtility, ThemeBreakpoint } from "./util/theming"
@@ -23,17 +23,18 @@ const createProps = createHTMLMemoHook((props: Props) => {
   }
 })
 
-function Container(props: Props & ComponentProps<"section">) {
-  const [_props, _children] = createProps(props)
+function Section(props: Props & ComponentProps<"section">) {
+  const [fml] = splitProps(props, ["children"])
+  const [_props] = createProps(props)
 
   return (
     <section {..._props}>
-      {_children()}
+      {fml.children}
     </section>
   )
 }
 
-export default Object.assign(Container, {
+export default Object.assign(Section, {
   createProps,
 })
 

@@ -30,7 +30,8 @@ const createProps = createHTMLMemoHook((props: Props) => {
 })
 
 function Modal(props: Props & ComponentProps<"div">) {
-  const [_props, _children] = createProps(props)
+  const [fml] = splitProps(props, ["children"])
+  const [_props] = createProps(props)
 
   const context = {
     active: () => !!props.active,
@@ -43,7 +44,7 @@ function Modal(props: Props & ComponentProps<"div">) {
       <A href={props.oncloseHref} onclick={props.onclose} />
       <div class="modal-container">
         <ModalContext.Provider value={context}>
-          {_children()}
+          {fml.children}
         </ModalContext.Provider>
       </div>
     </div>

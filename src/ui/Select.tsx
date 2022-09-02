@@ -1,5 +1,5 @@
 import classnames from "classnames"
-import { ComponentProps } from "solid-js"
+import { ComponentProps, splitProps } from "solid-js"
 import "./Select.scss"
 import createHTMLMemoHook from "./util/createHTMLMemoHook"
 import "./util/form-mixins/input-select"
@@ -23,11 +23,12 @@ const createProps = createHTMLMemoHook((props: Props) => {
 })
 
 function Select(props: Props & ComponentProps<"select">) {
-  const [_props, _children] = createProps(props)
+  const [fml] = splitProps(props, ["children"])
+  const [_props] = createProps(props)
 
   return (
     <select {..._props}>
-      {_children()}
+      {fml.children}
     </select>
   )
 }

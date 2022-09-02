@@ -1,5 +1,5 @@
 import classnames from "classnames"
-import { ComponentProps } from "solid-js"
+import { ComponentProps, splitProps } from "solid-js"
 import ColumnRow from "./Column.Row"
 import "./Column.scss"
 import createHTMLMemoHook from "./util/createHTMLMemoHook"
@@ -27,11 +27,12 @@ const createProps = createHTMLMemoHook((props: Props) => {
 })
 
 function Column(props: Props & ComponentProps<"div">) {
-  const [_props, _children] = createProps(props)
+  const [fml] = splitProps(props, ["children"])
+  const [_props] = createProps(props)
 
   return (
     <div {..._props}>
-      {_children()}
+      {fml.children}
     </div>
   )
 }

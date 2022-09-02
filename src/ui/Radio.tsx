@@ -25,6 +25,7 @@ const createProps = createHTMLMemoHook((props: Props) => {
 
 function Radio(props: Props & ComponentProps<"input">) {
   const [containerProps, inputProps] = splitProps(props, [
+    "children",
     "class",
     "classList",
     "style",
@@ -33,13 +34,13 @@ function Radio(props: Props & ComponentProps<"input">) {
     "hasError",
   ])
 
-  const [_containerProps, _children] = createProps(containerProps)
+  const [_containerProps] = createProps(containerProps)
 
   return (
     <label {..._containerProps}>
       <input {...inputProps} type="radio" />
       <i class="form-icon" />
-      {_children()}
+      {containerProps.children}
     </label>
   )
 }

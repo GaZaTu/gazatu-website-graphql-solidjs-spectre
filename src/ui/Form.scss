@@ -1,3 +1,5 @@
+@use "spectre.css/variables" as *;
+
 .form-group {
   &:not(:last-child) {
     margin-bottom: $layout-spacing-md;
@@ -7,7 +9,7 @@
 .form-label {
   display: block;
   line-height: $line-height;
-  padding: $control-padding-y + $border-width-md 0;
+  padding: $control-padding-y-md + $border-width-md 0;
 
   &.label-sm,
   .form-group-sm & {
@@ -29,7 +31,7 @@
 
   .has-success &,
   .is-success + & {
-    color: $success-color;
+    color: $success;
   }
 
   .has-error &,
@@ -39,12 +41,13 @@
 }
 
 .form-horizontal {
-  padding: $layout-spacing 0;
+  padding: $layout-spacing-md 0;
+}
 
-  .form-group {
-    display: flex;
-    flex-wrap: wrap;
-  }
+.form-horizontal .form-group,
+.form-group.form-group-horizontal {
+  display: flex;
+  flex-wrap: wrap;
 }
 
 fieldset {

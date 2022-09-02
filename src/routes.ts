@@ -15,6 +15,10 @@ const routes: RouteDefinitionExt[] = [
     component: lazy(() => import("./pages/trivia/TriviaCategoryList")),
   },
   {
+    path: "/trivia/categories/:id",
+    component: lazy(() => import("./pages/trivia/TriviaCategory")),
+  },
+  {
     path: "**",
     component: lazy(() => import("./pages/Http404")),
   },

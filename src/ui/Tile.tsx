@@ -1,5 +1,5 @@
 import classnames from "classnames"
-import { ComponentProps } from "solid-js"
+import { ComponentProps, splitProps } from "solid-js"
 import TileAction from "./Tile.Action"
 import TileBody from "./Tile.Body"
 import TileIcon from "./Tile.Icon"
@@ -24,11 +24,12 @@ const createProps = createHTMLMemoHook((props: Props) => {
 })
 
 function Tile(props: Props & ComponentProps<"div">) {
-  const [_props, _children] = createProps(props)
+  const [fml] = splitProps(props, ["children"])
+  const [_props] = createProps(props)
 
   return (
     <div {..._props}>
-      {_children()}
+      {fml.children}
     </div>
   )
 }

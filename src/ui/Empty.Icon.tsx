@@ -1,5 +1,5 @@
 import classnames from "classnames"
-import { ComponentProps } from "solid-js"
+import { ComponentProps, splitProps } from "solid-js"
 import "./Empty.scss"
 import Icon from "./Icon"
 import createHTMLMemoHook from "./util/createHTMLMemoHook"
@@ -20,14 +20,15 @@ const createProps = createHTMLMemoHook((props: Props) => {
 })
 
 function EmptyIcon(props: Props & ComponentProps<"section">) {
-  const [_props, _children] = createProps(props)
+  const [fml] = splitProps(props, ["children"])
+  const [_props] = createProps(props)
 
   return (
     <section {..._props}>
       {props.iconSrc && (
         <Icon src={props.iconSrc} size={props.iconSize ?? "3x"} />
       )}
-      {_children()}
+      {fml.children}
     </section>
   )
 }

@@ -1,5 +1,5 @@
 import classnames from "classnames"
-import { ComponentProps } from "solid-js"
+import { ComponentProps, createMemo, splitProps } from "solid-js"
 import A from "./A"
 import ButtonGroup from "./Button.Group"
 import "./Button.scss"
@@ -36,21 +36,23 @@ const createProps = createHTMLMemoHook((props: Props) => {
 })
 
 function Button(props: Props & ComponentProps<"button">) {
-  const [_props, _children] = createProps(props)
+  const [fml] = splitProps(props, ["children"])
+  const [_props] = createProps(props)
 
   return (
     <button {..._props}>
-      {_children()}
+      {fml.children}
     </button>
   )
 }
 
 function ButtonAnchor(props: Props & ComponentProps<typeof A>) {
-  const [_props, _children] = createProps(props, { color: "link" })
+  const [fml] = splitProps(props, ["children"])
+  const [_props] = createProps(props, { color: "link" })
 
   return (
     <A {..._props}>
-      {_children()}
+      {fml.children}
     </A>
   )
 }

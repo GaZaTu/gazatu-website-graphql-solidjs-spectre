@@ -1,5 +1,5 @@
 import classnames from "classnames"
-import { ComponentProps } from "solid-js"
+import { ComponentProps, splitProps } from "solid-js"
 import "./Bar.scss"
 import createHTMLMemoHook from "./util/createHTMLMemoHook"
 import { text } from "./util/text"
@@ -22,7 +22,8 @@ const createProps = createHTMLMemoHook((props: Props) => {
 })
 
 function BarSection(props: Props & ComponentProps<"span">) {
-  const [_props, _children] = createProps(props)
+  const [fml] = splitProps(props, ["children"])
+  const [_props] = createProps(props)
 
   return (
     <span
@@ -42,7 +43,7 @@ function BarSection(props: Props & ComponentProps<"span">) {
       aria-valuenow={props.value}
       aria-valuemin={0}
       aria-valuemax={props.max}>
-      {_children()}
+      {fml.children}
     </span>
   )
 }

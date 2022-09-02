@@ -1,5 +1,5 @@
 import classnames from "classnames"
-import { ComponentProps } from "solid-js"
+import { ComponentProps, splitProps } from "solid-js"
 import "./LoadingPlaceholder.scss"
 import createHTMLMemoHook from "./util/createHTMLMemoHook"
 
@@ -28,12 +28,13 @@ const createProps = createHTMLMemoHook((props: Props) => {
 })
 
 function LoadingPlaceholder(props: Props & ComponentProps<"div">) {
-  const [_props, _children] = createProps(props)
+  const [fml] = splitProps(props, ["children"])
+  const [_props] = createProps(props)
 
   return (
     <div {..._props}>
       <div class="loading-placeholder-gradient">
-        {_children()}
+        {fml.children}
       </div>
     </div>
   )

@@ -15,7 +15,8 @@ const createProps = createHTMLMemoHook((props: Props) => {
 })
 
 function NavbarDropdown(props: Props & ComponentProps<typeof Dropdown>) {
-  const [_props, _children] = createProps(props)
+  const [fml] = splitProps(props, ["children"])
+  const [_props] = createProps(props)
 
   const [toggleProps, dropdownProps] = splitProps(_props, [
     "toggle",
@@ -29,7 +30,7 @@ function NavbarDropdown(props: Props & ComponentProps<typeof Dropdown>) {
         <Icon src={iconArrowDown} />
       </Button.A>
     )}>
-      {_children()}
+      {fml.children}
     </Dropdown>
   )
 }

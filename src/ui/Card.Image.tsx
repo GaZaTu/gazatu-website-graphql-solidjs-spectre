@@ -1,5 +1,5 @@
 import classnames from "classnames"
-import { ComponentProps } from "solid-js"
+import { ComponentProps, splitProps } from "solid-js"
 import "./Card.scss"
 import Img from "./Img"
 import createHTMLMemoHook from "./util/createHTMLMemoHook"
@@ -20,14 +20,15 @@ const createProps = createHTMLMemoHook((props: Props) => {
 })
 
 function CardImage(props: Props & ComponentProps<"section">) {
-  const [_props, _children] = createProps(props)
+  const [fml] = splitProps(props, ["children"])
+  const [_props] = createProps(props)
 
   return (
     <section {..._props}>
       {props.src && (
         <Img src={props.src} alt={props.alt} responsive />
       )}
-      {_children()}
+      {fml.children}
     </section>
   )
 }

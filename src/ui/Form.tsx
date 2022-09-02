@@ -1,5 +1,5 @@
 import classnames from "classnames"
-import { ComponentProps } from "solid-js"
+import { ComponentProps, splitProps } from "solid-js"
 import FormGroup from "./Form.Group"
 import "./Label.scss"
 import createHTMLMemoHook from "./util/createHTMLMemoHook"
@@ -20,11 +20,12 @@ const createProps = createHTMLMemoHook((props: Props) => {
 })
 
 function Form(props: Props & ComponentProps<"form">) {
-  const [_props, _children] = createProps(props)
+  const [fml] = splitProps(props, ["children"])
+  const [_props] = createProps(props)
 
   return (
     <form {..._props}>
-      {_children()}
+      {fml.children}
     </form>
   )
 }

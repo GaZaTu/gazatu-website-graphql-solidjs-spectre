@@ -20,7 +20,8 @@ const createProps = createHTMLMemoHook((props: Props) => {
 })
 
 function ModalHeader(props: Props & ComponentProps<"section">) {
-  const [_props, _children] = createProps(props)
+  const [fml] = splitProps(props, ["children"])
+  const [_props] = createProps(props)
 
   const {
     oncloseHref,
@@ -30,7 +31,7 @@ function ModalHeader(props: Props & ComponentProps<"section">) {
   return (
     <section {..._props}>
       <Button.A clear class={`${float("right")}`} href={oncloseHref()} onclick={onclose()} />
-      {_children()}
+      {fml.children}
     </section>
   )
 }

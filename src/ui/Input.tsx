@@ -1,5 +1,6 @@
 import classnames from "classnames"
-import { ComponentProps, Show } from "solid-js"
+import { ComponentProps, createEffect, Show, splitProps, useContext } from "solid-js"
+import FormGroupContext from "./Form.Group.Context"
 import Icon from "./Icon"
 import "./Input.scss"
 import createHTMLMemoHook from "./util/createHTMLMemoHook"
@@ -30,22 +31,28 @@ const createProps = createHTMLMemoHook((props: Props) => {
 })
 
 function Input(props: Props & ComponentProps<"input">) {
-  const [_props, _children] = createProps(props)
+  const [fml] = splitProps(props, ["children"])
+  const [_props] = createProps(props)
+
+  const formGroup = useContext(FormGroupContext)
+  createEffect(() => {
+    formGroup.setInputId(_props.id)
+  })
 
   return (
     <>
       <Show when={props.loading || props.iconSrc}>
         <span class={`has-icon-${props.iconLocation ?? "right"}`}>
-          <input {..._props} />
+          <input placeholder={formGroup.labelAsString()} {..._props} />
           {/* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */}
           <Icon src={props.loading ? "loading" : props.iconSrc!} />
-          {_children()}
+          {fml.children}
         </span>
       </Show>
 
       <Show when={!props.iconSrc}>
-        <input {..._props} />
-        {_children()}
+        <input placeholder={formGroup.labelAsString()} {..._props} />
+        {fml.children}
       </Show>
     </>
   )

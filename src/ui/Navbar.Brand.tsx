@@ -1,5 +1,5 @@
 import classnames from "classnames"
-import { ComponentProps } from "solid-js"
+import { ComponentProps, splitProps } from "solid-js"
 import "./Navbar.scss"
 import createHTMLMemoHook from "./util/createHTMLMemoHook"
 
@@ -17,13 +17,14 @@ const createProps = createHTMLMemoHook((props: Props) => {
 })
 
 function NavbarBrand(props: Props & ComponentProps<"span">) {
-  const [_props, _children] = createProps(props)
+  const [fml] = splitProps(props, ["children"])
+  const [_props] = createProps(props)
 
   // const context = useContext(NavbarContext)
 
   return (
     <span {..._props}>
-      {_children()}
+      {fml.children}
 
       {/* <NavbarBurger expanded={context.expanded()} onclick={() => {
         console.log("wtfrlick")
