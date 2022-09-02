@@ -5,6 +5,9 @@ const FormGroupContext = createContext({
 
   inputId: (() => undefined) as Accessor<string | undefined>,
   setInputId: (() => undefined) as Setter<string | undefined>,
+
+  inputName: (() => undefined) as Accessor<string | undefined>,
+  setInputName: (() => undefined) as Setter<string | undefined>,
 })
 
 export default Object.assign(FormGroupContext, {

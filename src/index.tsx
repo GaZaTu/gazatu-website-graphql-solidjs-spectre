@@ -46,17 +46,38 @@ export const setupPrerender: EntryFileExports["setupPrerender"] = async () => {
     root: ROOT_ELEMENT_ID,
     routes: routes
       .map(r => {
-        if (r.path === "**") {
+        const path = String(r.path)
+
+        if (path === "**") {
           return "__404"
         }
 
-        return String(r.path)
+        if (path.endsWith(":id")) {
+          return path.replace(":id", "__id")
+        }
+
+        return path
       })
       .filter(i => !i.includes(":") && !i.includes("*")),
     csp: {
       fileName: "csp.conf",
       fileType: "nginx-conf",
       template: "script-src 'self' {{INLINE_SCRIPT_HASHES}}; object-src 'none'; frame-ancestors 'self'; base-uri 'self'; form-action 'self'; worker-src 'self' blob:; trusted-types *;",
+    },
+    dyn: {
+      fileName: "dyn.conf",
+      fileType: "nginx-conf",
+      routes: [
+        {
+          matches: "^(.*)/__id$",
+          template: `
+            location ~ ^{{$1}}/[^/]+ {
+              limit_req zone=mylimit burst=20 nodelay;
+              try_files $uri {{$0}}/index.html =404;
+            }
+          `,
+        },
+      ],
     },
   }
 }

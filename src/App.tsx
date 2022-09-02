@@ -6,12 +6,12 @@ import AppHeader from "./AppHeader"
 import AppMain from "./AppMain"
 import { setDefaultFetchInfo } from "./lib/fetchFromApi"
 import { setGraphqlEndpoint } from "./lib/fetchGraphQL"
-import A from "./ui/A"
+import AnchorContext from "./ui/A.Context"
 import Toaster from "./ui/Toaster"
 import { useColorSchemeEffect } from "./ui/util/colorScheme"
 
-A.Context.useLocation = useLocation
-A.Context.useNavigate = useNavigate
+AnchorContext.useLocation = useLocation
+AnchorContext.useNavigate = useNavigate
 
 setDefaultFetchInfo("https://api.gazatu.xyz")
 setGraphqlEndpoint("https://api.gazatu.xyz/graphql")

@@ -1,6 +1,7 @@
 import classnames from "classnames"
-import { ComponentProps, createSignal, JSX, Show, splitProps } from "solid-js"
+import { ComponentProps, createSignal, JSX, Show, splitProps, useContext } from "solid-js"
 import Column from "./Column"
+import FormContext from "./Form.Context"
 import FormGroupContext from "./Form.Group.Context"
 import "./Form.scss"
 import createHTMLMemoHook from "./util/createHTMLMemoHook"
@@ -31,10 +32,21 @@ const createProps = createHTMLMemoHook((props: Props) => {
 })
 
 function FormGroup(props: Props & ComponentProps<"div">) {
-  const [fml] = splitProps(props, ["children"])
-  const [_props] = createProps(props)
-
   const [inputId, setInputId] = createSignal<string>()
+  const [inputName, setInputName] = createSignal<string>()
+
+  const form = useContext(FormContext)
+
+  const [fml] = splitProps(props, ["children"])
+  const [_props] = createProps(props, {
+    get hasError() {
+      return !!form.getError(inputName() ?? "")
+    },
+    get hint() {
+      return form.getError(inputName() ?? "")
+    },
+  })
+
   const context: ComponentProps<typeof FormGroupContext.Provider>["value"] = {
     labelAsString: () => {
       if (typeof _props.label === "string") {
@@ -49,6 +61,8 @@ function FormGroup(props: Props & ComponentProps<"div">) {
     },
     inputId,
     setInputId,
+    inputName,
+    setInputName,
   }
 
   const labelContent = () => {
@@ -65,7 +79,7 @@ function FormGroup(props: Props & ComponentProps<"div">) {
 
   const createLabel = () => {
     return (
-      <Show when={props.label || props.labelAsString}>
+      <Show when={_props.label || _props.labelAsString}>
         <label class="form-label" for={inputId()}>{labelContent()}</label>
       </Show>
     )
@@ -73,8 +87,8 @@ function FormGroup(props: Props & ComponentProps<"div">) {
 
   const createHint = () => {
     return (
-      <Show when={props.hint}>
-        <small class="form-input-hint">{props.hint}</small>
+      <Show when={_props.hint}>
+        <small class="form-input-hint">{_props.hint}</small>
       </Show>
     )
   }
@@ -82,7 +96,7 @@ function FormGroup(props: Props & ComponentProps<"div">) {
   return (
     <div {..._props}>
       <FormGroupContext.Provider value={context}>
-        <Show when={props.horizontal}>
+        <Show when={_props.horizontal}>
           <Column xxl={3} sm={12}>
             {createLabel()}
           </Column>
@@ -92,7 +106,7 @@ function FormGroup(props: Props & ComponentProps<"div">) {
           </Column>
         </Show>
 
-        <Show when={!props.horizontal}>
+        <Show when={!_props.horizontal}>
           {createLabel()}
           {fml.children}
           {createHint()}
