@@ -6,6 +6,7 @@ import { intersection, size, string, type, refine, literal } from "superstruct"
 import fetchGraphQL, { gql } from "../lib/fetchGraphQL"
 import { Mutation, Query } from "../lib/schema.gql"
 import { setStoredAuth } from "../store/auth"
+import A from "../ui/A"
 import Button from "../ui/Button"
 import Checkbox from "../ui/Checkbox"
 import Column from "../ui/Column"
@@ -14,6 +15,7 @@ import Form from "../ui/Form"
 import Input from "../ui/Input"
 import Section from "../ui/Section"
 import Toaster from "../ui/Toaster"
+import { tooltip } from "../ui/util/tooltip"
 
 const AuthenticateValidator = type({
   username: size(string(), 6, 256),
@@ -106,7 +108,9 @@ const LoginForm: Component<{ isRegister?: boolean }> = props => {
         <Input type="text" name="username" />
       </Form.Group>
 
-      <Form.Group label="Password" horizontal>
+      <Form.Group label={l => (
+        <span {...tooltip("sent over TLS1.3, hashed using argon2")}>{l} {props.isRegister && (<A href="https://github.com/GaZaTu/gazatu-api-graphql-pgsql/blob/master/src/graphql/user/auth/auth.resolver.ts#L91">(Server)</A>)}</span>
+      )} labelAsString="Password" horizontal>
         <Input type="password" name="password" />
       </Form.Group>
 
