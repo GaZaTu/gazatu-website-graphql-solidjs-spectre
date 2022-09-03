@@ -1,0 +1,24 @@
+@use "../spectre.css/variables" as *;
+
+// Icon flag
+.#{$icon-prefix}.icon-save {
+  border: $icon-border-width solid currentColor;
+  border-radius: $border-radius-xs;
+  &::before {
+    border: $icon-border-width solid currentColor;
+    border-radius: 50%;
+    height: .25em;
+    left: 50%;
+    top: 75%;
+    width: .25em;
+  }
+  &::after {
+    border: $icon-border-width solid currentColor;
+    border-bottom: 0;
+    border-right: 0;
+    height: .5em;
+    left: 60%;
+    transform: translate(-80%, -100%) rotate(180deg);
+    width: .7em;
+  }
+}

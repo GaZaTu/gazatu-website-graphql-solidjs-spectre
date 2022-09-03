@@ -17,7 +17,6 @@ const createProps = createHTMLMemoHook((props: Props) => {
     get class() {
       return classnames({
         "form": true,
-        "form-horizontal": props.horizontal,
       })
     },
   }

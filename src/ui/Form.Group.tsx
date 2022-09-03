@@ -25,7 +25,6 @@ const createProps = createHTMLMemoHook((props: Props) => {
         "form-group": true,
         [`form-group-${props.size}`]: !!props.size,
         "has-error": props.hasError,
-        "form-group-horizontal": props.horizontal,
       })
     },
   }
@@ -97,13 +96,15 @@ function FormGroup(props: Props & ComponentProps<"div">) {
     <div {..._props}>
       <FormGroupContext.Provider value={context}>
         <Show when={_props.horizontal}>
-          <Column xxl={3} sm={12}>
-            {createLabel()}
-          </Column>
-          <Column xxl={9} sm={12}>
-            {fml.children}
-            {createHint()}
-          </Column>
+          <Column.Row>
+            <Column xxl={3} sm={12}>
+              {createLabel()}
+            </Column>
+            <Column xxl={9} sm={12}>
+              {fml.children}
+              {createHint()}
+            </Column>
+          </Column.Row>
         </Show>
 
         <Show when={!_props.horizontal}>

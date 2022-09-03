@@ -1,9 +1,10 @@
 import classnames from "classnames"
-import { ComponentProps, createMemo, splitProps } from "solid-js"
+import { ComponentProps, splitProps } from "solid-js"
 import A from "./A"
 import ButtonGroup from "./Button.Group"
 import "./Button.scss"
 import createHTMLMemoHook from "./util/createHTMLMemoHook"
+import { loading } from "./util/loading"
 import { ThemeColor, ThemeSize } from "./util/theming"
 
 type Props = {
@@ -15,10 +16,16 @@ type Props = {
   clear?: boolean
   outlined?: boolean
   active?: boolean
+  loading?: boolean
+
+  type?: "button" | "submit" | "reset"
 }
 
 const createProps = createHTMLMemoHook((props: Props) => {
   return {
+    get type() {
+      return props.type ?? "button"
+    },
     get class() {
       return classnames({
         "btn": true,
@@ -30,6 +37,7 @@ const createProps = createHTMLMemoHook((props: Props) => {
         "btn-clear": props.clear,
         "btn-outlined": props.outlined,
         "btn-active": props.active,
+        ...loading(props.loading ? "sm" : undefined),
       })
     },
   }

@@ -10,21 +10,26 @@ export {
   setGraphqlEndpoint,
 }
 
+type GraphQLOptions = {
+  query: string
+  variables?: Record<string, unknown>
+}
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type GraphQLResult<T = any> = {
   errors?: { message?: string }[]
   data?: T
 }
 
-const fetchGraphQL = async <T>(query: string, variables?: Record<string, unknown>) => {
+const fetchGraphQL = async<T>(options: GraphQLOptions) => {
   const response = await fetchFromApi(graphqlEndpoint(), {
     method: "POST",
     headers: {
       "content-type": "application/json",
     },
     body: JSON.stringify({
-      query,
-      variables,
+      query: options.query,
+      variables: options.variables,
     }),
   })
 
@@ -52,9 +57,7 @@ export const gql = (query: TemplateStringsArray) =>
     .replace(/\s{2,}/g, " ")
     .trim()
 
-type GraphQLResourceOptions<T, I extends T = T> = {
-  query: string
-  variables?: Record<string, unknown>
+type GraphQLResourceOptions<T, I extends T = T> = GraphQLOptions & {
   initialValue?: I
 }
 
@@ -65,7 +68,14 @@ const createGraphQLResource = <T>(options: GraphQLResourceOptions<T>) => {
     error: undefined as Error | undefined,
   })
 
+  const [refresh, setRefresh] = createSignal(false)
+
   createEffect((previousRequest?: { cancelled: boolean }) => {
+    if (refresh()) {
+      setRefresh(false)
+      return undefined
+    }
+
     if (!options.variables || isServer) {
       return undefined
     }
@@ -88,7 +98,7 @@ const createGraphQLResource = <T>(options: GraphQLResourceOptions<T>) => {
       let error: typeof state.error = undefined
 
       try {
-        data = await fetchGraphQL<T>(options.query, options.variables)
+        data = await fetchGraphQL<T>(options)
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (e: any) {
         error = e
@@ -107,7 +117,20 @@ const createGraphQLResource = <T>(options: GraphQLResourceOptions<T>) => {
     return request
   })
 
-  return state
+  return {
+    get loading() {
+      return state.loading
+    },
+    get data() {
+      return state.data
+    },
+    get error() {
+      return state.error
+    },
+    refresh() {
+      setRefresh(true)
+    },
+  }
 }
 
 export {

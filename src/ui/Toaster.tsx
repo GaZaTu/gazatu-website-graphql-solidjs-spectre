@@ -15,17 +15,18 @@ const pushNotification = (props: Partial<ComponentProps<typeof ToastWithAnimatio
   })
 }
 
-const pushSuccess = (message: string) => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const pushSuccess = (message: any) => {
   pushNotification({
     color: "success",
-    children: message,
+    children: String(message),
   })
 
   return undefined
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const pushError = (error: any, onclose?: () => void) => {
+const pushError = (error: any, onclose?: (() => void) | unknown) => {
   if (import.meta.env.PROD) {
     error = error?.message ?? String(error)
   } else {
@@ -37,7 +38,8 @@ const pushError = (error: any, onclose?: () => void) => {
   pushNotification({
     color: "failure",
     children: error,
-    onclose,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    onclose: (typeof onclose === "function") ? (onclose as any) : undefined,
   })
 
   return undefined

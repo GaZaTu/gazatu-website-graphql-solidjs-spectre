@@ -40,16 +40,6 @@
   }
 }
 
-.form-horizontal {
-  padding: $layout-spacing-md 0;
-}
-
-.form-horizontal .form-group,
-.form-group.form-group-horizontal {
-  display: flex;
-  flex-wrap: wrap;
-}
-
 fieldset {
   margin-bottom: $layout-spacing-lg;
 }
