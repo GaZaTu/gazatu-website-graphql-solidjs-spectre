@@ -108,8 +108,8 @@ const LoginForm: Component<{ isRegister?: boolean }> = props => {
         <Input type="text" name="username" />
       </Form.Group>
 
-      <Form.Group label={l => (
-        <span {...tooltip("sent over TLS1.3, hashed using argon2")}>{l} {props.isRegister && (<A href="https://github.com/GaZaTu/gazatu-api-graphql-pgsql/blob/master/src/graphql/user/auth/auth.resolver.ts#L91">(Server)</A>)}</span>
+      <Form.Group label={(
+        <span {...tooltip("sent over TLS1.3, hashed using argon2")}>Password {props.isRegister && (<A href="https://github.com/GaZaTu/gazatu-api-graphql-pgsql/blob/master/src/graphql/user/auth/auth.resolver.ts#L91">(Server)</A>)}</span>
       )} labelAsString="Password" horizontal>
         <Input type="password" name="password" />
       </Form.Group>
