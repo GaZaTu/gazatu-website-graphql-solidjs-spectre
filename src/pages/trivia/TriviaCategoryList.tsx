@@ -1,7 +1,8 @@
 import { Title } from "@solidjs/meta"
-import { Component } from "solid-js"
+import { Component, Show } from "solid-js"
 import { createGraphQLResource, gql } from "../../lib/fetchGraphQL"
 import { Query } from "../../lib/schema.gql"
+import { createAuthCheck } from "../../store/auth"
 import Button from "../../ui/Button"
 import Column from "../../ui/Column"
 import Icon from "../../ui/Icon"
@@ -14,6 +15,8 @@ import { createTableState, tableColumnLink, tableColumnSelect, tableDateCell, ta
 import { centerSelf } from "../../ui/util/position"
 
 const TriviaCategoryListView: Component = () => {
+  const isTriviaAdmin = createAuthCheck("trivia-admin")
+
   const categories = createGraphQLResource<Query>({
     query: gql`
       query Query($isTriviaAdmin: Boolean!, $verified: Boolean, $disabled: Boolean) {
@@ -30,7 +33,9 @@ const TriviaCategoryListView: Component = () => {
       }
     `,
     variables: {
-      isTriviaAdmin: false,
+      get isTriviaAdmin() {
+        return isTriviaAdmin()
+      },
       verified: undefined,
       disabled: false,
     },
@@ -89,17 +94,19 @@ const TriviaCategoryListView: Component = () => {
       <Section size="xxl" marginTop>
         <Table context={table} loading={categories.loading} loadingSize="lg" striped toolbar={
           <Column.Row>
-            <Column>
-              <Button color="success" action rounded disabled={!table.actions.getIsSomeRowsSelected()}>
-                <Icon src={iconCheck} />
-              </Button>
-            </Column>
+            <Show when={isTriviaAdmin()}>
+              <Column>
+                <Button color="success" action rounded disabled={!table.actions.getIsSomeRowsSelected()}>
+                  <Icon src={iconCheck} />
+                </Button>
+              </Column>
 
-            <Column>
-              <Button color="failure" action rounded disabled={!table.actions.getIsSomeRowsSelected()}>
-                <Icon src={iconDelete} />
-              </Button>
-            </Column>
+              <Column>
+                <Button color="failure" action rounded disabled={!table.actions.getIsSomeRowsSelected()}>
+                  <Icon src={iconDelete} />
+                </Button>
+              </Column>
+            </Show>
           </Column.Row>
         } />
       </Section>

@@ -18,6 +18,7 @@ type Props = {
   loading?: boolean
 
   id?: string
+  ifEmpty?: string | null
 }
 
 const createProps = createHTMLMemoHook((props: Props) => {
@@ -51,11 +52,10 @@ function Input(props: Props & ComponentProps<"input">) {
   })
 
   const value = createMemo(() => {
-    if (_props.value) {
+    if (_props.value !== undefined) {
       return _props.value
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return form.getValue(_props.name ?? "") ?? ""
   })
 
@@ -71,7 +71,12 @@ function Input(props: Props & ComponentProps<"input">) {
       return
     }
 
-    form.setValue(_props.name, ev.currentTarget.value)
+    let value = ev.currentTarget.value as string | null
+    if (value === "" && _props.ifEmpty !== undefined) {
+      value = _props.ifEmpty
+    }
+
+    form.setValue(_props.name, value)
   }
 
   const handleBlur: ComponentProps<"input">["onblur"] = ev => {

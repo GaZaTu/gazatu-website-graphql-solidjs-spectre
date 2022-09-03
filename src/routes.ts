@@ -1,14 +1,18 @@
 import { RouteDefinition } from "@solidjs/router"
 import { lazy } from "solid-js"
 
-type RouteDefinitionExt = RouteDefinition & {
-  moduleId?: string
-}
-
-const routes: RouteDefinitionExt[] = [
+const routes: RouteDefinition[] = [
   {
     path: "/",
     component: lazy(() => import("./pages/Home")),
+  },
+  {
+    path: "/login",
+    component: lazy(() => import("./pages/Login")),
+  },
+  {
+    path: "/profile",
+    component: lazy(() => import("./pages/meta/User")),
   },
   {
     path: "/trivia/categories",

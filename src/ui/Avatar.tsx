@@ -32,6 +32,7 @@ function Avatar(props: Props & ComponentProps<"figure">) {
 
   return (
     <figure {..._props} data-initials={props.initials}>
+      {fml.children}
       {props.imageSrc && (
         <img src={props.imageSrc} alt={props.imageAlt} />
       )}
@@ -41,7 +42,6 @@ function Avatar(props: Props & ComponentProps<"figure">) {
       {props.presence && (
         <i class={`avatar-presence ${props.presence}`} />
       )}
-      {fml.children}
     </figure>
   )
 }

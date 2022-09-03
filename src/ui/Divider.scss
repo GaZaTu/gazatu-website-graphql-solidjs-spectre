@@ -7,8 +7,8 @@
   position: relative;
 
   &[data-content]::after {
-    background: $body-bg-monochrome;
-    color: lightgray;
+    background: $body-bg;
+    color: $body-fg;
     content: attr(data-content);
     display: inline-block;
     font-size: $font-size-sm;

@@ -6,6 +6,7 @@ import { nullable, optional, size, string, type } from "superstruct"
 import fetchGraphQL, { createGraphQLResource, gql } from "../../lib/fetchGraphQL"
 import { Mutation, Query, TriviaCategory } from "../../lib/schema.gql"
 import useIdFromParams from "../../lib/useIdFromParams"
+import { createAuthCheck } from "../../store/auth"
 import Button from "../../ui/Button"
 import Form from "../../ui/Form"
 import FormGroup from "../../ui/Form.Group"
@@ -24,6 +25,8 @@ const TriviaCategoryValidator = type({
 })
 
 const TriviaCategoryView: Component = () => {
+  const isTriviaAdmin = createAuthCheck("trivia-admin")
+
   const id = useIdFromParams()
 
   const category = createGraphQLResource<Query>({
@@ -50,8 +53,12 @@ const TriviaCategoryView: Component = () => {
       }
     `,
     variables: {
-      id,
-      isNew: !id,
+      get id() {
+        return id()
+      },
+      get isNew() {
+        return !id()
+      },
     },
   })
 
@@ -74,7 +81,7 @@ const TriviaCategoryView: Component = () => {
         variables: { input },
       })
 
-      if (id) {
+      if (id()) {
         category.refresh()
       } else {
         navigate(`/trivia/categories/${res.saveTriviaCategory?.id}`)
@@ -94,6 +101,10 @@ const TriviaCategoryView: Component = () => {
     return category.loading || form.isSubmitting() || isServer
   })
 
+  const readOnly = createMemo(() => {
+    return loading() || (id() && !isTriviaAdmin())
+  })
+
   return (
     <Section size="xl" marginTop>
       <h3>Trivia Category</h3>
@@ -102,22 +113,22 @@ const TriviaCategoryView: Component = () => {
         <Navbar size="lg">
           <Navbar.Section style={{ "max-width": 0 }} />
           <Navbar.Section>
-            <Button color="primary" action rounded onclick={form.createSubmitHandler()} disabled={!form.isValid()} loading={loading()}>
+            <Button type="submit" color="primary" action rounded onclick={form.createSubmitHandler()} disabled={readOnly()} loading={loading()}>
               <Icon src={iconSave} />
             </Button>
           </Navbar.Section>
         </Navbar>
 
         <FormGroup label="Name" horizontal>
-          <Input type="text" name="name" />
+          <Input type="text" name="name" readOnly={readOnly()} />
         </FormGroup>
 
         <FormGroup label="Description" horizontal>
-          <Input type="text" name="description" />
+          <Input type="text" name="description" readOnly={readOnly()} />
         </FormGroup>
 
         <FormGroup label="Submitter" horizontal>
-          <Input type="text" name="submitter" />
+          <Input type="text" name="submitter" readOnly={readOnly()} />
         </FormGroup>
       </Form>
     </Section>

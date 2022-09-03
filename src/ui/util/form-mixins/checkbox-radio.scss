@@ -6,7 +6,7 @@
     background: $body-bg;
     height: $control-icon-size;
     left: 0;
-    top: ($control-height-sm - $control-icon-size) / 2;
+    top: calc(($control-height-sm - $control-icon-size) / 2);
     width: $control-icon-size;
   }
 

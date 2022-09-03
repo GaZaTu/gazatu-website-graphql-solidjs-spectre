@@ -1,10 +1,12 @@
 import classnames from "classnames"
-import { ComponentProps, splitProps } from "solid-js"
+import { ComponentProps, createEffect, createMemo, Show, splitProps, useContext } from "solid-js"
 import "./Checkbox.scss"
 import createHTMLMemoHook from "./util/createHTMLMemoHook"
 import "./util/form-mixins/checkbox-radio.scss"
 import "./util/form-mixins/checkbox-radio-switch.scss"
 import { ThemeSize } from "./util/theming"
+import FormContext from "./Form.Context"
+import FormGroupContext from "./Form.Group.Context"
 
 type Props = {
   size?: ThemeSize
@@ -37,11 +39,63 @@ function Checkbox(props: Props & ComponentProps<"input">) {
 
   const [_containerProps] = createProps(containerProps)
 
+  const form = useContext(FormContext)
+
+  const formGroup = useContext(FormGroupContext)
+  createEffect(() => {
+    formGroup.setInputId(inputProps.id)
+    formGroup.setInputName(inputProps.name)
+
+    formGroup.setLabelHidden(true)
+  })
+
+  const value = createMemo(() => {
+    if (inputProps.value !== undefined) {
+      return inputProps.value
+    }
+
+    return form.getValue(inputProps.name ?? "") ?? false
+  })
+
+  const handleInput: ComponentProps<"input">["oninput"] = ev => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (inputProps.oninput as any)?.(ev)
+
+    if (ev.cancelBubble) {
+      return
+    }
+
+    if (!inputProps.name) {
+      return
+    }
+
+    console.log("ev.currentTarget.value", ev.currentTarget.value)
+
+    form.setValue(inputProps.name, ev.currentTarget.value)
+  }
+
+  const handleBlur: ComponentProps<"input">["onblur"] = ev => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (inputProps.onblur as any)?.(ev)
+
+    if (ev.cancelBubble) {
+      return
+    }
+
+    if (!inputProps.name) {
+      return
+    }
+
+    form.setTouched(inputProps.name, true)
+  }
+
   return (
     <label {..._containerProps}>
-      <input {...inputProps} type="checkbox" />
+      <input value={value()} oninput={handleInput} onblur={handleBlur} {...inputProps} type="checkbox" />
       <i class="form-icon" />
-      {containerProps.children}
+      <Show when={formGroup.label() || formGroup.labelAsString()} fallback={containerProps.children}>
+        {formGroup.label() ?? formGroup.labelAsString()}
+      </Show>
     </label>
   )
 }

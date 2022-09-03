@@ -31,6 +31,7 @@ const createProps = createHTMLMemoHook((props: Props) => {
 })
 
 function FormGroup(props: Props & ComponentProps<"div">) {
+  const [labelHidden, setLabelHidden] = createSignal(false)
   const [inputId, setInputId] = createSignal<string>()
   const [inputName, setInputName] = createSignal<string>()
 
@@ -47,6 +48,9 @@ function FormGroup(props: Props & ComponentProps<"div">) {
   })
 
   const context: ComponentProps<typeof FormGroupContext.Provider>["value"] = {
+    label: () => {
+      return _props.label
+    },
     labelAsString: () => {
       if (typeof _props.label === "string") {
         return _props.label
@@ -58,6 +62,7 @@ function FormGroup(props: Props & ComponentProps<"div">) {
 
       return ""
     },
+    setLabelHidden,
     inputId,
     setInputId,
     inputName,
@@ -78,7 +83,7 @@ function FormGroup(props: Props & ComponentProps<"div">) {
 
   const createLabel = () => {
     return (
-      <Show when={_props.label || _props.labelAsString}>
+      <Show when={(_props.label || _props.labelAsString) && !labelHidden()}>
         <label class="form-label" for={inputId()}>{labelContent()}</label>
       </Show>
     )

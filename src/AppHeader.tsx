@@ -1,8 +1,11 @@
-import { Component, createEffect, createSignal, onCleanup } from "solid-js"
+import { Component, createEffect, createSignal, onCleanup, Show } from "solid-js"
+import { storedAuth } from "./store/auth"
 import A from "./ui/A"
 import Avatar from "./ui/Avatar"
 import Button from "./ui/Button"
 import Column from "./ui/Column"
+import Icon from "./ui/Icon"
+import iconPerson from "./ui/icons/iconPerson"
 import ImgWithPlaceholder from "./ui/ImgWithPlaceholder"
 import Label from "./ui/Label"
 import Menu from "./ui/Menu"
@@ -12,6 +15,7 @@ import Section from "./ui/Section"
 import Switch from "./ui/Switch"
 import { badge } from "./ui/util/badge"
 import { computedColorScheme, setColorScheme } from "./ui/util/colorScheme"
+import { centerSelf } from "./ui/util/position"
 
 const [showAppHeader, setShowAppHeader] = createSignal(true)
 const useShowAppHeaderEffect = (show: boolean) => {
@@ -73,8 +77,12 @@ const AppNav: Component = () => {
             </Column>
 
             <Column>
-              <A href="/profile">
-                <Avatar initials="Ga" aria-label="profile" />
+              <A href={storedAuth() ? "/profile" : "/login"} aria-label={storedAuth() ? "profile" : "login"}>
+                <Avatar initials={storedAuth()?.user?.username?.slice(0, 2)}>
+                  <Show when={!storedAuth()}>
+                    <Icon src={iconPerson} classList={{ ...centerSelf(true) }} style={{ top: "25%" }} />
+                  </Show>
+                </Avatar>
               </A>
             </Column>
           </Column.Row>
