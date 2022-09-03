@@ -16,6 +16,7 @@ import Input from "../ui/Input"
 import Section from "../ui/Section"
 import Toaster from "../ui/Toaster"
 import { tooltip } from "../ui/util/tooltip"
+import useBreakpoints from "../ui/util/useBreakpoints"
 
 const AuthenticateValidator = type({
   username: size(string(), 6, 256),
@@ -109,7 +110,7 @@ const LoginForm: Component<{ isRegister?: boolean }> = props => {
       </Form.Group>
 
       <Form.Group label={(
-        <span {...tooltip("sent over TLS1.3, hashed using argon2")}>Password {props.isRegister && (<A href="https://github.com/GaZaTu/gazatu-api-graphql-pgsql/blob/master/src/graphql/user/auth/auth.resolver.ts#L91">(Server)</A>)}</span>
+        <span {...tooltip("sent over TLS1.3, hashed using argon2")}>Password {props.isRegister && (<A href="https://github.com/GaZaTu/gazatu-api-graphql-pgsql/blob/master/src/graphql/user/auth/auth.resolver.ts#L91" tabIndex={-1}>(Server)</A>)}</span>
       )} labelAsString="Password" horizontal>
         <Input type="password" name="password" />
       </Form.Group>
@@ -134,16 +135,18 @@ const LoginForm: Component<{ isRegister?: boolean }> = props => {
 }
 
 const LoginView: Component = () => {
+  const breakpoints = useBreakpoints()
+
   return (
     <Section size="xl" marginTop>
       <Column.Row>
-        <Column>
+        <Column sm={12}>
           <LoginForm />
         </Column>
 
-        <Divider label="OR" vertical />
+        <Divider label="OR" vertical={breakpoints.md} />
 
-        <Column>
+        <Column sm={12}>
           <LoginForm isRegister />
         </Column>
       </Column.Row>

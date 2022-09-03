@@ -4,7 +4,7 @@ import { ThemeBreakpoint } from "./theming"
 
 const windowMatchesBreakpoint = <K extends ThemeBreakpoint>(key: K) => {
   return {
-    [key]: getThemeValue(key),
+    [key]: getThemeValue(`--size-${key}`),
   } as { [key in K]: string }
 }
 
