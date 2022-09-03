@@ -2,7 +2,7 @@ import { validator } from "@felte/validator-superstruct"
 import { useNavigate } from "@solidjs/router"
 import { Component, createEffect, createMemo } from "solid-js"
 import { isServer } from "solid-js/web"
-import { optional, size, string, type } from "superstruct"
+import { nullable, optional, size, string, type } from "superstruct"
 import fetchGraphQL, { createGraphQLResource, gql } from "../../lib/fetchGraphQL"
 import { Mutation, Query, TriviaCategory } from "../../lib/schema.gql"
 import useIdFromParams from "../../lib/useIdFromParams"
@@ -19,8 +19,8 @@ import Toaster from "../../ui/Toaster"
 
 const TriviaCategoryValidator = type({
   name: size(string(), 1, 256),
-  description: optional(size(string(), 0, 256)),
-  submitter: optional(size(string(), 0, 256)),
+  description: optional(nullable(size(string(), 0, 256))),
+  submitter: optional(nullable(size(string(), 0, 256))),
 })
 
 const TriviaCategoryView: Component = () => {
