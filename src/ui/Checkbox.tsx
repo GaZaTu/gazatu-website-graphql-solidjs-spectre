@@ -69,9 +69,7 @@ function Checkbox(props: Props & ComponentProps<"input">) {
       return
     }
 
-    console.log("ev.currentTarget.value", ev.currentTarget.value)
-
-    form.setValue(inputProps.name, ev.currentTarget.value)
+    form.setValue(inputProps.name, ev.currentTarget.checked)
   }
 
   const handleBlur: ComponentProps<"input">["onblur"] = ev => {
@@ -91,7 +89,7 @@ function Checkbox(props: Props & ComponentProps<"input">) {
 
   return (
     <label {..._containerProps}>
-      <input value={value()} oninput={handleInput} onblur={handleBlur} {...inputProps} type="checkbox" />
+      <input checked={value()} oninput={handleInput} onblur={handleBlur} {...inputProps} type="checkbox" />
       <i class="form-icon" />
       <Show when={formGroup.label() || formGroup.labelAsString()} fallback={containerProps.children}>
         {formGroup.label() ?? formGroup.labelAsString()}
