@@ -1,4 +1,3 @@
-import { renderTags } from "@solidjs/meta"
 import "modern-normalize/modern-normalize.css"
 import { ComponentProps } from "solid-js"
 import { __ssrLoadedModules } from "vite-ssg-but-for-everyone"
@@ -27,6 +26,7 @@ export const prerender: EntryFileExports["prerender"] = async context => {
   const main = () => <App url={context.route} head={head} />
 
   const { renderToStringAsync, generateHydrationScript } = await import("solid-js/web")
+  const { renderTags } = await import("@solidjs/meta")
   return {
     html: await renderToStringAsync(main),
     head: {

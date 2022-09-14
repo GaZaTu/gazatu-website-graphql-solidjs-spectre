@@ -59,7 +59,7 @@ const HomeView: Component = () => {
           <Button onclick={() => Toaster.push({ children: `Hello World! ${counter.xd++}`, color: "success" })}>Toast</Button>
         </Button.Group>
 
-        <Autocomplete {...filterable} multiple placeholder="test..." />
+        {/* <Autocomplete {...filterable} multiple placeholder="test..." /> */}
 
         <p>
           <LoadingPlaceholder height={"16px"} />
