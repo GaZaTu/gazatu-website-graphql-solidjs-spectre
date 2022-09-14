@@ -5,6 +5,7 @@ import { isServer } from "solid-js/web"
 import { intersection, size, string, type, refine, literal } from "superstruct"
 import fetchGraphQL, { gql } from "../lib/fetchGraphQL"
 import { Mutation, Query } from "../lib/schema.gql"
+import superstructIsRequired from "../lib/superstructIsRequired"
 import { setStoredAuth } from "../store/auth"
 import A from "../ui/A"
 import Button from "../ui/Button"
@@ -18,19 +19,18 @@ import Toaster from "../ui/Toaster"
 import { tooltip } from "../ui/util/tooltip"
 import useBreakpoints from "../ui/util/useBreakpoints"
 
-const AuthenticateValidator = type({
+const AuthenticateSchema = type({
   username: size(string(), 6, 256),
   password: size(string(), 6, 256),
 })
 
-const RegisterUserValidator = refine(
-  intersection([
-    AuthenticateValidator,
-    type({
-      password2: string(),
-      __check: literal(true),
-    }),
-  ]),
+const RegisterUserSchema = refine(
+  type({
+    username: size(string(), 6, 256),
+    password: size(string(), 6, 256),
+    password2: string(),
+    __check: literal(true),
+  }),
   "passwords_must_be_equal",
   ({ password, password2 }) => {
     if (password === password2) {
@@ -77,8 +77,10 @@ const gqlRegisterUser = gql`
 const LoginForm: Component<{ isRegister?: boolean }> = props => {
   const navigate = useNavigate()
 
+  const formSchema = props.isRegister ? RegisterUserSchema : AuthenticateSchema
   const form = Form.createContext({
-    extend: [validator({ struct: props.isRegister ? RegisterUserValidator : AuthenticateValidator })],
+    extend: [validator({ struct: formSchema })],
+    isRequired: superstructIsRequired.bind(undefined, formSchema),
     onSubmit: async _values => {
       const input = _values as Record<string, unknown>
       const res = await fetchGraphQL<Mutation & Query>({
@@ -105,27 +107,27 @@ const LoginForm: Component<{ isRegister?: boolean }> = props => {
     <Form context={form}>
       <h3>{props.isRegister ? "Register" : "Login"}</h3>
 
-      <Form.Group label="Username" horizontal>
+      <Form.Group label="Username">
         <Input type="text" name="username" />
       </Form.Group>
 
       <Form.Group label={(
         <span {...tooltip("sent over TLS1.3, hashed using argon2")}>Password {props.isRegister && (<A href="https://github.com/GaZaTu/gazatu-api-graphql-pgsql/blob/master/src/graphql/user/auth/auth.resolver.ts#L91" tabIndex={-1}>(Server)</A>)}</span>
-      )} labelAsString="Password" horizontal>
+      )} labelAsString="Password">
         <Input type="password" name="password" />
       </Form.Group>
 
       <Show when={props.isRegister}>
-        <Form.Group label="Repeat Password" horizontal>
+        <Form.Group label="Repeat Password">
           <Input type="password" name="password2" />
         </Form.Group>
 
-        <Form.Group label="I agree to sacrifice my soul and firstborn to dankman overlord pajlada" horizontal>
+        <Form.Group label="I agree to sacrifice my soul and firstborn to dankman overlord pajlada">
           <Checkbox name="__check" />
         </Form.Group>
       </Show>
 
-      <Form.Group horizontal>
+      <Form.Group>
         <Button type="submit" color="primary" onclick={form.createSubmitHandler()} loading={loading()}>
           {props.isRegister ? "Register" : "Login"}
         </Button>
@@ -138,7 +140,7 @@ const LoginView: Component = () => {
   const breakpoints = useBreakpoints()
 
   return (
-    <Section size="xl" marginTop>
+    <Section size="xl" withYMargin>
       <Column.Row>
         <Column sm={12}>
           <LoginForm />

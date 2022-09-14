@@ -16,6 +16,7 @@ type Props = {
   hint?: JSX.Element
 
   horizontal?: boolean
+  required?: boolean
 }
 
 const createProps = createHTMLMemoHook((props: Props) => {
@@ -24,6 +25,7 @@ const createProps = createHTMLMemoHook((props: Props) => {
       return classnames({
         "form-group": true,
         [`form-group-${props.size}`]: !!props.size,
+        "form-group-required": !!props.required,
         "has-error": props.hasError,
       })
     },
@@ -44,6 +46,12 @@ function FormGroup(props: Props & ComponentProps<"div">) {
     },
     get hint() {
       return form.getError(inputName() ?? "")
+    },
+    get required() {
+      return !!form.isRequired(inputName() ?? "")
+    },
+    get horizontal() {
+      return !!form.horizontal
     },
   })
 

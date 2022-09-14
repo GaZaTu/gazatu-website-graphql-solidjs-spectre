@@ -13,8 +13,8 @@ type Props = {
   hasError?: boolean
   inline?: boolean
 
-  iconSrc?: string
-  iconLocation?: "left" | "right"
+  iconSrcLeft?: string
+  iconSrcRight?: string
   loading?: boolean
 
   id?: string
@@ -100,16 +100,18 @@ function Input(props: Props & ComponentProps<"input">) {
 
   return (
     <>
-      <Show when={props.loading || props.iconSrc}>
-        <span class={`has-icon-${props.iconLocation ?? "right"}`}>
+      <Show when={props.loading || props.iconSrcLeft || props.iconSrcRight}>
+        <span classList={{ "has-icon-left": !!props.iconSrcLeft, "has-icon-right": !!props.iconSrcRight }}>
           {createInput()}
-          {/* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */}
-          <Icon src={props.loading ? "loading" : props.iconSrc!} />
+          <Show when={!props.loading} fallback={<Icon src="loading" />}>
+            <Icon src={props.iconSrcLeft} class="is-left" />
+            <Icon src={props.iconSrcRight} class="is-right" />
+          </Show>
           {fml.children}
         </span>
       </Show>
 
-      <Show when={!props.iconSrc}>
+      <Show when={!props.iconSrcLeft}>
         {createInput()}
         {fml.children}
       </Show>

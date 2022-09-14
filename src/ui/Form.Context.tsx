@@ -9,6 +9,10 @@ const FormContext = createContext({
   setValue: ((name: string, value: any) => undefined as void),
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   setTouched: ((name: string, touched: boolean) => undefined as void),
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  isRequired: ((name: string) => false as boolean),
+
+  horizontal: false as boolean,
 })
 
 export default Object.assign(FormContext, {

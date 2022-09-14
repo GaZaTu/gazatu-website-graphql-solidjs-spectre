@@ -6,10 +6,26 @@ import FormGroup from "./Form.Group"
 import "./Label.scss"
 import createHTMLMemoHook from "./util/createHTMLMemoHook"
 
+type Obj = Record<string, any>
+
+type FormConfig<Data extends Obj = any, Ext extends Obj = Obj> = NonNullable<Parameters<typeof createForm<Data, Ext>>[0]> & {
+  isRequired?: (name?: string) => boolean
+}
+
+const createContext = <Data extends Obj = any, Ext extends Obj = Obj>(config: FormConfig<Data, Ext>) => {
+  const {
+    isRequired,
+    ...formConfig
+  } = config
+
+  return Object.assign(createForm(formConfig), {
+    isRequired,
+  })
+}
+
 type Props = {
   horizontal?: boolean
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  context?: any // ReturnType<typeof createForm>
+  context?: ReturnType<typeof createContext>
 }
 
 const createProps = createHTMLMemoHook((props: Props) => {
@@ -39,6 +55,12 @@ function Form(props: Props & ComponentProps<"form">) {
     setTouched: (name, touched) => {
       _props.context?.setTouched(name, touched)
     },
+    isRequired: (name) => {
+      return _props.context?.isRequired?.(name) ?? false
+    },
+    get horizontal() {
+      return _props.horizontal ?? false
+    },
   }
 
   return (
@@ -52,7 +74,7 @@ function Form(props: Props & ComponentProps<"form">) {
 
 export default Object.assign(Form, {
   createProps,
-  createContext: createForm,
+  createContext,
   Context: FormContext,
   Group: FormGroup,
 })

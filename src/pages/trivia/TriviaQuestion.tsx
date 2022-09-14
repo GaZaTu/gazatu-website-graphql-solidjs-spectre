@@ -4,10 +4,11 @@ import { Component, createEffect, createMemo } from "solid-js"
 import { isServer } from "solid-js/web"
 import { nullable, optional, size, string, type } from "superstruct"
 import fetchGraphQL, { createGraphQLResource, gql } from "../../lib/fetchGraphQL"
-import { Mutation, Query, TriviaCategory } from "../../lib/schema.gql"
+import { Mutation, Query, TriviaQuestion } from "../../lib/schema.gql"
 import superstructIsRequired from "../../lib/superstructIsRequired"
 import useIdFromParams from "../../lib/useIdFromParams"
 import { createAuthCheck } from "../../store/auth"
+import Autocomplete from "../../ui/Autocomplete"
 import Button from "../../ui/Button"
 import Form from "../../ui/Form"
 import FormGroup from "../../ui/Form.Group"
@@ -21,37 +22,57 @@ import Section from "../../ui/Section"
 import Switch from "../../ui/Switch"
 import Toaster from "../../ui/Toaster"
 
-const TriviaCategorySchema = type({
-  name: size(string(), 1, 256),
-  description: optional(nullable(size(string(), 0, 256))),
-  submitter: optional(nullable(size(string(), 0, 256))),
+const TriviaQuestionSchema = type({
+  question: size(string(), 1, 512),
+  answer: size(string(), 1, 256),
+  category: type({ id: string() }),
 })
 
-const TriviaCategoryView: Component = () => {
+const TriviaQuestionView: Component = () => {
   const isTriviaAdmin = createAuthCheck("trivia-admin")
 
   const id = useIdFromParams()
 
   const response = createGraphQLResource<Query>({
     query: gql`
-      query Query($id: ID!, $isNew: Boolean!) {
-        triviaCategory(id: $id) @skip(if: $isNew) {
+      query Query($id: ID!, $isNew: Boolean!, $isTriviaAdmin: Boolean!) {
+        triviaQuestion(id: $id) @skip(if: $isNew) {
           id
-          name
-          description
+          question
+          answer
+          category {
+            id
+            name
+            verified
+            disabled
+          }
+          language @skip(if: true) {
+            id
+            name
+          }
+          hint1
+          hint2
           submitter
           verified
           disabled
           createdAt
           updatedAt
-          questions @skip(if: true) {
+          reports @include(if: $isTriviaAdmin) {
             id
-            question
-            hint1
-            hint2
-            answer
-            verified
+            message
+            submitter
+            createdAt
+            updatedAt
           }
+        }
+        triviaCategories(disabled: false, verified: null) {
+          id
+          name
+          verified
+        }
+        languages @skip(if: true) {
+          id
+          name
         }
       }
     `,
@@ -62,6 +83,9 @@ const TriviaCategoryView: Component = () => {
       get isNew() {
         return !id()
       },
+      get isTriviaAdmin() {
+        return isTriviaAdmin()
+      },
     },
   })
 
@@ -69,16 +93,16 @@ const TriviaCategoryView: Component = () => {
 
   const navigate = useNavigate()
 
-  const formSchema = TriviaCategorySchema
+  const formSchema = TriviaQuestionSchema
   const form = Form.createContext({
     extend: [validator({ struct: formSchema })],
     isRequired: superstructIsRequired.bind(undefined, formSchema),
     onSubmit: async _values => {
-      const input = _values as Partial<TriviaCategory>
+      const input = _values as Partial<TriviaQuestion>
       const res = await fetchGraphQL<Mutation>({
         query: gql`
-          mutation Mutation($input: TriviaCategoryInput!) {
-            saveTriviaCategory(input: $input) {
+          mutation Mutation($input: TriviaQuestionInput!) {
+            saveTriviaQuestion(input: $input) {
               id
             }
           }
@@ -88,18 +112,19 @@ const TriviaCategoryView: Component = () => {
 
       if (id()) {
         response.refresh()
-        return "Saved Trivia Category"
+        return "Saved Trivia Question"
       } else {
-        navigate(`/trivia/categories/${res.saveTriviaCategory?.id}`)
-        return "Submitted Trivia Category"
+        navigate(`/trivia/question/${res.saveTriviaQuestion?.id}`)
+        return "Submitted Trivia Question"
       }
+
     },
     onSuccess: Toaster.pushSuccess,
     onError: Toaster.pushError,
   })
 
   createEffect(() => {
-    form.setData(response.data?.triviaCategory)
+    form.setData(response.data?.triviaQuestion)
   })
 
   const loading = createMemo(() => {
@@ -110,17 +135,35 @@ const TriviaCategoryView: Component = () => {
     return loading() || (id() && !isTriviaAdmin())
   })
 
+  const categories = Autocomplete.createOptions(() => response.data?.triviaCategories ?? [], {
+    filterable: true,
+    createable: false,
+    key: "id",
+  })
+
   return (
     <Section size="lg" withYMargin>
-      <h3>Trivia Category</h3>
+      <h3>Trivia Question</h3>
 
       <Form context={form} horizontal>
-        <FormGroup label="Name">
-          <Input type="text" name="name" readOnly={readOnly()} ifEmpty={null} />
+        <FormGroup label="Category">
+          <Autocomplete name="category" {...categories} format={(i: any, t) => i.name} placeholder="test..." />
         </FormGroup>
 
-        <FormGroup label="Description">
-          <Input type="text" name="description" readOnly={readOnly()} ifEmpty={null} />
+        <FormGroup label="Question">
+          <Input type="text" name="question" readOnly={readOnly()} ifEmpty={null} />
+        </FormGroup>
+
+        <FormGroup label="Answer">
+          <Input type="text" name="answer" readOnly={readOnly()} ifEmpty={null} />
+        </FormGroup>
+
+        <FormGroup label="Hint 1">
+          <Input type="text" name="hint1" readOnly={readOnly()} ifEmpty={null} />
+        </FormGroup>
+
+        <FormGroup label="Hint 2">
+          <Input type="text" name="hint2" readOnly={readOnly()} ifEmpty={null} />
         </FormGroup>
 
         <FormGroup label="Submitter">
@@ -145,10 +188,10 @@ const TriviaCategoryView: Component = () => {
       </Form>
 
       <FormGroup label="Verified" horizontal>
-        <Switch checked={!!response.data?.triviaCategory?.verified} oninput={undefined} disabled={readOnly() || !id()} style={{ color: response.data?.triviaCategory?.verified ? "var(--success)" : "var(--failure)", "font-weight": "bold" }} />
+        <Switch checked={!!response.data?.triviaQuestion?.verified} oninput={undefined} disabled={readOnly() || !id()} style={{ color: response.data?.triviaQuestion?.verified ? "var(--success)" : "var(--failure)", "font-weight": "bold" }} />
       </FormGroup>
     </Section>
   )
 }
 
-export default TriviaCategoryView
+export default TriviaQuestionView

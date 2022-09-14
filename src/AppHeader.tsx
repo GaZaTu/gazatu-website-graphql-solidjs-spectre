@@ -4,6 +4,7 @@ import A from "./ui/A"
 import Avatar from "./ui/Avatar"
 import Button from "./ui/Button"
 import Column from "./ui/Column"
+import Divider from "./ui/Divider"
 import Icon from "./ui/Icon"
 import iconPerson from "./ui/icons/iconPerson"
 import ImgWithPlaceholder from "./ui/ImgWithPlaceholder"
@@ -53,6 +54,13 @@ const AppNav: Component = () => {
 
           <Navbar.Dropdown toggle={<span {...badge(123)}>Trivia</span>} matchHref="/trivia">
             <Menu>
+              <Menu.Item>
+                <A href="/trivia/questions/new" match>Submit Question</A>
+              </Menu.Item>
+              <Menu.Item>
+                <A href="/trivia/categories/new" match>Submit Category</A>
+              </Menu.Item>
+              <Divider />
               <Menu.Item badge={<Label color="primary">12</Label>}>
                 <A href="/trivia/questions" match {...badge(1)}>Questions</A>
               </Menu.Item>

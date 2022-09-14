@@ -32,19 +32,19 @@ html {
   --success: rgb(var(--success--rgb-triplet));
   --success-monochrome--rgb-triplet: 77, 206, 94;
   --success-monochrome: rgb(var(--success-monochrome--rgb-triplet));
-  --success-text--rgb-triplet: 250, 250, 250;
+  --success-text--rgb-triplet: 6, 6, 6;
   --success-text: rgb(var(--success-text--rgb-triplet));
   --warning--rgb-triplet: 255, 183, 0;
   --warning: rgb(var(--warning--rgb-triplet));
   --warning-monochrome--rgb-triplet: 255, 197, 51;
   --warning-monochrome: rgb(var(--warning-monochrome--rgb-triplet));
-  --warning-text--rgb-triplet: 250, 250, 250;
+  --warning-text--rgb-triplet: 6, 6, 6;
   --warning-text: rgb(var(--warning-text--rgb-triplet));
   --failure--rgb-triplet: 232, 86, 0;
   --failure: rgb(var(--failure--rgb-triplet));
   --failure-monochrome--rgb-triplet: 255, 112, 28;
   --failure-monochrome: rgb(var(--failure-monochrome--rgb-triplet));
-  --failure-text--rgb-triplet: 250, 250, 250;
+  --failure-text--rgb-triplet: 6, 6, 6;
   --failure-text: rgb(var(--failure-text--rgb-triplet));
 
   // Other colors

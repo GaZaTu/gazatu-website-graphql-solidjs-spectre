@@ -17,7 +17,7 @@ import { centerSelf } from "../../ui/util/position"
 const TriviaCategoryListView: Component = () => {
   const isTriviaAdmin = createAuthCheck("trivia-admin")
 
-  const categories = createGraphQLResource<Query>({
+  const response = createGraphQLResource<Query>({
     query: gql`
       query Query($isTriviaAdmin: Boolean!, $verified: Boolean, $disabled: Boolean) {
         triviaCategories(verified: $verified, disabled: $disabled) {
@@ -41,13 +41,13 @@ const TriviaCategoryListView: Component = () => {
     },
   })
 
-  createGlobalProgressStateEffect(() => categories.loading)
+  createGlobalProgressStateEffect(() => response.loading)
 
   const [tableState, setTableState] = createTableState({ useSearchParams: true })
 
   const table = Table.createContext({
     get data() {
-      return categories.data?.triviaCategories ?? []
+      return response.data?.triviaCategories ?? []
     },
     columns: [
       tableColumnSelect(),
@@ -84,15 +84,15 @@ const TriviaCategoryListView: Component = () => {
 
   return (
     <>
-      <Section size="xl" marginTop>
+      <Section size="xl" withYMargin>
         <Title>Trivia Categories</Title>
         <h3>Trivia Categories</h3>
 
-        <p>test2 {categories.data?.triviaCategories?.length ?? "n/a"}</p>
+        <p>test2 {response.data?.triviaCategories?.length ?? "n/a"}</p>
       </Section>
 
-      <Section size="xxl" marginTop>
-        <Table context={table} loading={categories.loading} loadingSize="lg" striped toolbar={
+      <Section size="xxl" withYMargin>
+        <Table context={table} loading={response.loading} loadingSize="lg" striped toolbar={
           <Column.Row>
             <Show when={isTriviaAdmin()}>
               <Column>

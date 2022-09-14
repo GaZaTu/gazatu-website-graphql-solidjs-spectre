@@ -1,5 +1,6 @@
 import classnames from "classnames"
-import { ComponentProps, splitProps } from "solid-js"
+import { ComponentProps, createEffect, Show, splitProps, useContext } from "solid-js"
+import FormGroupContext from "./Form.Group.Context"
 import "./Switch.scss"
 import createHTMLMemoHook from "./util/createHTMLMemoHook"
 import "./util/form-mixins/checkbox-radio-switch.scss"
@@ -34,11 +35,21 @@ function Checkbox(props: Props & ComponentProps<"input">) {
 
   const [_containerProps] = createProps(containerProps)
 
+  const formGroup = useContext(FormGroupContext)
+  createEffect(() => {
+    formGroup.setInputId(inputProps.id)
+    formGroup.setInputName(inputProps.name)
+
+    formGroup.setLabelHidden(true)
+  })
+
   return (
     <label {..._containerProps}>
       <input {...inputProps} type="checkbox" />
       <i class="form-icon" />
-      {containerProps.children}
+      <Show when={formGroup.label() || formGroup.labelAsString()} fallback={containerProps.children}>
+        {formGroup.label() ?? formGroup.labelAsString()}
+      </Show>
     </label>
   )
 }

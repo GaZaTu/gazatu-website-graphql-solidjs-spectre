@@ -49,3 +49,12 @@ legend {
   font-weight: 500;
   margin-bottom: $layout-spacing-lg;
 }
+
+.form-group-required {
+  .form-label::after,
+  .form-checkbox::after {
+    content: "*";
+    color: $failure;
+    margin-left: 0.2rem;
+  }
+}

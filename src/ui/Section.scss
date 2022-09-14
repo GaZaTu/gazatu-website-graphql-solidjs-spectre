@@ -8,8 +8,12 @@
   padding-right: $layout-spacing-md;
   width: 100%;
 
-  &.container-margin-top {
-    margin-top: $unit-4;
+  &.container-with-y-margin {
+    margin-bottom: $layout-spacing-md;
+
+    &:first-of-type {
+      margin-top: $layout-spacing-md;
+    }
   }
 
   &.container-left {

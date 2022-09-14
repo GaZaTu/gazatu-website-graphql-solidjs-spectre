@@ -7,7 +7,7 @@ import { createUtility, ThemeBreakpoint } from "./util/theming"
 type Props = {
   left?: boolean
   size?: ThemeBreakpoint
-  marginTop?: boolean
+  withYMargin?: boolean
 }
 
 const createProps = createHTMLMemoHook((props: Props) => {
@@ -17,7 +17,7 @@ const createProps = createHTMLMemoHook((props: Props) => {
         "container": true,
         "container-left": props.left,
         [`grid-${props.size}`]: !!props.size,
-        "container-margin-top": props.marginTop,
+        "container-with-y-margin": props.withYMargin,
       })
     },
   }

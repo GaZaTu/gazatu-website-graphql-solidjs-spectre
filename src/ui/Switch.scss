@@ -1,7 +1,7 @@
 @use "spectre.css/variables" as *;
 
 .form-switch {
-  padding-left: calc($unit-8 + $control-padding-x-md);
+  padding-left: calc($unit-8 + $control-padding-x-md) !important;
 
   .form-icon {
     background: $body-bg-monochrome;
@@ -49,7 +49,7 @@
     &:disabled,
     &.disabled {
       & + .form-icon::before {
-        background: $body-bg-monochrome;
+        background: $body-bg;
       }
     }
   }

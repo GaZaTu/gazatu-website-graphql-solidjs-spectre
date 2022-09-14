@@ -3,6 +3,7 @@ import { ColumnDef, createSolidTable, flexRender, getCoreRowModel, getFilteredRo
 import classnames from "classnames"
 import { ComponentProps, createEffect, createSignal, For, JSX, mergeProps, Show, splitProps } from "solid-js"
 import Column from "./Column"
+import iconCross from "./icons/iconCross"
 import iconSearch from "./icons/iconSearch"
 import Input from "./Input"
 import LoadingPlaceholder from "./LoadingPlaceholder"
@@ -107,7 +108,7 @@ function Table<TData extends RowData>(props: Props<TData> & ComponentProps<"div"
     <div class="table-container" {...containerProps}>
       <Column.Row class="table-toolbar">
         <Column xxl={4} md={6} sm={12} classList={{ ...marginT(2) }}>
-          <Input value={__.context?.actions.getState().globalFilter ?? ""} oninput={ev => setGlobalFilter(ev.currentTarget.value)} iconSrc={iconSearch} iconLocation="left" classList={{ ...rounded("lg") }} placeholder="Search..." />
+          <Input value={__.context?.actions.getState().globalFilter ?? ""} oninput={ev => setGlobalFilter(ev.currentTarget.value)} iconSrcLeft={iconSearch} classList={{ ...rounded("lg") }} placeholder="Search..." />
         </Column>
 
         <Column xxl="auto" offset="ml" classList={{ ...marginT(2) }}>

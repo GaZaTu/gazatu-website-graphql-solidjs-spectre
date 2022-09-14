@@ -67,6 +67,7 @@ textarea.form-input {
 // Form Icons
 .has-icon-left,
 .has-icon-right {
+  display: flex;
   position: relative;
 
   &.form-inline {
@@ -85,7 +86,7 @@ textarea.form-input {
 }
 
 .has-icon-left {
-  .#{$icon-prefix} {
+  .#{$icon-prefix}:not(.is-right) {
     left: calc($border-width-md * 6);
   }
 
@@ -95,7 +96,7 @@ textarea.form-input {
 }
 
 .has-icon-right {
-  .#{$icon-prefix} {
+  .#{$icon-prefix}:not(.is-left) {
     right: calc($border-width-md * 6);
   }
 

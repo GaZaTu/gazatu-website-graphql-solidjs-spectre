@@ -23,6 +23,10 @@ const routes: RouteDefinition[] = [
     component: lazy(() => import("./pages/trivia/TriviaCategory")),
   },
   {
+    path: "/trivia/questions/:id",
+    component: lazy(() => import("./pages/trivia/TriviaQuestion")),
+  },
+  {
     path: "**",
     component: lazy(() => import("./pages/Http404")),
   },

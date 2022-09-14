@@ -27,11 +27,14 @@ const pushSuccess = (message: any) => {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const pushError = (error: any, onclose?: (() => void) | unknown) => {
+  console.error(error)
+
   if (import.meta.env.PROD) {
     error = error?.message ?? String(error)
   } else {
+    error = error ? `${error.name ?? "Error"}: ${error.message}\n\t${error.stack?.replaceAll("\n", "\n\t")}` : String(error)
     error = (
-      <Code snippet>{error?.stack ?? String(error)}</Code>
+      <Code snippet>{error}</Code>
     )
   }
 

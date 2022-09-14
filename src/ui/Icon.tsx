@@ -12,7 +12,7 @@ const createProps = createHTMLMemoHook((props: Props) => {
   return {
     get class() {
       return classnames({
-        "spectre-icon": true,
+        "spectre-icon": !!props.src,
         [props.src ?? ""]: true,
         [`icon-${props.size}`]: !!props.size,
       })
