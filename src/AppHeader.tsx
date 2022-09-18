@@ -5,8 +5,10 @@ import Avatar from "./ui/Avatar"
 import Button from "./ui/Button"
 import Column from "./ui/Column"
 import Divider from "./ui/Divider"
+import Dropdown from "./ui/Dropdown"
+import FormGroup from "./ui/Form.Group"
 import Icon from "./ui/Icon"
-import iconPerson from "./ui/icons/iconPerson"
+import iconMoreVert from "./ui/icons/iconMoreVert"
 import ImgWithPlaceholder from "./ui/ImgWithPlaceholder"
 import Label from "./ui/Label"
 import Menu from "./ui/Menu"
@@ -16,7 +18,7 @@ import Section from "./ui/Section"
 import Switch from "./ui/Switch"
 import { badge } from "./ui/util/badge"
 import { computedColorScheme, setColorScheme } from "./ui/util/colorScheme"
-import { centerSelf } from "./ui/util/position"
+import { centerChildren } from "./ui/util/position"
 
 const [showAppHeader, setShowAppHeader] = createSignal(true)
 const useShowAppHeaderEffect = (show: boolean) => {
@@ -75,23 +77,46 @@ const AppNav: Component = () => {
         </Navbar.Section>
 
         <Navbar.Section>
-          <Column.Row>
-            <Column>
-              <Button.A href="http://github.com/GaZaTu" color="primary" outlined>GitHub</Button.A>
+          <Column.Row gaps="sm">
+            <Column classList={{ ...centerChildren(true) }}>
+              <Button.A href="http://github.com/GaZaTu/gazatu-website-graphql-solidjs-spectre" color="link" action>
+                <ImgWithPlaceholder src={(computedColorScheme() === "dark") ? "/static/github-octocat.dark.min.svg" : "/static/github-octocat.min.svg"} alt="github" width={26} height={26} />
+              </Button.A>
             </Column>
 
-            <Column>
-              <Switch checked={computedColorScheme() === "dark"} onclick={() => setColorScheme((computedColorScheme() === "dark") ? "light" : "dark")} />
-            </Column>
-
-            <Column>
-              <A href={storedAuth() ? "/profile" : "/login"} aria-label={storedAuth() ? "profile" : "login"}>
-                <Avatar initials={storedAuth()?.user?.username?.slice(0, 2)}>
-                  <Show when={!storedAuth()}>
-                    <Icon src={iconPerson} classList={{ ...centerSelf(true) }} style={{ top: "25%" }} />
+            <Column classList={{ ...centerChildren(true) }}>
+              <Dropdown right toggle={(
+                <Button.A action>
+                  <Icon src={iconMoreVert} />
+                </Button.A>
+              )}>
+                <Menu>
+                  <Menu.Item>
+                    <FormGroup label="Dark Theme">
+                      <Switch checked={computedColorScheme() === "dark"} onclick={() => setColorScheme((computedColorScheme() === "dark") ? "light" : "dark")} />
+                    </FormGroup>
+                  </Menu.Item>
+                  <Show when={storedAuth()}>
+                    <Divider />
+                    <Menu.Item>
+                      <A href="/profile" match>Profile</A>
+                    </Menu.Item>
+                    <Menu.Item>
+                      <A href="/logout">Logout</A>
+                    </Menu.Item>
                   </Show>
-                </Avatar>
-              </A>
+                </Menu>
+              </Dropdown>
+            </Column>
+
+            <Column classList={{ ...centerChildren(true) }}>
+              <Show when={storedAuth()} fallback={
+                <Button.A href="/login" color="gray">Login</Button.A>
+              }>
+                <A href="/profile">
+                  <Avatar initials={storedAuth()?.user?.username?.slice(0, 2)} />
+                </A>
+              </Show>
             </Column>
           </Column.Row>
         </Navbar.Section>

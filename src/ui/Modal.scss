@@ -68,7 +68,7 @@
 }
 
 .modal-container {
-  box-shadow: 0 $unit-1 ($unit-1 + $unit-o) * 2 rgba($body-fg-monochrome--rgb-triplet, .3);
+  box-shadow: 0 $unit-1 calc($unit-1 + $unit-o * 2) rgba($body-fg-monochrome--rgb-triplet, .3);
   background: $body-bg;
   border-radius: $control-border-radius;
   display: flex;

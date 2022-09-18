@@ -48,6 +48,28 @@ const pushError = (error: any, onclose?: (() => void) | unknown) => {
   return undefined
 }
 
+function tryFunc<R>(func: () => R): R {
+  try {
+    const maybePromise = func()
+
+    if (maybePromise instanceof Promise) {
+      return (async () => {
+        try {
+          return await maybePromise
+        } catch (error) {
+          pushError(error)
+          throw error
+        }
+      })() as R
+    }
+
+    return maybePromise
+  } catch (error) {
+    pushError(error)
+    throw error
+  }
+}
+
 function Toaster(props: {}) {
   const notifs = useToaster(notifications)
 
@@ -67,6 +89,7 @@ export default Object.assign(Toaster, {
   push: pushNotification,
   pushSuccess,
   pushError,
+  try: tryFunc,
 })
 
 type ToastWithAnimationProps = {

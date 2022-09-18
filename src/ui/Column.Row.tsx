@@ -4,7 +4,7 @@ import "./Img.scss"
 import createHTMLMemoHook from "./util/createHTMLMemoHook"
 
 type Props = {
-  gapless?: boolean
+  gaps?: "sm" | "md" | "none"
   oneline?: boolean
 }
 
@@ -13,6 +13,7 @@ const createProps = createHTMLMemoHook((props: Props) => {
     get class() {
       return classnames({
         "columns": true,
+        [`col-gaps-${props.gaps ?? "md"}`]: !!props.gaps,
       })
     },
   }

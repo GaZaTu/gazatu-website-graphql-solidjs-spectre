@@ -10,8 +10,8 @@ type Props = {
   active?: boolean
   disabled?: boolean
 
-  href?: ComponentProps<typeof A>["href"]
-  // onclick?: ComponentProps<typeof A>["onclick"]
+  queryParams?: ComponentProps<typeof A>["params"]
+  onclick?: ComponentProps<typeof A>["onclick"]
 }
 
 const createProps = createHTMLMemoHook((props: Props) => {
@@ -28,17 +28,16 @@ const createProps = createHTMLMemoHook((props: Props) => {
   }
 })
 
-function PaginationItem(props: Props & ComponentProps<"li">) {
+function PaginationItem(props: Props & Omit<ComponentProps<"li">, "onclick">) {
   const [fml] = splitProps(props, ["children"])
   const [_props] = createProps(props)
 
   return (
-    <li {..._props} onClick={undefined}>
-      {(props.href || props.onclick) && (
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        <A href={props.href} onclick={props.onclick as any} tabIndex={props.disabled ? -1 : undefined}>{fml.children}</A>
+    <li {..._props} onclick={undefined}>
+      {(props.queryParams || props.onclick) && (
+        <A params={props.queryParams} keepExistingParams onclick={props.onclick} tabIndex={props.disabled ? -1 : undefined}>{fml.children}</A>
       )}
-      {(!props.href && !props.onclick) && (
+      {(!props.queryParams && !props.onclick) && (
         <span>{fml.children}</span>
       )}
     </li>

@@ -1,7 +1,7 @@
 import { Title } from "@solidjs/meta"
 import { Component, Show } from "solid-js"
 import { createGraphQLResource, gql } from "../../lib/fetchGraphQL"
-import { Query } from "../../lib/schema.gql"
+import { Query, TriviaCategory } from "../../lib/schema.gql"
 import { createAuthCheck } from "../../store/auth"
 import Button from "../../ui/Button"
 import Column from "../../ui/Column"
@@ -12,14 +12,15 @@ import { createGlobalProgressStateEffect } from "../../ui/Progress.Global"
 import Section from "../../ui/Section"
 import Table from "../../ui/Table"
 import { createTableState, tableColumnLink, tableColumnSelect, tableDateCell, tableOnGlobalFilterChange, tableOnPaginationChange, tableOnSortingChange } from "../../ui/Table.Helpers"
+import Toaster from "../../ui/Toaster"
 import { centerSelf } from "../../ui/util/position"
 
 const TriviaCategoryListView: Component = () => {
-  const isTriviaAdmin = createAuthCheck("trivia-admin")
+  const isTriviaAdmin = createAuthCheck("trivia/admin")
 
   const response = createGraphQLResource<Query>({
     query: gql`
-      query Query($isTriviaAdmin: Boolean!, $verified: Boolean, $disabled: Boolean) {
+      query ($isTriviaAdmin: Boolean!, $verified: Boolean, $disabled: Boolean) {
         triviaCategories(verified: $verified, disabled: $disabled) {
           id
           name
@@ -39,13 +40,14 @@ const TriviaCategoryListView: Component = () => {
       verified: undefined,
       disabled: false,
     },
+    onError: Toaster.pushError,
   })
 
   createGlobalProgressStateEffect(() => response.loading)
 
   const [tableState, setTableState] = createTableState({ useSearchParams: true })
 
-  const table = Table.createContext({
+  const table = Table.createContext<TriviaCategory>({
     get data() {
       return response.data?.triviaCategories ?? []
     },
@@ -84,15 +86,13 @@ const TriviaCategoryListView: Component = () => {
 
   return (
     <>
-      <Section size="xl" withYMargin>
+      <Section size="xl" marginY>
         <Title>Trivia Categories</Title>
         <h3>Trivia Categories</h3>
-
-        <p>test2 {response.data?.triviaCategories?.length ?? "n/a"}</p>
       </Section>
 
-      <Section size="xxl" withYMargin>
-        <Table context={table} loading={response.loading} loadingSize="lg" striped toolbar={
+      <Section size="xxl" marginY flex style={{ "flex-grow": 1 }}>
+        <Table context={table} loading={response.loading} loadingSize="lg" striped pageQueryParam="p" toolbar={
           <Column.Row>
             <Show when={isTriviaAdmin()}>
               <Column>

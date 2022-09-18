@@ -31,7 +31,7 @@ const tableDateCell = (...[locales, options]: Parameters<typeof Intl.DateTimeFor
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const tableColumnSelect = (): ColumnDef<any, any> => ({
+const tableColumnSelect = <T, V>(): ColumnDef<T, V> => ({
   id: "__select",
   meta: { compact: true },
   header: info => (
@@ -43,7 +43,7 @@ const tableColumnSelect = (): ColumnDef<any, any> => ({
 })
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const tableColumnLink = (getProps: (row: Row<any>) => ComponentProps<typeof Button.A>): ColumnDef<any, any> => ({
+const tableColumnLink = <T, V>(getProps: (row: Row<T>) => ComponentProps<typeof Button.A>): ColumnDef<T, V> => ({
   id: "__link",
   meta: { compact: true },
   cell: info => (

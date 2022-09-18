@@ -1,4 +1,4 @@
-import { createEffect, createSignal } from "solid-js"
+import { Accessor, createEffect, createSignal } from "solid-js"
 import { createStore } from "solid-js/store"
 import { isServer } from "solid-js/web"
 import fetchFromApi from "./fetchFromApi"
@@ -17,9 +17,12 @@ type GraphQLOptions = {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type GraphQLResult<T = any> = {
+  message?: string
   errors?: { message?: string }[]
-  data?: T
+  data: T | null
 }
+
+class GraphQLError extends Error {}
 
 const fetchGraphQL = async<T>(options: GraphQLOptions) => {
   const response = await fetchFromApi(graphqlEndpoint(), {
@@ -35,11 +38,18 @@ const fetchGraphQL = async<T>(options: GraphQLOptions) => {
 
   const json = await response.json() as GraphQLResult<T>
 
-  const errorMessage = json?.errors?.[0]?.message
-  const error = errorMessage ? new Error(errorMessage) : undefined
+  if (!response.ok) {
+    const errorMessage = json.message
+    if (errorMessage) {
+      throw new GraphQLError(errorMessage)
+    }
 
-  if (error) {
-    throw error
+    throw new GraphQLError(response.statusText)
+  }
+
+  const errorMessage = json?.errors?.[0]?.message
+  if (errorMessage) {
+    throw new GraphQLError(errorMessage)
   }
 
   return json.data!
@@ -57,8 +67,10 @@ export const gql = (query: TemplateStringsArray) =>
     .replace(/\s{2,}/g, " ")
     .trim()
 
-type GraphQLResourceOptions<T, I extends T = T> = GraphQLOptions & {
+type GraphQLResourceOptions<T, I extends T = T> = Omit<GraphQLOptions, "variables"> & {
   initialValue?: I
+  onError?: (error: Error) => void
+  variables?: Record<string, unknown> | Accessor<Record<string, unknown> | undefined>
 }
 
 const createGraphQLResource = <T>(options: GraphQLResourceOptions<T>) => {
@@ -70,18 +82,33 @@ const createGraphQLResource = <T>(options: GraphQLResourceOptions<T>) => {
 
   const [refresh, setRefresh] = createSignal(false)
 
-  createEffect((previousRequest?: { cancelled: boolean }) => {
+  createEffect((previousEffect?: { cancelled: boolean, stringifiedVariables: string }) => {
     if (refresh()) {
       setRefresh(false)
       return undefined
     }
 
-    if (!options.variables || isServer) {
+    const query = options.query
+    const variables = (() => {
+      if (typeof options.variables === "function") {
+        return options.variables()
+      } else {
+        return options.variables
+      }
+    })()
+
+    if (!variables || isServer) {
       return undefined
     }
 
-    const request = {
+    const stringifiedVariables = JSON.stringify(variables)
+    if (stringifiedVariables === previousEffect?.stringifiedVariables) {
+      return undefined
+    }
+
+    const effect = {
       cancelled: false,
+      stringifiedVariables,
     }
 
     setState(state => ({
@@ -89,8 +116,8 @@ const createGraphQLResource = <T>(options: GraphQLResourceOptions<T>) => {
       loading: true,
     }))
 
-    if (previousRequest) {
-      previousRequest.cancelled = true
+    if (previousEffect) {
+      previousEffect.cancelled = true
     }
 
     void (async () => {
@@ -98,12 +125,13 @@ const createGraphQLResource = <T>(options: GraphQLResourceOptions<T>) => {
       let error: typeof state.error = undefined
 
       try {
-        data = await fetchGraphQL<T>(options)
+        data = await fetchGraphQL<T>({ query, variables })
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (e: any) {
+        console.warn("GraphQL error", e)
         error = e
       } finally {
-        if (!request.cancelled) {
+        if (!effect.cancelled) {
           setState(state => ({
             ...state,
             loading: false,
@@ -114,7 +142,15 @@ const createGraphQLResource = <T>(options: GraphQLResourceOptions<T>) => {
       }
     })()
 
-    return request
+    return effect
+  })
+
+  createEffect(() => {
+    if (!state.error) {
+      return
+    }
+
+    options.onError?.(state.error)
   })
 
   return {
@@ -129,6 +165,13 @@ const createGraphQLResource = <T>(options: GraphQLResourceOptions<T>) => {
     },
     refresh() {
       setRefresh(true)
+    },
+    clear() {
+      setState({
+        loading: false,
+        data: undefined,
+        error: undefined,
+      })
     },
   }
 }

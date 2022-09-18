@@ -22,19 +22,19 @@ import Switch from "../../ui/Switch"
 import Toaster from "../../ui/Toaster"
 
 const TriviaCategorySchema = type({
-  name: size(string(), 1, 256),
+  name: size(string(), 1, 32),
   description: optional(nullable(size(string(), 0, 256))),
-  submitter: optional(nullable(size(string(), 0, 256))),
+  submitter: optional(nullable(size(string(), 0, 64))),
 })
 
 const TriviaCategoryView: Component = () => {
-  const isTriviaAdmin = createAuthCheck("trivia-admin")
+  const isTriviaAdmin = createAuthCheck("trivia/admin")
 
   const id = useIdFromParams()
 
   const response = createGraphQLResource<Query>({
     query: gql`
-      query Query($id: ID!, $isNew: Boolean!) {
+      query ($id: String!, $isNew: Boolean!) {
         triviaCategory(id: $id) @skip(if: $isNew) {
           id
           name
@@ -63,6 +63,7 @@ const TriviaCategoryView: Component = () => {
         return !id()
       },
     },
+    onError: Toaster.pushError,
   })
 
   createGlobalProgressStateEffect(() => response.loading)
@@ -77,7 +78,7 @@ const TriviaCategoryView: Component = () => {
       const input = _values as Partial<TriviaCategory>
       const res = await fetchGraphQL<Mutation>({
         query: gql`
-          mutation Mutation($input: TriviaCategoryInput!) {
+          mutation ($input: TriviaCategoryInput!) {
             saveTriviaCategory(input: $input) {
               id
             }
@@ -111,7 +112,7 @@ const TriviaCategoryView: Component = () => {
   })
 
   return (
-    <Section size="lg" withYMargin>
+    <Section size="lg" marginY>
       <h3>Trivia Category</h3>
 
       <Form context={form} horizontal>

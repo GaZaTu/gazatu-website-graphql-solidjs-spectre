@@ -3,7 +3,6 @@ import { ColumnDef, createSolidTable, flexRender, getCoreRowModel, getFilteredRo
 import classnames from "classnames"
 import { ComponentProps, createEffect, createSignal, For, JSX, mergeProps, Show, splitProps } from "solid-js"
 import Column from "./Column"
-import iconCross from "./icons/iconCross"
 import iconSearch from "./icons/iconSearch"
 import Input from "./Input"
 import LoadingPlaceholder from "./LoadingPlaceholder"
@@ -23,9 +22,11 @@ declare module "@tanstack/solid-table" {
 
 export type TableState = _TableState
 
-type TableContext<TData extends RowData> = {
-  options: Partial<TableOptions<TData>>
-  actions: TableActions<unknown>
+type TableContext = {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  options: any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  actions: TableActions<any>
 }
 
 function createContext<TData extends RowData>(options: Partial<TableOptions<TData>>) {
@@ -43,7 +44,7 @@ function createContext<TData extends RowData>(options: Partial<TableOptions<TDat
   return {
     options,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    actions: createSolidTable(options as any),
+    actions: createSolidTable<TData>(options as any),
   }
 }
 
@@ -56,8 +57,9 @@ const getColumnStyle = (columnDef?: ColumnDef<unknown, unknown>, clickable = fal
   "user-select": clickable ? "none" : undefined,
 })
 
-type Props<TData extends RowData> = {
-  context?: TableContext<TData>
+type Props = {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  context?: TableContext
   striped?: boolean
   hoverable?: boolean
   scrollable?: boolean
@@ -65,9 +67,10 @@ type Props<TData extends RowData> = {
   loading?: boolean
   loadingSize?: "sm" | "lg"
   toolbar?: JSX.Element
+  pageQueryParam?: string
 }
 
-const createTableClassName = (props: Props<unknown>) => {
+const createTableClassName = (props: Props) => {
   return classnames({
     "table": true,
     "table-striped": props.striped,
@@ -77,7 +80,7 @@ const createTableClassName = (props: Props<unknown>) => {
   })
 }
 
-function Table<TData extends RowData>(props: Props<TData> & ComponentProps<"div">) {
+function Table(props: Props & ComponentProps<"div">) {
   const [tableProps, __, containerProps] = splitProps(props, [
     "striped",
     "hoverable",
@@ -86,6 +89,7 @@ function Table<TData extends RowData>(props: Props<TData> & ComponentProps<"div"
     "loading",
     "loadingSize",
     "toolbar",
+    "pageQueryParam",
   ], [
     "context",
   ])
@@ -124,7 +128,8 @@ function Table<TData extends RowData>(props: Props<TData> & ComponentProps<"div"
                 <tr>
                   <For each={headerGroup.headers}>
                     {header => (
-                      <th colSpan={header.colSpan} onclick={header.column.getToggleSortingHandler()} style={getColumnStyle(header.column.columnDef, header.column.getCanSort())}>
+                      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                      <th colSpan={header.colSpan} onclick={header.column.getToggleSortingHandler()} style={getColumnStyle(header.column.columnDef as any, header.column.getCanSort())}>
                         <Show when={!header.isPlaceholder} fallback={null}>
                           {flexRender(header.column.columnDef.header, header.getContext())}
                           {{ asc: " 🔼", desc: " 🔽" }[header.column.getIsSorted() as string] ?? undefined}
@@ -162,7 +167,8 @@ function Table<TData extends RowData>(props: Props<TData> & ComponentProps<"div"
                 <TableRow>
                   <For each={row.getVisibleCells()}>
                     {cell => (
-                      <td style={getColumnStyle(cell.column.columnDef)}>
+                      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                      <td style={getColumnStyle(cell.column.columnDef as any)}>
                         {flexRender(cell.column.columnDef.cell, cell.getContext())}
                       </td>
                     )}
@@ -185,6 +191,7 @@ function Table<TData extends RowData>(props: Props<TData> & ComponentProps<"div"
             // hasNext={__.context?.state.getCanNextPage() ?? false}
             // hasPrev={__.context?.state.getCanPreviousPage() ?? false}
             loading={tableProps.loading}
+            pageQueryParam={tableProps.pageQueryParam}
             compact
           />
         </Column>
@@ -199,7 +206,8 @@ export default Object.assign(Table, {
 })
 
 type PlaceholderRowProps = {
-  actions?: TableActions<unknown>
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  actions?: TableActions<any>
 }
 
 const PlaceholderRow = (props: PlaceholderRowProps) => {
@@ -207,7 +215,8 @@ const PlaceholderRow = (props: PlaceholderRowProps) => {
     <tr>
       <For each={props.actions?.getVisibleFlatColumns()}>
         {column => (
-          <td style={getColumnStyle(column.columnDef)}>
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          <td style={getColumnStyle(column.columnDef as any)}>
             <LoadingPlaceholder width="100%" height="var(--line-height)" />
           </td>
         )}

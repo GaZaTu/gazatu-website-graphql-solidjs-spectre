@@ -19,6 +19,8 @@ type Props = {
 
   id?: string
   ifEmpty?: string | null
+
+  multiline?: boolean
 }
 
 const createProps = createHTMLMemoHook((props: Props) => {
@@ -47,8 +49,12 @@ function Input(props: Props & ComponentProps<"input">) {
 
   const formGroup = useContext(FormGroupContext)
   createEffect(() => {
-    formGroup.setInputId(_props.id)
-    formGroup.setInputName(_props.name)
+    if (_props.id) {
+      formGroup.setInputId(_props.id)
+    }
+    if (_props.name) {
+      formGroup.setInputName(_props.name)
+    }
   })
 
   const value = createMemo(() => {
@@ -56,10 +62,11 @@ function Input(props: Props & ComponentProps<"input">) {
       return _props.value
     }
 
-    return form.getValue(_props.name ?? "") ?? ""
+    const value = form.getValue(_props.name ?? "") ?? ""
+    return value
   })
 
-  const handleInput: ComponentProps<"input">["oninput"] = ev => {
+  const handleInput = (ev: InputEvent & { currentTarget: HTMLInputElement | HTMLTextAreaElement }) => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (_props.oninput as any)?.(ev)
 
@@ -79,7 +86,7 @@ function Input(props: Props & ComponentProps<"input">) {
     form.setValue(_props.name, value)
   }
 
-  const handleBlur: ComponentProps<"input">["onblur"] = ev => {
+  const handleBlur = (ev: FocusEvent) => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (_props.onblur as any)?.(ev)
 
@@ -95,7 +102,11 @@ function Input(props: Props & ComponentProps<"input">) {
   }
 
   const createInput = () => (
-    <input value={value()} oninput={handleInput} onblur={handleBlur} placeholder={formGroup.labelAsString()} {..._props} />
+    <Show when={_props.multiline} fallback={
+      <input value={value()} oninput={handleInput} onblur={handleBlur} placeholder={formGroup.labelAsString()} {..._props} />
+    }>
+      <textarea value={value()} oninput={handleInput} onblur={handleBlur} placeholder={formGroup.labelAsString()} {..._props as {}} />
+    </Show>
   )
 
   return (

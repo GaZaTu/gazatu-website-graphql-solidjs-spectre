@@ -1,9 +1,9 @@
 import { createStorageSignal } from "@solid-primitives/storage"
 import { createEffect, createMemo } from "solid-js"
 import { setDefaultFetchInit } from "../lib/fetchFromApi"
-import { AuthResult } from "../lib/schema.gql"
+import { Auth } from "../lib/schema.gql"
 
-const [storedAuth, setStoredAuth] = createStorageSignal<AuthResult | null>("auth-data", null, {
+const [storedAuth, setStoredAuth] = createStorageSignal<Auth | null>("auth-data", null, {
   api: (() => {
     if (typeof window === "undefined") {
       return undefined

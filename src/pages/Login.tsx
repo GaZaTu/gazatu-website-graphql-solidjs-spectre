@@ -2,7 +2,7 @@ import { validator } from "@felte/validator-superstruct"
 import { useNavigate } from "@solidjs/router"
 import { Component, createMemo, Show } from "solid-js"
 import { isServer } from "solid-js/web"
-import { intersection, size, string, type, refine, literal } from "superstruct"
+import { literal, refine, size, string, type } from "superstruct"
 import fetchGraphQL, { gql } from "../lib/fetchGraphQL"
 import { Mutation, Query } from "../lib/schema.gql"
 import superstructIsRequired from "../lib/superstructIsRequired"
@@ -45,7 +45,7 @@ const RegisterUserSchema = refine(
 )
 
 const gqlAuthenticate = gql`
-  query Query($username: String!, $password: String!) {
+  query ($username: String!, $password: String!) {
     authenticate(username: $username, password: $password) {
       token
       user {
@@ -60,7 +60,7 @@ const gqlAuthenticate = gql`
 `
 
 const gqlRegisterUser = gql`
-  mutation Mutation($username: String!, $password: String!) {
+  mutation ($username: String!, $password: String!) {
     registerUser(username: $username, password: $password) {
       token
       user {
@@ -140,7 +140,7 @@ const LoginView: Component = () => {
   const breakpoints = useBreakpoints()
 
   return (
-    <Section size="xl" withYMargin>
+    <Section size="xl" marginY>
       <Column.Row>
         <Column sm={12}>
           <LoginForm />

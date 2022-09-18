@@ -8,13 +8,22 @@
   margin-left: calc($layout-spacing-md * -1);
   margin-right: calc($layout-spacing-md * -1);
 
-  &.col-gapless {
+  &.col-gaps-none {
     margin-left: 0;
     margin-right: 0;
 
     & > .column {
       padding-left: 0;
       padding-right: 0;
+    }
+  }
+  &.col-gaps-sm {
+    margin-left: calc($layout-spacing-sm * -1);
+    margin-right: calc($layout-spacing-sm * -1);
+
+    & > .column {
+      padding-left: $layout-spacing-sm;
+      padding-right: $layout-spacing-sm;
     }
   }
   &.col-oneline {

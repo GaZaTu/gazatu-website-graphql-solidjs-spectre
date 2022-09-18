@@ -8,6 +8,11 @@
   padding-right: $layout-spacing-md;
   width: 100%;
 
+  &.container-flex {
+    display: flex;
+    flex-direction: column;
+  }
+
   &.container-with-y-margin {
     margin-bottom: $layout-spacing-md;
 

@@ -1,5 +1,5 @@
 import classnames from "classnames"
-import { ComponentProps, createSignal, JSX, Show, splitProps, useContext } from "solid-js"
+import { Accessor, ComponentProps, createMemo, createSignal, JSX, Show, splitProps, useContext } from "solid-js"
 import Column from "./Column"
 import FormContext from "./Form.Context"
 import FormGroupContext from "./Form.Group.Context"
@@ -44,15 +44,23 @@ function FormGroup(props: Props & ComponentProps<"div">) {
     get hasError() {
       return !!form.getError(inputName() ?? "")
     },
-    get hint() {
-      return form.getError(inputName() ?? "")
-    },
+    // get hint() {
+    //   return form.getError(inputName() ?? "")
+    // },
     get required() {
       return !!form.isRequired(inputName() ?? "")
     },
     get horizontal() {
       return !!form.horizontal
     },
+  })
+
+  const hint = createMemo(() => {
+    return _props.hint
+  })
+
+  const error = createMemo(() => {
+    return form.getError(inputName() ?? "")
   })
 
   const context: ComponentProps<typeof FormGroupContext.Provider>["value"] = {
@@ -97,10 +105,12 @@ function FormGroup(props: Props & ComponentProps<"div">) {
     )
   }
 
-  const createHint = () => {
+  const createHint = (hint: Accessor<JSX.Element>) => {
     return (
-      <Show when={_props.hint}>
-        <small class="form-input-hint">{_props.hint}</small>
+      <Show when={hint()} keyed>
+        {hint => (
+          <small class="form-input-hint">{hint}</small>
+        )}
       </Show>
     )
   }
@@ -115,7 +125,8 @@ function FormGroup(props: Props & ComponentProps<"div">) {
             </Column>
             <Column xxl={9} sm={12}>
               {fml.children}
-              {createHint()}
+              {createHint(error)}
+              {createHint(hint)}
             </Column>
           </Column.Row>
         </Show>
@@ -123,7 +134,8 @@ function FormGroup(props: Props & ComponentProps<"div">) {
         <Show when={!_props.horizontal}>
           {createLabel()}
           {fml.children}
-          {createHint()}
+          {createHint(error)}
+          {createHint(hint)}
         </Show>
       </FormGroupContext.Provider>
     </div>

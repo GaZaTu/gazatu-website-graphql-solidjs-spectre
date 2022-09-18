@@ -54,7 +54,8 @@ function Checkbox(props: Props & ComponentProps<"input">) {
       return inputProps.value
     }
 
-    return form.getValue(inputProps.name ?? "") ?? false
+    const value = form.getValue(inputProps.name ?? "") ?? false
+    return value
   })
 
   const handleInput: ComponentProps<"input">["oninput"] = ev => {

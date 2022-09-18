@@ -7,14 +7,18 @@ import AppMain from "./AppMain"
 import { setDefaultFetchInfo } from "./lib/fetchFromApi"
 import { setGraphqlEndpoint } from "./lib/fetchGraphQL"
 import AnchorContext from "./ui/A.Context"
+import ModalPortal from "./ui/Modal.Portal"
 import Toaster from "./ui/Toaster"
 import { useColorSchemeEffect } from "./ui/util/colorScheme"
 
 AnchorContext.useLocation = useLocation
 AnchorContext.useNavigate = useNavigate
 
-setDefaultFetchInfo("https://api.gazatu.xyz")
-setGraphqlEndpoint("https://api.gazatu.xyz/graphql")
+// setDefaultFetchInfo("https://api.gazatu.xyz")
+// setGraphqlEndpoint("https://api.gazatu.xyz/graphql")
+
+setDefaultFetchInfo("http://localhost:3434")
+setGraphqlEndpoint("http://localhost:3434/graphql")
 
 type Props = {
   url?: string
@@ -38,6 +42,7 @@ const App: Component<Props> = props => {
 
         <AppFooter />
 
+        <ModalPortal />
         <Toaster />
       </MetaProvider>
     </Router>

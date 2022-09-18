@@ -1,5 +1,5 @@
 import classnames from "classnames"
-import { ComponentProps } from "solid-js"
+import { ComponentProps, splitProps } from "solid-js"
 import A from "./A"
 import ModalBody from "./Modal.Body"
 import ModalContext from "./Modal.Context"
@@ -41,7 +41,7 @@ function Modal(props: Props & ComponentProps<"div">) {
 
   return (
     <div {..._props}>
-      <A href={props.oncloseHref} onclick={props.onclose} />
+      <A class="modal-overlay" href={props.oncloseHref} onclick={props.onclose} />
       <div class="modal-container">
         <ModalContext.Provider value={context}>
           {fml.children}

@@ -171,9 +171,8 @@
       }
 
       > .container {
-        max-width: 100%;
-        overflow: hidden;
         flex-direction: column;
+        max-width: 100%;
       }
 
       .navbar-brand {
@@ -192,6 +191,7 @@
 
         > .container {
           flex-direction: unset;
+          overflow: hidden;
         }
       }
 

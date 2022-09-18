@@ -33,11 +33,12 @@ const mergeFetchParams = ([info, init]: Parameters<typeof fetch>, [defaultInfo, 
   return [info, init] as const
 }
 
-const fetchFromApi: (typeof fetch) = (info, init) => {
+const fetchFromApi: (typeof fetch) = async (info, init) => {
   const defaultInfo = defaultFetchInfo()
   const defaultInit = defaultFetchInit()
 
-  return fetch(...mergeFetchParams([info, init], [defaultInfo, defaultInit]))
+  const response = await fetch(...mergeFetchParams([info, init], [defaultInfo, defaultInit]))
+  return response
 }
 
 export default fetchFromApi

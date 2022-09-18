@@ -22,7 +22,7 @@ const UserView: Component = () => {
   }
 
   return (
-    <Section size="xl" withYMargin>
+    <Section size="xl" marginY>
       <Show when={isSelf()}>
         <Button color="warning" onclick={logout}>Logout</Button>
       </Show>

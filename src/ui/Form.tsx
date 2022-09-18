@@ -6,13 +6,14 @@ import FormGroup from "./Form.Group"
 import "./Label.scss"
 import createHTMLMemoHook from "./util/createHTMLMemoHook"
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Obj = Record<string, any>
 
-type FormConfig<Data extends Obj = any, Ext extends Obj = Obj> = NonNullable<Parameters<typeof createForm<Data, Ext>>[0]> & {
+type FormConfig<Data extends Obj = Obj, Ext extends Obj = Obj> = NonNullable<Parameters<typeof createForm<Data, Ext>>[0]> & {
   isRequired?: (name?: string) => boolean
 }
 
-const createContext = <Data extends Obj = any, Ext extends Obj = Obj>(config: FormConfig<Data, Ext>) => {
+const createContext = <Data extends Obj = Obj, Ext extends Obj = Obj>(config: FormConfig<Data, Ext>) => {
   const {
     isRequired,
     ...formConfig
@@ -40,7 +41,13 @@ const createProps = createHTMLMemoHook((props: Props) => {
 
 function Form(props: Props & ComponentProps<"form">) {
   const [fml] = splitProps(props, ["children"])
-  const [_props] = createProps(props)
+  const [_props] = createProps(props, {
+    onKeyDown: ev => {
+      if (ev.ctrlKey && ev.key === "Enter") {
+        _props.context?.handleSubmit?.()
+      }
+    },
+  })
 
   const form: ComponentProps<typeof FormContext.Provider>["value"] = {
     getValue: (name) => {

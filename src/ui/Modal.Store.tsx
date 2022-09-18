@@ -2,29 +2,29 @@
 
 import { createEffect, createSignal, onCleanup } from "solid-js"
 
-export interface ToastData<T> {
+export interface ModalData<T> {
   id: string
   data: T
 }
 
-export type ToasterListener<T> = (queue: ToastData<T>[]) => void
+export type ModalListener<T> = (queue: ModalData<T>[]) => void
 
-export class ToasterStore<T> {
-  private static toasterId = 0
+export class ModalStore<T> {
+  private static modalId = 0
 
   private id: number
 
-  private queue: ToastData<T>[] = []
+  private queue: ModalData<T>[] = []
 
-  private listeners = new Set<ToasterListener<T>>()
+  private listeners = new Set<ModalListener<T>>()
 
-  private toastId = 0
+  private modalId = 0
 
   constructor() {
-    this.id = ToasterStore.toasterId++
+    this.id = ModalStore.modalId++
   }
 
-  subscribe(callback: ToasterListener<T>) {
+  subscribe(callback: ModalListener<T>) {
     this.listeners.add(callback)
 
     return () => {
@@ -41,9 +41,9 @@ export class ToasterStore<T> {
   }
 
   create(data: T) {
-    const id = `toast-${this.id}-[${this.toastId}`
+    const id = `modal-${this.id}-[${this.modalId}`
 
-    this.toastId += 1
+    this.modalId += 1
     this.queue.push({ id, data })
     this.notify()
 
@@ -65,11 +65,11 @@ export class ToasterStore<T> {
   }
 }
 
-export function useToaster<T>(toaster: ToasterStore<T>) {
-  const [signal, setSignal] = createSignal(toaster.getQueue())
+export function useModals<T>(modals: ModalStore<T>) {
+  const [signal, setSignal] = createSignal(modals.getQueue())
 
   createEffect(() => {
-    onCleanup(toaster.subscribe(setSignal))
+    onCleanup(modals.subscribe(setSignal))
   })
 
   return signal

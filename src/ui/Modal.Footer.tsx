@@ -1,5 +1,5 @@
 import classnames from "classnames"
-import { ComponentProps } from "solid-js"
+import { ComponentProps, splitProps } from "solid-js"
 import "./Modal.scss"
 import createHTMLMemoHook from "./util/createHTMLMemoHook"
 

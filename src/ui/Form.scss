@@ -25,17 +25,25 @@
 }
 
 .form-input-hint {
-  color: $gray;
+  display: block;
+  color: $body-fg-monochrome;
   font-size: $font-size-sm;
-  margin-top: $unit-1;
 
-  .has-success &,
-  .is-success + & {
-    color: $success;
+  &:first-of-type {
+    margin-top: $unit-1;
   }
 
-  .has-error &,
-  .is-error + & {
+  &:last-of-type {
+    margin-bottom: $unit-1;
+  }
+
+  // .has-success &,
+  // .is-success + & {
+  //   color: $success;
+  // }
+
+  .has-error &:first-of-type,
+  .is-error + &:first-of-type {
     color: $failure;
   }
 }

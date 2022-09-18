@@ -1,0 +1,8 @@
+@use "../spectre.css/variables" as *;
+
+// Icon more
+.#{$icon-prefix}.icon-more-vert {
+  &::before {
+    box-shadow: 0 -.4em, 0 .4em;
+  }
+}

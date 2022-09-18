@@ -26,6 +26,9 @@
       line-height: $unit-4;
       margin: $unit-h;
       width: auto;
+      border: 0;
+      margin-left: 0;
+      padding: calc(var(--control-padding-y-md) - var(--unit-h)) calc(var(--control-padding-x-md) - var(--unit-h));
     }
   }
 
@@ -46,4 +49,21 @@
   //     flex: 1 0 auto;
   //   }
   // }
+}
+
+.has-error {
+  .form-autocomplete {
+    .form-autocomplete-input {
+      border-color: $failure;
+
+      &.is-focused {
+        box-shadow: 0 0 0 .1rem rgba($failure--rgb-triplet, .2);
+      }
+
+      .form-input {
+        background-color: unset;
+        box-shadow: unset;
+      }
+    }
+  }
 }

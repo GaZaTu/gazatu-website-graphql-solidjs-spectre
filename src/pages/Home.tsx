@@ -42,7 +42,7 @@ const HomeView: Component = () => {
 
   return (
     <>
-      <Section size="xl" withYMargin>
+      <Section size="xl" marginY>
         <Button.Group>
           <Button onclick={() => setColorScheme(null)} active={colorScheme() === null}>System</Button>
           <Button onclick={() => setColorScheme("dark")} active={colorScheme() === "dark"}>Dark</Button>

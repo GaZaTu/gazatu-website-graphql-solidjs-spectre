@@ -18,6 +18,7 @@ type Props = {
   loading?: boolean
   useQuery?: boolean
   compact?: boolean
+  pageQueryParam?: string
 }
 
 const createProps = createHTMLMemoHook((props: Props) => {
@@ -69,7 +70,7 @@ function Pagination(props: Props & ComponentProps<"nav">) {
   // const location = A.Context.useLocation()
   // const navigate = A.Context.useNavigate()
 
-  const onclick: ComponentProps<"li">["onclick"] = (event) => {
+  const onclick = (event: MouseEvent & { currentTarget: HTMLElement }) => {
     const page = event.currentTarget.dataset.page
     if (!page) {
       return
@@ -95,17 +96,35 @@ function Pagination(props: Props & ComponentProps<"nav">) {
     return (_props.pageIndex ?? _props.firstIndex ?? 0) < ((_props.pageCount ?? 0) - 1)
   })
 
+  const pageQueryParams = (page: number) => {
+    if (!_props.pageQueryParam) {
+      return undefined
+    }
+
+    return {
+      [_props.pageQueryParam]: page,
+    }
+  }
+
+  const prevPage = createMemo(() => {
+    return (_props.pageIndex ?? 0) - 1
+  })
+
+  const nextPage = createMemo(() => {
+    return (_props.pageIndex ?? 0) + 1
+  })
+
   return (
     <nav {..._props}>
       {/* <Show when={_props.hasPrev} /> */}
-      <PaginationItem data-page={(_props.pageIndex ?? 0) - 1} onclick={onclick} disabled={!canPrev()}>
+      <PaginationItem data-page={prevPage()} queryParams={pageQueryParams(prevPage())} onclick={onclick} disabled={!canPrev()}>
         <Icon src={iconArrowLeft} />
       </PaginationItem>
 
       <ul>
         <For each={pages()}>
           {page => (
-            <PaginationItem data-page={page} onclick={(page >= 0) ? onclick : undefined} active={page === (_props.pageIndex ?? 0)}>
+            <PaginationItem data-page={page} queryParams={pageQueryParams(page)} onclick={(page >= 0) ? onclick : undefined} active={page === (_props.pageIndex ?? 0)}>
               {(page >= 0) ? String(page + (((_props.firstIndex ?? 0) === 0) ? 1 : 0)) : "..."}
             </PaginationItem>
           )}
@@ -113,7 +132,7 @@ function Pagination(props: Props & ComponentProps<"nav">) {
       </ul>
 
       {/* <Show when={_props.hasNext} /> */}
-      <PaginationItem data-page={(_props.pageIndex ?? 0) + 1} onclick={onclick} disabled={!canNext()}>
+      <PaginationItem data-page={nextPage()} queryParams={pageQueryParams(nextPage())} onclick={onclick} disabled={!canNext()}>
         <Icon src={iconArrowRight} />
       </PaginationItem>
     </nav>
