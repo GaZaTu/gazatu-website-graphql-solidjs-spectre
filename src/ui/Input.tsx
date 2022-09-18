@@ -62,7 +62,11 @@ function Input(props: Props & ComponentProps<"input">) {
       return _props.value
     }
 
-    const value = form.getValue(_props.name ?? "") ?? ""
+    if (!_props.name) {
+      return undefined
+    }
+
+    const value = form.getValue(_props.name) ?? ""
     return value
   })
 

@@ -42,13 +42,23 @@ function FormGroup(props: Props & ComponentProps<"div">) {
   const [fml] = splitProps(props, ["children"])
   const [_props] = createProps(props, {
     get hasError() {
-      return !!form.getError(inputName() ?? "")
+      if (!inputName()) {
+        return false
+      }
+
+      const error = form.getError(inputName()!)
+      if (typeof error !== "string") {
+        return false
+      }
+
+      return true
     },
-    // get hint() {
-    //   return form.getError(inputName() ?? "")
-    // },
     get required() {
-      return !!form.isRequired(inputName() ?? "")
+      if (!inputName()) {
+        return false
+      }
+
+      return !!form.isRequired(inputName()!)
     },
     get horizontal() {
       return !!form.horizontal
@@ -60,7 +70,16 @@ function FormGroup(props: Props & ComponentProps<"div">) {
   })
 
   const error = createMemo(() => {
-    return form.getError(inputName() ?? "")
+    if (!inputName()) {
+      return undefined
+    }
+
+    const error = form.getError(inputName()!)
+    if (typeof error !== "string") {
+      return undefined
+    }
+
+    return error
   })
 
   const context: ComponentProps<typeof FormGroupContext.Provider>["value"] = {

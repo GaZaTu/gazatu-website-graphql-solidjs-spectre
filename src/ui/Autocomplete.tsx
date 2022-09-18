@@ -101,7 +101,11 @@ function Autocomplete<V, O>(props: Props<V, O> & Omit<ComponentProps<"div">, "on
       return selectProps.value
     }
 
-    const value = form.getValue(containerProps.name ?? "") ?? (selectProps.multiple ? [] : "")
+    if (!containerProps.name) {
+      return undefined
+    }
+
+    const value = form.getValue(containerProps.name) ?? (selectProps.multiple ? [] : "")
     return value
   })
 
