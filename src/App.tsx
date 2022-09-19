@@ -15,8 +15,8 @@ AnchorContext.useLocation = useLocation
 AnchorContext.useNavigate = useNavigate
 
 if (import.meta.env.PROD) {
-  setDefaultFetchInfo("https://api.gazatu.xyz")
-  setGraphqlEndpoint("https://api.gazatu.xyz/graphql")
+  setDefaultFetchInfo("https://api.test.gazatu.xyz")
+  setGraphqlEndpoint("https://api.test.gazatu.xyz/graphql")
 } else {
   setDefaultFetchInfo("http://localhost:3434")
   setGraphqlEndpoint("http://localhost:3434/graphql")
