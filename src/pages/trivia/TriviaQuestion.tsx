@@ -65,7 +65,7 @@ const TriviaQuestionView: Component = () => {
 
   const response = createGraphQLResource<Query>({
     query: gql`
-      query ($id: String!, $isNew: Boolean!, $isTriviaAdmin: Boolean!) {
+      query ($id: String!, $isNew: Boolean!) { # , $isTriviaAdmin: Boolean!
         triviaQuestion(id: $id) @skip(if: $isNew) {
           id
           question
@@ -83,15 +83,15 @@ const TriviaQuestionView: Component = () => {
           disabled
           createdAt
           updatedAt
-          reports @include(if: $isTriviaAdmin) {
-            id
-            message
-            submitter
-            createdAt
-            updatedAt
-          }
+          # reports @include(if: $isTriviaAdmin) {
+          #   id
+          #   message
+          #   submitter
+          #   createdAt
+          #   updatedAt
+          # }
         }
-        triviaCategories(disabled: false, verified: null) {
+        triviaCategories { # (disabled: false, verified: null)
           id
           name
           verified
@@ -191,7 +191,7 @@ const TriviaQuestionView: Component = () => {
   const similarQuestionsResource = createGraphQLResource<Query>({
     query: gql`
       query ($search: String) {
-        triviaQuestions(search: $search, limit: 4) {
+        triviaQuestionsConnection(args: { search: $search, limit: 4 }) {
           slice {
             id
             question
@@ -212,7 +212,7 @@ const TriviaQuestionView: Component = () => {
     onError: Toaster.pushError,
   })
   const similarQuestions = createMemo(() => {
-    return similarQuestionsResource.data?.triviaQuestions?.slice
+    return similarQuestionsResource.data?.triviaQuestionsConnection?.slice
       ?.filter(q => q.id !== id())
   })
 
@@ -248,7 +248,7 @@ const TriviaQuestionView: Component = () => {
       <Column.Row>
         <Column>
           <Form context={form} horizontal>
-            <FormGroup label="Categories" hint={!form.data("categories")?.length ? "pick `Generic` if this question does not have a category" : undefined}>
+            <FormGroup label="Categories" hint={(form.touched("categories") && !form.data("categories")?.length) ? "pick `Generic` if this question does not have a category" : undefined}>
               <Autocomplete name="categories" {...categories} multiple readOnly={readOnly()} />
             </FormGroup>
 

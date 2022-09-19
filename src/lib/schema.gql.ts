@@ -4,7 +4,7 @@ export interface Query {
     triviaCategory?: TriviaCategory | null;
     triviaCategories?: TriviaCategory[];
     triviaQuestion?: TriviaQuestion | null;
-    triviaQuestions?: TriviaQuestionPagination | null;
+    triviaQuestionsConnection?: TriviaQuestionsConnection | null;
 }
 export interface Auth {
     __typename?: "Auth";
@@ -15,12 +15,10 @@ export interface User {
     __typename?: "User";
     id?: string | null;
     username?: string;
-    password?: Void | null;
     roles?: UserRole[];
     createdAt?: string | null;
     updatedAt?: string | null;
 }
-export type Void = unknown;
 export interface UserRole {
     __typename?: "UserRole";
     id?: string | null;
@@ -52,8 +50,8 @@ export interface TriviaQuestion {
     createdAt?: string | null;
     updatedAt?: string | null;
 }
-export interface TriviaQuestionPagination {
-    __typename?: "TriviaQuestionPagination";
+export interface TriviaQuestionsConnection {
+    __typename?: "TriviaQuestionsConnection";
     slice?: TriviaQuestion[];
     pageIndex?: number;
     pageCount?: number;
@@ -67,4 +65,11 @@ export interface Mutation {
     registerUser?: Auth;
     saveTriviaCategory?: TriviaCategory;
     saveTriviaQuestion?: TriviaQuestion;
+    verifyTriviaQuestions?: Void | null;
+    disableTriviaQuestions?: Void | null;
+}
+export type Void = unknown;
+export interface Subscription {
+    __typename?: "Subscription";
+    triviaSSE?: string;
 }

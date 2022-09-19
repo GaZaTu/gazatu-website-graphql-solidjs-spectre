@@ -26,8 +26,8 @@ const TriviaQuestionListView: Component = () => {
 
   const response = createGraphQLResource<Query>({
     query: gql`
-      query ($isTriviaAdmin: Boolean!, $offset: Int, $limit: Int, $sortBy: String, $sortDir: SortDirection, $search: String, $verified: Boolean, $disabled: Boolean) {
-        triviaQuestions(offset: $offset, limit: $limit, sortBy: $sortBy, sortDir: $sortDir, search: $search, verified: $verified, disabled: $disabled) {
+      query ($args: TriviaQuestionsConnectionArgs) {
+        triviaQuestionsConnection(args: $args) {
           slice {
             id
             categories {
@@ -53,23 +53,30 @@ const TriviaQuestionListView: Component = () => {
       get isTriviaAdmin() {
         return isTriviaAdmin()
       },
-      get offset() {
-        return (tableState.pagination?.pageIndex ?? 0) * (tableState.pagination?.pageSize ?? 0)
+      args: {
+        get offset() {
+          return (tableState.pagination?.pageIndex ?? 0) * (tableState.pagination?.pageSize ?? 0)
+        },
+        get limit() {
+          return tableState.pagination?.pageSize ?? 0
+        },
+        get orderBy() {
+          const orderBy = tableState.sorting?.[0]
+          if (!orderBy) {
+            return undefined
+          }
+
+          return {
+            col: orderBy.id,
+            dir: orderBy.desc ? "DESC" : "ASC",
+          }
+        },
+        get search() {
+          return tableState.globalFilter
+        },
+        verified: undefined,
+        disabled: false,
       },
-      get limit() {
-        return tableState.pagination?.pageSize ?? 0
-      },
-      get sortBy() {
-        return tableState.sorting?.[0]?.id
-      },
-      get sortDir() {
-        return tableState.sorting?.[0]?.desc ? "DESC" : "ASC"
-      },
-      get search() {
-        return tableState.globalFilter
-      },
-      verified: undefined,
-      disabled: false,
     },
     onError: Toaster.pushError,
   })
@@ -78,7 +85,7 @@ const TriviaQuestionListView: Component = () => {
 
   const table = Table.createContext<TriviaQuestion>({
     get data() {
-      return response.data?.triviaQuestions?.slice ?? []
+      return response.data?.triviaQuestionsConnection?.slice ?? []
     },
     columns: [
       tableColumnSelect(),
@@ -129,7 +136,7 @@ const TriviaQuestionListView: Component = () => {
     manualSorting: true,
     manualFiltering: true,
     get pageCount() {
-      return response.data?.triviaQuestions?.pageCount
+      return response.data?.triviaQuestionsConnection?.pageCount
     },
   })
 
