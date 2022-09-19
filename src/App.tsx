@@ -14,11 +14,13 @@ import { useColorSchemeEffect } from "./ui/util/colorScheme"
 AnchorContext.useLocation = useLocation
 AnchorContext.useNavigate = useNavigate
 
-// setDefaultFetchInfo("https://api.gazatu.xyz")
-// setGraphqlEndpoint("https://api.gazatu.xyz/graphql")
-
-setDefaultFetchInfo("http://localhost:3434")
-setGraphqlEndpoint("http://localhost:3434/graphql")
+if (import.meta.env.PROD) {
+  setDefaultFetchInfo("https://api.gazatu.xyz")
+  setGraphqlEndpoint("https://api.gazatu.xyz/graphql")
+} else {
+  setDefaultFetchInfo("http://localhost:3434")
+  setGraphqlEndpoint("http://localhost:3434/graphql")
+}
 
 type Props = {
   url?: string
