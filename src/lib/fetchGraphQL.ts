@@ -29,6 +29,7 @@ const fetchGraphQL = async<T>(options: GraphQLOptions) => {
     method: "POST",
     headers: {
       "content-type": "application/json",
+      "accept": "application/graphql-response+json, application/json",
     },
     body: JSON.stringify({
       query: options.query,
@@ -38,21 +39,25 @@ const fetchGraphQL = async<T>(options: GraphQLOptions) => {
 
   const json = await response.json() as GraphQLResult<T>
 
-  if (!response.ok) {
-    const errorMessage = json.message
+  if (!json?.data) {
+    const errorMessageGraphQL = json?.errors?.[0]?.message
+    if (errorMessageGraphQL) {
+      throw new GraphQLError(errorMessageGraphQL)
+    }
+
+    const errorMessage = json?.message
     if (errorMessage) {
       throw new GraphQLError(errorMessage)
     }
 
-    throw new GraphQLError(response.statusText)
+    if (!response.ok) {
+      throw new GraphQLError(response.statusText)
+    }
+
+    throw new GraphQLError("Unexpected")
   }
 
-  const errorMessage = json?.errors?.[0]?.message
-  if (errorMessage) {
-    throw new GraphQLError(errorMessage)
-  }
-
-  return json.data!
+  return json.data
 }
 
 export default fetchGraphQL

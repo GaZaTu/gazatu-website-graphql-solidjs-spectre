@@ -41,7 +41,7 @@ const AppNav: Component = () => {
   const [expanded, setExpanded] = createSignal(false)
 
   return (
-    <Navbar id="AppHeader" size="lg" filled style={{ display: !showAppHeader() ? "none" : undefined }} responsive expanded={expanded()}>
+    <Navbar id="AppHeader" size="lg" filled style={{ display: !showAppHeader() ? "none" : "flex" }} responsive expanded={expanded()}>
       <GlobalProgress />
 
       <Section size="xl">
@@ -92,8 +92,10 @@ const AppNav: Component = () => {
               )}>
                 <Menu>
                   <Menu.Item>
-                    <FormGroup label="Dark Theme">
-                      <Switch checked={computedColorScheme() === "dark"} onclick={() => setColorScheme((computedColorScheme() === "dark") ? "light" : "dark")} />
+                    <FormGroup>
+                      <Switch checked={computedColorScheme() === "dark"} onclick={() => setColorScheme((computedColorScheme() === "dark") ? "light" : "dark")}>
+                        Dark Theme
+                      </Switch>
                     </FormGroup>
                   </Menu.Item>
                   <Show when={storedAuth()}>

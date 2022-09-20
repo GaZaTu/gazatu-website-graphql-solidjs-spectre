@@ -1,4 +1,4 @@
-import { Meta, MetaProvider, Title } from "@solidjs/meta"
+import { MetaProvider, Title } from "@solidjs/meta"
 import { Router, useLocation, useNavigate } from "@solidjs/router"
 import { Component, ComponentProps, ErrorBoundary } from "solid-js"
 import AppFooter from "./AppFooter"
@@ -34,7 +34,7 @@ const App: Component<Props> = props => {
     <Router url={props.url}>
       <MetaProvider tags={props.head}>
         <Title>gazatu.xyz</Title>
-        <Meta name="description">trivia'n'shit</Meta>
+        {/* <Meta name="description">trivia'n'shit</Meta> */}
 
         <AppHeader />
 
