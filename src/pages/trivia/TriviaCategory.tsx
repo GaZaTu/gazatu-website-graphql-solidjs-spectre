@@ -1,6 +1,7 @@
 import { validator } from "@felte/validator-superstruct"
+import { Title } from "@solidjs/meta"
 import { useNavigate } from "@solidjs/router"
-import { Component, createEffect, createMemo } from "solid-js"
+import { Component, createEffect, createMemo, Show } from "solid-js"
 import { isServer } from "solid-js/web"
 import { nullable, optional, size, string, type } from "superstruct"
 import fetchGraphQL, { createGraphQLResource, gql } from "../../lib/fetchGraphQL"
@@ -15,11 +16,34 @@ import Icon from "../../ui/Icon"
 import iconDelete from "../../ui/icons/iconDelete"
 import iconSave from "../../ui/icons/iconSave"
 import Input from "../../ui/Input"
+import ModalPortal from "../../ui/Modal.Portal"
 import Navbar from "../../ui/Navbar"
 import { createGlobalProgressStateEffect } from "../../ui/Progress.Global"
 import Section from "../../ui/Section"
 import Switch from "../../ui/Switch"
 import Toaster from "../../ui/Toaster"
+
+export const verifyTriviaCategories = async (ids: string[]) => {
+  await fetchGraphQL<Mutation>({
+    query: gql`
+      mutation ($ids: [String!]!) {
+        verifyTriviaCategories(ids: $ids)
+      }
+    `,
+    variables: { ids },
+  })
+}
+
+export const removeTriviaCategories = async (ids: string[]) => {
+  await fetchGraphQL<Mutation>({
+    query: gql`
+      mutation ($ids: [String!]!) {
+        removeTriviaCategories(ids: $ids)
+      }
+    `,
+    variables: { ids },
+  })
+}
 
 const TriviaCategorySchema = type({
   name: size(string(), 1, 32),
@@ -44,14 +68,6 @@ const TriviaCategoryView: Component = () => {
           disabled
           createdAt
           updatedAt
-          questions @skip(if: true) {
-            id
-            question
-            hint1
-            hint2
-            answer
-            verified
-          }
         }
       }
     `,
@@ -111,8 +127,30 @@ const TriviaCategoryView: Component = () => {
     return loading() || (id() && !isTriviaAdmin())
   })
 
+  const verified = createMemo(() => {
+    return response.data?.triviaCategory?.verified ?? false
+  })
+
+  const handleVerify = async () => {
+    await Toaster.try(async () => {
+      await verifyTriviaCategories([id()])
+    })
+  }
+
+  const handleRemove = async () => {
+    if (!await ModalPortal.confirm("Delete this trivia category?")) {
+      return
+    }
+
+    await Toaster.try(async () => {
+      await removeTriviaCategories([id()])
+      navigate(-1)
+    })
+  }
+
   return (
     <Section size="lg" marginY>
+      <Title>Trivia Category</Title>
       <h3>Trivia Category</h3>
 
       <Form context={form} horizontal>
@@ -137,16 +175,18 @@ const TriviaCategoryView: Component = () => {
             </Navbar.Section>
 
             <Navbar.Section>
-              <Button color="failure" action rounded disabled={readOnly()}>
-                <Icon src={iconDelete} />
-              </Button>
+              <Show when={isTriviaAdmin()}>
+                <Button color="failure" action rounded onclick={handleRemove} disabled={readOnly() || !id()}>
+                  <Icon src={iconDelete} />
+                </Button>
+              </Show>
             </Navbar.Section>
           </Navbar>
         </FormGroup>
       </Form>
 
       <FormGroup label="Verified" horizontal>
-        <Switch checked={!!response.data?.triviaCategory?.verified} oninput={undefined} disabled={readOnly() || !id()} style={{ color: response.data?.triviaCategory?.verified ? "var(--success)" : "var(--failure)", "font-weight": "bold" }} />
+        <Switch checked={verified()} oninput={handleVerify} disabled={readOnly() || !id() || verified()} style={{ color: verified() ? "var(--success)" : "var(--failure)", "font-weight": "bold" }} />
       </FormGroup>
     </Section>
   )

@@ -1,6 +1,7 @@
 import { validator } from "@felte/validator-superstruct"
 import { createDebouncedMemo } from "@solid-primitives/memo"
 import { createStorageSignal } from "@solid-primitives/storage"
+import { Title } from "@solidjs/meta"
 import { useNavigate } from "@solidjs/router"
 import { Component, createEffect, createMemo, For, Show } from "solid-js"
 import { isServer } from "solid-js/web"
@@ -243,6 +244,7 @@ const TriviaQuestionView: Component = () => {
 
   return (
     <Section size="xl" marginY>
+      <Title>Trivia Question</Title>
       <h3>Trivia Question</h3>
 
       <Column.Row>

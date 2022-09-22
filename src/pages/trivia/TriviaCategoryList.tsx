@@ -1,5 +1,5 @@
 import { Title } from "@solidjs/meta"
-import { Component, Show } from "solid-js"
+import { Component, createMemo, Show } from "solid-js"
 import { createGraphQLResource, gql } from "../../lib/fetchGraphQL"
 import { Query, TriviaCategory } from "../../lib/schema.gql"
 import { createAuthCheck } from "../../store/auth"
@@ -8,20 +8,22 @@ import Column from "../../ui/Column"
 import Icon from "../../ui/Icon"
 import iconCheck from "../../ui/icons/iconCheck"
 import iconDelete from "../../ui/icons/iconDelete"
+import ModalPortal from "../../ui/Modal.Portal"
 import { createGlobalProgressStateEffect } from "../../ui/Progress.Global"
 import Section from "../../ui/Section"
 import Table from "../../ui/Table"
 import { createTableState, tableColumnLink, tableColumnSelect, tableDateCell, tableOnGlobalFilterChange, tableOnPaginationChange, tableOnSortingChange } from "../../ui/Table.Helpers"
 import Toaster from "../../ui/Toaster"
 import { centerSelf } from "../../ui/util/position"
+import { removeTriviaCategories, verifyTriviaCategories } from "./TriviaCategory"
 
 const TriviaCategoryListView: Component = () => {
   const isTriviaAdmin = createAuthCheck("trivia/admin")
 
   const response = createGraphQLResource<Query>({
     query: gql`
-      query ($isTriviaAdmin: Boolean!, $verified: Boolean, $disabled: Boolean) {
-        triviaCategories(verified: $verified, disabled: $disabled) {
+      query ($isTriviaAdmin: Boolean!) {
+        triviaCategories {
           id
           name
           submitter
@@ -37,8 +39,6 @@ const TriviaCategoryListView: Component = () => {
       get isTriviaAdmin() {
         return isTriviaAdmin()
       },
-      verified: undefined,
-      disabled: false,
     },
     onError: Toaster.pushError,
   })
@@ -69,6 +69,12 @@ const TriviaCategoryListView: Component = () => {
         maxSize: 100,
       },
       {
+        accessorKey: "questionsCount",
+        header: "Questions",
+        cell: info => info.getValue() ?? "N/A",
+        maxSize: 100,
+      },
+      {
         accessorKey: "verified",
         header: "Verified",
         meta: { compact: true },
@@ -84,6 +90,30 @@ const TriviaCategoryListView: Component = () => {
     onGlobalFilterChange: tableOnGlobalFilterChange(setTableState),
   })
 
+  const selectedIds = createMemo(() => {
+    return table.actions.getSelectedRowModel().flatRows.map(r => r.original.id!)
+  })
+
+  const handleVerify = async () => {
+    await Toaster.try(async () => {
+      await verifyTriviaCategories(selectedIds())
+      table.actions.setRowSelection({})
+      response.refresh()
+    })
+  }
+
+  const handleRemove = async () => {
+    if (!await ModalPortal.confirm("Delete the selected trivia categories?")) {
+      return
+    }
+
+    await Toaster.try(async () => {
+      await removeTriviaCategories(selectedIds())
+      table.actions.setRowSelection({})
+      response.refresh()
+    })
+  }
+
   return (
     <>
       <Section size="xl" marginY>
@@ -96,13 +126,13 @@ const TriviaCategoryListView: Component = () => {
           <Column.Row>
             <Show when={isTriviaAdmin()}>
               <Column>
-                <Button color="success" action rounded disabled={!table.actions.getIsSomeRowsSelected()}>
+                <Button color="success" action rounded disabled={!selectedIds().length} onclick={handleVerify}>
                   <Icon src={iconCheck} />
                 </Button>
               </Column>
 
               <Column>
-                <Button color="failure" action rounded disabled={!table.actions.getIsSomeRowsSelected()}>
+                <Button color="failure" action rounded disabled={!selectedIds().length} onclick={handleRemove}>
                   <Icon src={iconDelete} />
                 </Button>
               </Column>
