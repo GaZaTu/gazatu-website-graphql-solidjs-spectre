@@ -92,7 +92,7 @@ const TriviaQuestionView: Component = () => {
           #   updatedAt
           # }
         }
-        categories { # (disabled: false, verified: null)
+        triviaCategoryList { # (disabled: false, verified: null)
           id
           name
           verified
@@ -250,7 +250,7 @@ const TriviaQuestionView: Component = () => {
       <Column.Row>
         <Column>
           <Form context={form} horizontal>
-            <FormGroup label="Categories" hint={(form.touched("categories") && !form.data("categories")?.length) ? "pick `Generic` if this question does not have a category" : undefined}>
+            <FormGroup label="Categories" hint={(form.touched("categories") && !form.data("categories")?.length) ? "pick `General Knowledge` if this question does not have a category" : undefined}>
               <Autocomplete name="categories" {...categories} multiple readOnly={readOnly()} />
             </FormGroup>
 
