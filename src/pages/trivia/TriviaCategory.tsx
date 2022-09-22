@@ -27,7 +27,7 @@ export const verifyTriviaCategories = async (ids: string[]) => {
   await fetchGraphQL<Mutation>({
     query: gql`
       mutation ($ids: [String!]!) {
-        verifyTriviaCategories(ids: $ids)
+        triviaCategoryVerifyByIds(ids: $ids)
       }
     `,
     variables: { ids },
@@ -38,7 +38,7 @@ export const removeTriviaCategories = async (ids: string[]) => {
   await fetchGraphQL<Mutation>({
     query: gql`
       mutation ($ids: [String!]!) {
-        removeTriviaCategories(ids: $ids)
+        triviaCategoryRemoveByIds(ids: $ids)
       }
     `,
     variables: { ids },
@@ -59,7 +59,7 @@ const TriviaCategoryView: Component = () => {
   const response = createGraphQLResource<Query>({
     query: gql`
       query ($id: String!, $isNew: Boolean!) {
-        triviaCategory(id: $id) @skip(if: $isNew) {
+        triviaCategoryById(id: $id) @skip(if: $isNew) {
           id
           name
           description
@@ -95,7 +95,7 @@ const TriviaCategoryView: Component = () => {
       const res = await fetchGraphQL<Mutation>({
         query: gql`
           mutation ($input: TriviaCategoryInput!) {
-            saveTriviaCategory(input: $input) {
+            triviaCategorySave(input: $input) {
               id
             }
           }
@@ -107,7 +107,7 @@ const TriviaCategoryView: Component = () => {
         response.refresh()
         return "Saved Trivia Category"
       } else {
-        navigate(`/trivia/categories/${res.saveTriviaCategory?.id}`)
+        navigate(`/trivia/categories/${res.triviaCategorySave?.id}`)
         return "Submitted Trivia Category"
       }
     },
@@ -116,7 +116,7 @@ const TriviaCategoryView: Component = () => {
   })
 
   createEffect(() => {
-    form.setData(response.data?.triviaCategory)
+    form.setData(response.data?.triviaCategoryById)
   })
 
   const loading = createMemo(() => {
@@ -128,7 +128,7 @@ const TriviaCategoryView: Component = () => {
   })
 
   const verified = createMemo(() => {
-    return response.data?.triviaCategory?.verified ?? false
+    return response.data?.triviaCategoryById?.verified ?? false
   })
 
   const handleVerify = async () => {

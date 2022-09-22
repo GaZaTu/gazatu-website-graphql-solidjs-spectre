@@ -46,7 +46,7 @@ const RegisterUserSchema = refine(
 
 const gqlAuthenticate = gql`
   query ($username: String!, $password: String!) {
-    authenticate(username: $username, password: $password) {
+    userAuthenticate(username: $username, password: $password) {
       token
       user {
         id
@@ -61,7 +61,7 @@ const gqlAuthenticate = gql`
 
 const gqlRegisterUser = gql`
   mutation ($username: String!, $password: String!) {
-    registerUser(username: $username, password: $password) {
+    userCreate(username: $username, password: $password) {
       token
       user {
         id
@@ -88,7 +88,7 @@ const LoginForm: Component<{ isRegister?: boolean }> = props => {
         variables: { ...input },
       })
 
-      const auth = props.isRegister ? res.registerUser : res.authenticate
+      const auth = props.isRegister ? res.userCreate : res.userAuthenticate
       setStoredAuth(auth ?? null)
 
       navigate("/")

@@ -1,4 +1,5 @@
 import { Title } from "@solidjs/meta"
+import { useLocation } from "@solidjs/router"
 import { Component, createMemo, For, Show } from "solid-js"
 import { createGraphQLResource, gql } from "../../lib/fetchGraphQL"
 import { Query, TriviaCategory, TriviaQuestion } from "../../lib/schema.gql"
@@ -22,12 +23,18 @@ import { disableTriviaQuestions, verifyTriviaQuestions } from "./TriviaQuestion"
 const TriviaQuestionListView: Component = () => {
   const isTriviaAdmin = createAuthCheck("trivia/admin")
 
-  const [tableState, setTableState] = createTableState({ useSearchParams: true })
+  const location = useLocation()
+
+  const [tableState, setTableState] = createTableState({
+    sorting: [
+      { id: "createdAt", desc: true },
+    ],
+  }, { useSearchParams: true })
 
   const response = createGraphQLResource<Query>({
     query: gql`
-      query ($args: TriviaQuestionsConnectionArgs) {
-        triviaQuestionsConnection(args: $args) {
+      query ($args: TriviaQuestionListConnectionArgs) {
+        triviaQuestionListConnection(args: $args) {
           slice {
             id
             categories {
@@ -40,9 +47,7 @@ const TriviaQuestionListView: Component = () => {
             hint2
             submitter
             verified
-            disabled
             createdAt
-            updatedAt
           }
           pageIndex
           pageCount
@@ -74,7 +79,9 @@ const TriviaQuestionListView: Component = () => {
         get search() {
           return tableState.globalFilter
         },
-        verified: undefined,
+        get verified() {
+          return location.query.verified ? (location.query.verified === "true") : undefined
+        },
         disabled: false,
       },
     },
@@ -85,7 +92,7 @@ const TriviaQuestionListView: Component = () => {
 
   const table = Table.createContext<TriviaQuestion>({
     get data() {
-      return response.data?.triviaQuestionsConnection?.slice ?? []
+      return response.data?.triviaQuestionListConnection?.slice ?? []
     },
     columns: [
       tableColumnSelect(),
@@ -106,15 +113,29 @@ const TriviaQuestionListView: Component = () => {
       },
       {
         accessorKey: "question",
-        header: "Name",
+        header: "Question",
+      },
+      {
+        accessorKey: "answer",
+        header: "Answer",
+        maxSize: 100,
+      },
+      {
+        accessorKey: "hint1",
+        header: "Hints",
+      },
+      {
+        accessorKey: "hint2",
+        header: "",
       },
       {
         accessorKey: "submitter",
         header: "Submitter",
+        maxSize: 100,
       },
       {
-        accessorKey: "updatedAt",
-        header: "Updated",
+        accessorKey: "createdAt",
+        header: "Created",
         cell: tableDateCell(),
         maxSize: 100,
       },
@@ -136,7 +157,7 @@ const TriviaQuestionListView: Component = () => {
     manualSorting: true,
     manualFiltering: true,
     get pageCount() {
-      return response.data?.triviaQuestionsConnection?.pageCount
+      return response.data?.triviaQuestionListConnection?.pageCount
     },
   })
 
@@ -171,7 +192,7 @@ const TriviaQuestionListView: Component = () => {
         <h3>Trivia Questions</h3>
       </Section>
 
-      <Section size="xxl" marginY flex style={{ "flex-grow": 1 }}>
+      <Section marginY flex style={{ "flex-grow": 1 }}>
         <Table context={table} loading={response.loading} loadingSize="lg" striped toolbar={
           <Column.Row>
             <Show when={isTriviaAdmin()}>

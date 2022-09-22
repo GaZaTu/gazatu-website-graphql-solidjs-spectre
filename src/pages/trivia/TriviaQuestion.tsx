@@ -32,7 +32,7 @@ export const verifyTriviaQuestions = async (ids: string[]) => {
   await fetchGraphQL<Mutation>({
     query: gql`
       mutation ($ids: [String!]!) {
-        verifyTriviaQuestions(ids: $ids)
+        triviaQuestionVerifyByIds(ids: $ids)
       }
     `,
     variables: { ids },
@@ -43,7 +43,7 @@ export const disableTriviaQuestions = async (ids: string[]) => {
   await fetchGraphQL<Mutation>({
     query: gql`
       mutation ($ids: [String!]!) {
-        disableTriviaQuestions(ids: $ids)
+        triviaQuestionDisableByIds(ids: $ids)
       }
     `,
     variables: { ids },
@@ -67,7 +67,7 @@ const TriviaQuestionView: Component = () => {
   const response = createGraphQLResource<Query>({
     query: gql`
       query ($id: String!, $isNew: Boolean!) { # , $isTriviaAdmin: Boolean!
-        triviaQuestion(id: $id) @skip(if: $isNew) {
+        triviaQuestionById(id: $id) @skip(if: $isNew) {
           id
           question
           answer
@@ -135,7 +135,7 @@ const TriviaQuestionView: Component = () => {
       const res = await fetchGraphQL<Mutation>({
         query: gql`
           mutation ($input: TriviaQuestionInput!) {
-            saveTriviaQuestion(input: $input) {
+            triviaQuestionSave(input: $input) {
               id
             }
           }
@@ -151,7 +151,7 @@ const TriviaQuestionView: Component = () => {
           similarQuestionsResource.clear()
           form.reset()
         } else {
-          navigate(`/trivia/questions/${res.saveTriviaQuestion?.id}`)
+          navigate(`/trivia/questions/${res.triviaQuestionSave?.id}`)
         }
 
         return "Submitted Trivia Question"
@@ -162,7 +162,7 @@ const TriviaQuestionView: Component = () => {
   })
 
   createEffect(() => {
-    form.setData(response.data?.triviaQuestion)
+    form.setData(response.data?.triviaQuestionById)
   })
 
   const loading = createMemo(() => {
@@ -174,7 +174,7 @@ const TriviaQuestionView: Component = () => {
   })
 
   const verified = createMemo(() => {
-    return response.data?.triviaQuestion?.verified ?? false
+    return response.data?.triviaQuestionById?.verified ?? false
   })
 
   const similarQuestionsVariables = createDebouncedMemo(() => {
@@ -192,7 +192,7 @@ const TriviaQuestionView: Component = () => {
   const similarQuestionsResource = createGraphQLResource<Query>({
     query: gql`
       query ($search: String) {
-        triviaQuestionsConnection(args: { search: $search, limit: 4 }) {
+        triviaQuestionListConnection(args: { search: $search, limit: 4 }) {
           slice {
             id
             question
@@ -213,11 +213,11 @@ const TriviaQuestionView: Component = () => {
     onError: Toaster.pushError,
   })
   const similarQuestions = createMemo(() => {
-    return similarQuestionsResource.data?.triviaQuestionsConnection?.slice
+    return similarQuestionsResource.data?.triviaQuestionListConnection?.slice
       ?.filter(q => q.id !== id())
   })
 
-  const categories = Autocomplete.createOptions(() => response.data?.triviaCategories ?? [], {
+  const categories = Autocomplete.createOptions(() => response.data?.triviaCategoryList ?? [], {
     filterable: true,
     createable: false,
     key: "name",

@@ -1,4 +1,5 @@
 import { Title } from "@solidjs/meta"
+import { useLocation } from "@solidjs/router"
 import { Component, createMemo, Show } from "solid-js"
 import { createGraphQLResource, gql } from "../../lib/fetchGraphQL"
 import { Query, TriviaCategory } from "../../lib/schema.gql"
@@ -20,17 +21,17 @@ import { removeTriviaCategories, verifyTriviaCategories } from "./TriviaCategory
 const TriviaCategoryListView: Component = () => {
   const isTriviaAdmin = createAuthCheck("trivia/admin")
 
+  const location = useLocation()
+
   const response = createGraphQLResource<Query>({
     query: gql`
-      query ($isTriviaAdmin: Boolean!) {
-        triviaCategories {
+      query ($isTriviaAdmin: Boolean!, $verified: Boolean, $disabled: Boolean) {
+        triviaCategoryList(verified: $verified, disabled: $disabled) {
           id
           name
           submitter
           verified
-          disabled
           createdAt
-          updatedAt
           questionsCount @include(if: $isTriviaAdmin)
         }
       }
@@ -39,17 +40,25 @@ const TriviaCategoryListView: Component = () => {
       get isTriviaAdmin() {
         return isTriviaAdmin()
       },
+      get verified() {
+        return location.query.verified ? (location.query.verified === "true") : undefined
+      },
+      disabled: false,
     },
     onError: Toaster.pushError,
   })
 
   createGlobalProgressStateEffect(() => response.loading)
 
-  const [tableState, setTableState] = createTableState({ useSearchParams: true })
+  const [tableState, setTableState] = createTableState({
+    sorting: [
+      { id: "createdAt", desc: true },
+    ],
+  }, { useSearchParams: true })
 
   const table = Table.createContext<TriviaCategory>({
     get data() {
-      return response.data?.triviaCategories ?? []
+      return response.data?.triviaCategoryList ?? []
     },
     columns: [
       tableColumnSelect(),
@@ -61,10 +70,11 @@ const TriviaCategoryListView: Component = () => {
       {
         accessorKey: "submitter",
         header: "Submitter",
+        maxSize: 100,
       },
       {
-        accessorKey: "updatedAt",
-        header: "Updated",
+        accessorKey: "createdAt",
+        header: "Created",
         cell: tableDateCell(),
         maxSize: 100,
       },
@@ -121,7 +131,7 @@ const TriviaCategoryListView: Component = () => {
         <h3>Trivia Categories</h3>
       </Section>
 
-      <Section size="xxl" marginY flex style={{ "flex-grow": 1 }}>
+      <Section size="xl" marginY flex style={{ "flex-grow": 1 }}>
         <Table context={table} loading={response.loading} loadingSize="lg" striped pageQueryParam="p" toolbar={
           <Column.Row>
             <Show when={isTriviaAdmin()}>

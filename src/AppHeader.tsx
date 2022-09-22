@@ -1,5 +1,10 @@
-import { Component, createEffect, createSignal, onCleanup, Show } from "solid-js"
-import { storedAuth } from "./store/auth"
+import { gql } from "@solid-primitives/graphql"
+import { debounce } from "debounce"
+import { Component, createEffect, createMemo, createSignal, onCleanup, Show } from "solid-js"
+import { defaultFetchInfo } from "./lib/fetchFromApi"
+import fetchGraphQL from "./lib/fetchGraphQL"
+import { Query, Subscription, TriviaCounts } from "./lib/schema.gql"
+import { createAuthCheck, storedAuth } from "./store/auth"
 import A from "./ui/A"
 import Avatar from "./ui/Avatar"
 import Button from "./ui/Button"
@@ -16,6 +21,7 @@ import Navbar from "./ui/Navbar"
 import GlobalProgress from "./ui/Progress.Global"
 import Section from "./ui/Section"
 import Switch from "./ui/Switch"
+import Toaster from "./ui/Toaster"
 import { badge } from "./ui/util/badge"
 import { computedColorScheme, setColorScheme } from "./ui/util/colorScheme"
 import { centerChildren } from "./ui/util/position"
@@ -38,6 +44,76 @@ export {
 }
 
 const AppNav: Component = () => {
+  const isTriviaAdmin = createAuthCheck("trivia/admin")
+
+  const [triviaCounts, setTriviaCounts] = createSignal<TriviaCounts>()
+
+  createEffect(async () => {
+    const triviaAdmin = isTriviaAdmin()
+    if (!triviaAdmin) {
+      setTriviaCounts(undefined)
+      return
+    }
+
+    const updateTriviaCounts = debounce(async () => {
+      try {
+        const result = await fetchGraphQL<Query>({
+          query: gql`
+            query {
+              triviaCounts {
+                questions
+                questionsNotVerified
+                categories
+                categoriesNotVerified
+                reports
+              }
+            }
+          `,
+        })
+
+        setTriviaCounts(result.triviaCounts)
+      } catch (error) {
+        Toaster.pushError(error)
+      }
+    }, 1000)
+
+    await updateTriviaCounts()
+
+    try {
+      const result = await fetchGraphQL<Subscription>({
+        query: gql`
+          query {
+            triviaEventsOTP
+          }
+        `,
+      })
+
+      const events = new EventSource(`${defaultFetchInfo()}/trivia/events?otp=${result.triviaEventsOTP}`)
+      events.onmessage = ev => updateTriviaCounts()
+    } catch (error) {
+      Toaster.pushError(error)
+    }
+  })
+
+  const triviaTodos = createMemo(() => {
+    const counts = triviaCounts()
+    if (!counts) {
+      return undefined
+    }
+
+    return counts.questionsNotVerified! + counts.categoriesNotVerified! + counts.reports!
+  })
+
+  const createTriviaCountsMenuLabel = (key: keyof TriviaCounts) => {
+    return (
+      <Show when={triviaCounts()} keyed>
+        {counts => (
+          <Label color="primary">{counts[key]}</Label>
+        )}
+      </Show>
+    )
+  }
+
   const [expanded, setExpanded] = createSignal(false)
 
   return (
@@ -54,21 +130,39 @@ const AppNav: Component = () => {
             <Navbar.Burger expanded={expanded()} onclick={() => setExpanded(v => !v)} aria-label="navigation" />
           </Navbar.Brand>
 
-          <Navbar.Dropdown toggle={<span {...badge(123)}>Trivia</span>} matchHref="/trivia">
-            <Menu>
+          <Navbar.Dropdown toggle={<span {...badge(triviaTodos())}>Trivia</span>} matchHref="/trivia">
+            <Menu style={{ "min-width": "12rem" }}>
               <Menu.Item>
                 <A href="/trivia/questions/new" match>Submit Question</A>
               </Menu.Item>
               <Menu.Item>
                 <A href="/trivia/categories/new" match>Submit Category</A>
               </Menu.Item>
-              <Divider />
-              <Menu.Item badge={<Label color="primary">12</Label>}>
-                <A href="/trivia/questions" match {...badge(1)}>Questions</A>
-              </Menu.Item>
               <Menu.Item>
-                <A href="/trivia/categories" match>Categories</A>
+                <A href="/trivia/reports/new" match>Report Question</A>
               </Menu.Item>
+              <Divider />
+              <Menu.Item badge={createTriviaCountsMenuLabel("questions")}>
+                <A href="/trivia/questions" match={{ exact: "withQuery" }}>Questions</A>
+              </Menu.Item>
+              <Show when={isTriviaAdmin()}>
+                <Menu.Item badge={createTriviaCountsMenuLabel("questionsNotVerified")}>
+                  <A href="/trivia/questions" params={{ verified: false }} match={{ exact: "withQuery" }}>Questions (not verified)</A>
+                </Menu.Item>
+              </Show>
+              <Menu.Item badge={createTriviaCountsMenuLabel("categories")}>
+                <A href="/trivia/categories" match={{ exact: "withQuery" }}>Categories</A>
+              </Menu.Item>
+              <Show when={isTriviaAdmin()}>
+                <Menu.Item badge={createTriviaCountsMenuLabel("categoriesNotVerified")}>
+                  <A href="/trivia/categories" params={{ verified: false }} match={{ exact: "withQuery" }}>Categories (not verified)</A>
+                </Menu.Item>
+              </Show>
+              <Show when={isTriviaAdmin()}>
+                <Menu.Item badge={createTriviaCountsMenuLabel("reports")}>
+                  <A href="/trivia/reports" match={{ exact: "withQuery" }}>Reports</A>
+                </Menu.Item>
+              </Show>
             </Menu>
           </Navbar.Dropdown>
 

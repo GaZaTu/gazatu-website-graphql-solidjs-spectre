@@ -76,7 +76,7 @@ const tableOnSortingChange = tableOnAnyStateChange("sorting")
 
 const tableOnGlobalFilterChange = tableOnAnyStateChange("globalFilter")
 
-const createTableState = (options?: { useSearchParams?: boolean }) => {
+const createTableState = (defaults: Partial<TableState>, options?: { useSearchParams?: boolean }) => {
   const location = A.Context.useLocation()
   const navigate = A.Context.useNavigate()
 
@@ -107,6 +107,7 @@ const createTableState = (options?: { useSearchParams?: boolean }) => {
       pageSize: 25,
     },
     sorting: [],
+    ...defaults,
     globalFilter: getSearchParam("q", "", String),
   })
 

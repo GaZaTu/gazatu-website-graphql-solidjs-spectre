@@ -1,10 +1,30 @@
 export interface Query {
     __typename?: "Query";
-    authenticate?: Auth;
-    triviaCategory?: TriviaCategory | null;
-    triviaCategories?: TriviaCategory[];
-    triviaQuestion?: TriviaQuestion | null;
-    triviaQuestionsConnection?: TriviaQuestionsConnection | null;
+    userAuthenticate?: Auth;
+    triviaCategoryById?: TriviaCategory | null;
+    triviaCategoryList?: TriviaCategory[];
+    triviaQuestionById?: TriviaQuestion | null;
+    triviaQuestionListConnection?: TriviaQuestionListConnection | null;
+    triviaReportById?: TriviaReport | null;
+    triviaReportList?: TriviaReport[];
+    triviaCounts?: TriviaCounts;
+}
+export interface Mutation {
+    __typename?: "Mutation";
+    userCreate?: Auth;
+    triviaCategorySave?: TriviaCategory;
+    triviaCategoryVerifyByIds?: Void | null;
+    triviaCategoryRemoveByIds?: Void | null;
+    triviaQuestionSave?: TriviaQuestion;
+    triviaQuestionVerifyByIds?: Void | null;
+    triviaQuestionDisableByIds?: Void | null;
+    triviaReportSave?: TriviaReport;
+    triviaReportRemoveById?: Void | null;
+    triviaReportRemoveByQuestionId?: Void | null;
+}
+export interface Subscription {
+    __typename?: "Subscription";
+    triviaEventsOTP?: string;
 }
 export interface Auth {
     __typename?: "Auth";
@@ -35,6 +55,7 @@ export interface TriviaCategory {
     disabled?: boolean | null;
     createdAt?: string | null;
     updatedAt?: string | null;
+    questionsCount?: number;
 }
 export interface TriviaQuestion {
     __typename?: "TriviaQuestion";
@@ -49,9 +70,11 @@ export interface TriviaQuestion {
     disabled?: boolean | null;
     createdAt?: string | null;
     updatedAt?: string | null;
+    reportsCount?: number;
+    reports?: TriviaReport[];
 }
-export interface TriviaQuestionsConnection {
-    __typename?: "TriviaQuestionsConnection";
+export interface TriviaQuestionListConnection {
+    __typename?: "TriviaQuestionListConnection";
     slice?: TriviaQuestion[];
     pageIndex?: number;
     pageCount?: number;
@@ -60,16 +83,21 @@ export enum SortDirection {
     ASC = "ASC",
     DESC = "DESC"
 }
-export interface Mutation {
-    __typename?: "Mutation";
-    registerUser?: Auth;
-    saveTriviaCategory?: TriviaCategory;
-    saveTriviaQuestion?: TriviaQuestion;
-    verifyTriviaQuestions?: Void | null;
-    disableTriviaQuestions?: Void | null;
+export interface TriviaReport {
+    __typename?: "TriviaReport";
+    id?: string | null;
+    questionId?: string;
+    question?: TriviaQuestion;
+    message?: string;
+    submitter?: string;
+    createdAt?: string | null;
+}
+export interface TriviaCounts {
+    __typename?: "TriviaCounts";
+    questions?: number;
+    questionsNotVerified?: number;
+    categories?: number;
+    categoriesNotVerified?: number;
+    reports?: number;
 }
 export type Void = unknown;
-export interface Subscription {
-    __typename?: "Subscription";
-    triviaSSE?: string;
-}
