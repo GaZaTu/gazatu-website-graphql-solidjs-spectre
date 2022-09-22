@@ -1,5 +1,5 @@
 import { gql } from "@solid-primitives/graphql"
-import { debounce } from "debounce"
+import debounce from "debounce"
 import { Component, createEffect, createMemo, createSignal, onCleanup, Show } from "solid-js"
 import { defaultFetchInfo } from "./lib/fetchFromApi"
 import fetchGraphQL from "./lib/fetchGraphQL"
