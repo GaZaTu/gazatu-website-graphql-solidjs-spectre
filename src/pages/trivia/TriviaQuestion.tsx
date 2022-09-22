@@ -92,7 +92,7 @@ const TriviaQuestionView: Component = () => {
           #   updatedAt
           # }
         }
-        triviaCategories { # (disabled: false, verified: null)
+        categories { # (disabled: false, verified: null)
           id
           name
           verified

@@ -51,7 +51,6 @@ const AppNav: Component = () => {
   createEffect(async () => {
     const triviaAdmin = isTriviaAdmin()
     if (!triviaAdmin) {
-      setTriviaCounts(undefined)
       return
     }
 
