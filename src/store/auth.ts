@@ -18,7 +18,9 @@ const setStoredAuth: (typeof _setStoredAuth) = value => {
   }
 }
 
-keyval.get(STORAGE_KEY).then(_setStoredAuth)
+if (typeof window !== "undefined") {
+  keyval.get(STORAGE_KEY).then(_setStoredAuth)
+}
 
 const createAuthCheck = (...needed: string[]) => {
   return createMemo(() => {
