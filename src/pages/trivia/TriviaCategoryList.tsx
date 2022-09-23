@@ -25,8 +25,8 @@ const TriviaCategoryListView: Component = () => {
 
   const response = createGraphQLResource<Query>({
     query: gql`
-      query ($isTriviaAdmin: Boolean!, $verified: Boolean, $disabled: Boolean) {
-        triviaCategoryList(verified: $verified, disabled: $disabled) {
+      query ($isTriviaAdmin: Boolean!, $args: TriviaCategoryListArgs) {
+        triviaCategoryList(args: $args) {
           id
           name
           submitter
@@ -40,10 +40,12 @@ const TriviaCategoryListView: Component = () => {
       get isTriviaAdmin() {
         return isTriviaAdmin()
       },
-      get verified() {
-        return location.query.verified ? (location.query.verified === "true") : undefined
+      args: {
+        get verified() {
+          return location.query.verified ? (location.query.verified === "true") : undefined
+        },
+        disabled: false,
       },
-      disabled: false,
     },
     onError: Toaster.pushError,
   })
