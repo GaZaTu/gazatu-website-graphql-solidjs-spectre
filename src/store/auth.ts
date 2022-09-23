@@ -1,19 +1,24 @@
-import { createStorageSignal } from "@solid-primitives/storage"
-import { createEffect, createMemo } from "solid-js"
+import keyval from "idb-keyval"
+import { createEffect, createMemo, createSignal } from "solid-js"
 import { setDefaultFetchInit } from "../lib/fetchFromApi"
 import { Auth } from "../lib/schema.gql"
 
-const [storedAuth, setStoredAuth] = createStorageSignal<Auth | null>("auth-data", null, {
-  api: (() => {
-    if (typeof window === "undefined") {
-      return undefined
-    }
+const STORAGE_KEY = "authentication"
 
-    return window.localStorage
-  })(),
-  serializer: (v: unknown) => JSON.stringify(v),
-  deserializer: (s: string) => JSON.parse(s),
-})
+const [storedAuth, _setStoredAuth] = createSignal<Auth | null>(null)
+const setStoredAuth: (typeof _setStoredAuth) = value => {
+  if (typeof value === "function") {
+    return _setStoredAuth(prev => {
+      keyval.set(STORAGE_KEY, value)
+      return value(prev)
+    })
+  } else {
+    keyval.set(STORAGE_KEY, value)
+    return _setStoredAuth(value)
+  }
+}
+
+keyval.get(STORAGE_KEY).then(_setStoredAuth)
 
 const createAuthCheck = (...needed: string[]) => {
   return createMemo(() => {
