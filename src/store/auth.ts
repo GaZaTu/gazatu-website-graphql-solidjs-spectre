@@ -1,4 +1,4 @@
-import keyval from "idb-keyval"
+import * as keyval from "idb-keyval"
 import { createEffect, createMemo, createSignal } from "solid-js"
 import { setDefaultFetchInit } from "../lib/fetchFromApi"
 import { Auth } from "../lib/schema.gql"
