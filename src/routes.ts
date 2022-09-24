@@ -11,6 +11,14 @@ const routes: RouteDefinition[] = [
     component: lazy(() => import("./pages/Login")),
   },
   {
+    path: "/users",
+    component: lazy(() => import("./pages/meta/UserList")),
+  },
+  {
+    path: "/users/:id",
+    component: lazy(() => import("./pages/meta/User")),
+  },
+  {
     path: "/profile",
     component: lazy(() => import("./pages/meta/User")),
   },
@@ -29,6 +37,10 @@ const routes: RouteDefinition[] = [
   {
     path: "/trivia/questions/:id",
     component: lazy(() => import("./pages/trivia/TriviaQuestion")),
+  },
+  {
+    path: "/trivia/reports",
+    component: lazy(() => import("./pages/trivia/TriviaReportList")),
   },
   {
     path: "**",

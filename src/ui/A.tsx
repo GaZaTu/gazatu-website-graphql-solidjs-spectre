@@ -207,12 +207,12 @@ const locationMatchesURL = (location?: Location, url?: URL, match?: Props["match
     return false
   }
 
-  if (typeof match === "object") {
-    if (match.exact === true) {
-      if (location.pathname !== url.pathname) {
-        return false
-      }
-    } else if (match.exact === "withQuery") {
+  if (typeof match === "object" && match.exact) {
+    if (location.pathname !== url.pathname) {
+      return false
+    }
+
+    if (match.exact === "withQuery") {
       if (location.search !== url.search) {
         return false
       }

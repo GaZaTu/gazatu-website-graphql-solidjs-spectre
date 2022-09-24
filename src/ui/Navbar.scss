@@ -8,12 +8,14 @@
   justify-content: space-between;
   height: auto;
 
-  &.navbar-sm {
-    min-height: $unit-8;
-  }
+  &:not(.navbar-expanded) {
+    &.navbar-sm {
+      min-height: $unit-8;
+    }
 
-  &.navbar-lg {
-    min-height: $unit-12;
+    &.navbar-lg {
+      min-height: $unit-12;
+    }
   }
 
   &.navbar-filled {

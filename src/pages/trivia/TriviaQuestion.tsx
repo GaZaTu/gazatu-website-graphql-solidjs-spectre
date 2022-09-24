@@ -3,7 +3,7 @@ import { createDebouncedMemo } from "@solid-primitives/memo"
 import { createStorageSignal } from "@solid-primitives/storage"
 import { Title } from "@solidjs/meta"
 import { useNavigate } from "@solidjs/router"
-import { Component, createEffect, createMemo, For, Show } from "solid-js"
+import { Component, createEffect, createMemo, For, Show, lazy } from "solid-js"
 import { isServer } from "solid-js/web"
 import { array, nullable, optional, size, string, type } from "superstruct"
 import fetchGraphQL, { createGraphQLResource, gql } from "../../lib/fetchGraphQL"
@@ -66,7 +66,7 @@ const TriviaQuestionView: Component = () => {
 
   const response = createGraphQLResource<Query>({
     query: gql`
-      query ($id: String!, $isNew: Boolean!) { # , $isTriviaAdmin: Boolean!
+      query ($isTriviaAdmin: Boolean!, $id: String!, $isNew: Boolean!) {
         triviaQuestionById(id: $id) @skip(if: $isNew) {
           id
           question
@@ -84,15 +84,14 @@ const TriviaQuestionView: Component = () => {
           disabled
           createdAt
           updatedAt
-          # reports @include(if: $isTriviaAdmin) {
-          #   id
-          #   message
-          #   submitter
-          #   createdAt
-          #   updatedAt
-          # }
+          reports @include(if: $isTriviaAdmin) {
+            id
+            message
+            submitter
+            createdAt
+          }
         }
-        triviaCategoryList { # (disabled: false, verified: null)
+        triviaCategoryList {
           id
           name
           verified
@@ -100,14 +99,14 @@ const TriviaQuestionView: Component = () => {
       }
     `,
     variables: {
+      get isTriviaAdmin() {
+        return isTriviaAdmin()
+      },
       get id() {
         return id()
       },
       get isNew() {
         return !id()
-      },
-      get isTriviaAdmin() {
-        return isTriviaAdmin()
       },
     },
     onError: Toaster.pushError,
@@ -243,95 +242,103 @@ const TriviaQuestionView: Component = () => {
   }
 
   return (
-    <Section size="xl" marginY>
-      <Title>Trivia Question</Title>
-      <h3>Trivia Question</h3>
+    <>
+      <Section size="xl" marginY>
+        <Title>Trivia Question</Title>
+        <h3>Trivia Question</h3>
 
-      <Column.Row>
-        <Column>
-          <Form context={form} horizontal>
-            <FormGroup label="Categories" hint={(form.touched("categories") && !form.data("categories")?.length) ? "pick `General Knowledge` if this question does not have a category" : undefined}>
-              <Autocomplete name="categories" {...categories} multiple readOnly={readOnly()} />
-            </FormGroup>
+        <Column.Row>
+          <Column>
+            <Form context={form} horizontal>
+              <FormGroup label="Categories" hint={(form.touched("categories") && !form.data("categories")?.length) ? "pick `General Knowledge` if this question does not have a category" : undefined}>
+                <Autocomplete name="categories" {...categories} multiple readOnly={readOnly()} />
+              </FormGroup>
 
-            <FormGroup label="Question">
-              <Input type="text" name="question" readOnly={readOnly()} ifEmpty={null} multiline style={{ "min-height": "calc(var(--control-height-md) * 3)" }} />
-            </FormGroup>
+              <FormGroup label="Question">
+                <Input type="text" name="question" readOnly={readOnly()} ifEmpty={null} multiline style={{ "min-height": "calc(var(--control-height-md) * 3)" }} />
+              </FormGroup>
 
-            <FormGroup label="Answer">
-              <Input type="text" name="answer" readOnly={readOnly()} ifEmpty={null} />
-            </FormGroup>
+              <FormGroup label="Answer">
+                <Input type="text" name="answer" readOnly={readOnly()} ifEmpty={null} />
+              </FormGroup>
 
-            <FormGroup label="Hint 1">
-              <Input type="text" name="hint1" readOnly={readOnly()} ifEmpty={null} multiline style={{ "min-height": "calc(var(--control-height-md) * 2)" }} />
-            </FormGroup>
+              <FormGroup label="Hint 1">
+                <Input type="text" name="hint1" readOnly={readOnly()} ifEmpty={null} multiline style={{ "min-height": "calc(var(--control-height-md) * 2)" }} />
+              </FormGroup>
 
-            <FormGroup label="Hint 2">
-              <Input type="text" name="hint2" readOnly={readOnly()} ifEmpty={null} multiline style={{ "min-height": "calc(var(--control-height-md) * 2)" }} />
-            </FormGroup>
+              <FormGroup label="Hint 2">
+                <Input type="text" name="hint2" readOnly={readOnly()} ifEmpty={null} multiline style={{ "min-height": "calc(var(--control-height-md) * 2)" }} />
+              </FormGroup>
 
-            <FormGroup label="Submitter">
-              <Input type="text" name="submitter" readOnly={readOnly()} ifEmpty={null} />
-            </FormGroup>
+              <FormGroup label="Submitter">
+                <Input type="text" name="submitter" readOnly={readOnly()} ifEmpty={null} />
+              </FormGroup>
 
-            <FormGroup>
-              <Navbar size="lg">
-                <Navbar.Section>
-                  <Column.Row>
-                    <Column>
-                      <Button type="submit" color="primary" action rounded onclick={form.createSubmitHandler()} disabled={readOnly()} loading={loading()}>
-                        <Icon src={iconSave} />
+              <FormGroup>
+                <Navbar size="lg">
+                  <Navbar.Section>
+                    <Column.Row>
+                      <Column>
+                        <Button type="submit" color="primary" action rounded onclick={form.createSubmitHandler()} disabled={readOnly()} loading={loading()}>
+                          <Icon src={iconSave} />
+                        </Button>
+                      </Column>
+
+                      <Column>
+                        <Show when={!id()}>
+                          <Switch checked={!!submitMultiple()} oninput={toggleSubmitMultiple}>
+                            Batch
+                          </Switch>
+                        </Show>
+                      </Column>
+                    </Column.Row>
+                  </Navbar.Section>
+
+                  <Navbar.Section>
+                    <Show when={isTriviaAdmin()}>
+                      <Button color="failure" action rounded onclick={handleDisable} disabled={readOnly() || !id()}>
+                        <Icon src={iconDelete} />
                       </Button>
-                    </Column>
+                    </Show>
+                  </Navbar.Section>
+                </Navbar>
+              </FormGroup>
+            </Form>
 
-                    <Column>
-                      <Show when={!id()}>
-                        <Switch checked={!!submitMultiple()} oninput={toggleSubmitMultiple}>
-                          Batch
-                        </Switch>
-                      </Show>
-                    </Column>
-                  </Column.Row>
-                </Navbar.Section>
-
-                <Navbar.Section>
-                  <Show when={isTriviaAdmin()}>
-                    <Button color="failure" action rounded onclick={handleDisable} disabled={readOnly() || !id()}>
-                      <Icon src={iconDelete} />
-                    </Button>
-                  </Show>
-                </Navbar.Section>
-              </Navbar>
+            <FormGroup label="Verified" horizontal>
+              <Switch checked={verified()} oninput={handleVerify} disabled={readOnly() || !id() || verified()} style={{ color: verified() ? "var(--success)" : "var(--failure)", "font-weight": "bold" }} />
             </FormGroup>
-          </Form>
+          </Column>
 
-          <FormGroup label="Verified" horizontal>
-            <Switch checked={verified()} oninput={handleVerify} disabled={readOnly() || !id() || verified()} style={{ color: verified() ? "var(--success)" : "var(--failure)", "font-weight": "bold" }} />
-          </FormGroup>
-        </Column>
+          <Column xxl={4} sm={12}>
+            <Show when={similarQuestions()?.length && !readOnly()}>
+              <h5>Similar (<b>existing</b>) Questions:</h5>
 
-        <Column xxl={4} sm={12}>
-          <Show when={similarQuestions()?.length && !readOnly()}>
-            <h5>Similar (<b>existing</b>) Questions:</h5>
+              <Column.Row>
+                <For each={similarQuestions()}>
+                  {similarQuestion => (
+                    <Column xxl={12} style={{ padding: "var(--unit-2)" }}>
+                      <Card style={{ background: "rgba(var(--warning--rgb-triplet), 0.05)" }}>
+                        <Card.Body>
+                          <span>{similarQuestion.question}</span>
+                        </Card.Body>
+                      </Card>
+                    </Column>
+                  )}
+                </For>
+              </Column.Row>
+            </Show>
+          </Column>
+        </Column.Row>
+      </Section>
 
-            <Column.Row>
-              <For each={similarQuestions()}>
-                {similarQuestion => (
-                  <Column xxl={12} style={{ padding: "var(--unit-2)" }}>
-                    <Card style={{ background: "rgba(var(--warning--rgb-triplet), 0.05)" }}>
-                      <Card.Body>
-                        <span>{similarQuestion.question}</span>
-                      </Card.Body>
-                    </Card>
-                  </Column>
-                )}
-              </For>
-            </Column.Row>
-          </Show>
-        </Column>
-      </Column.Row>
-    </Section>
+      <Show when={id() && isTriviaAdmin()}>
+        <TriviaReportList questionId={id()} />
+      </Show>
+    </>
   )
 }
 
 export default TriviaQuestionView
+
+const TriviaReportList = lazy(() => import("./TriviaReportList"))

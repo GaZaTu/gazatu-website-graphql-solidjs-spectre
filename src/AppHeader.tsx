@@ -44,6 +44,8 @@ export {
 }
 
 const AppNav: Component = () => {
+  const isLoggedIn = createAuthCheck()
+  const isAdmin = createAuthCheck("admin")
   const isTriviaAdmin = createAuthCheck("trivia/admin")
 
   const [triviaCounts, setTriviaCounts] = createSignal<TriviaCounts>()
@@ -132,13 +134,13 @@ const AppNav: Component = () => {
           <Navbar.Dropdown toggle={<span {...badge(triviaTodos())}>Trivia</span>} matchHref="/trivia">
             <Menu style={{ "min-width": "12rem" }}>
               <Menu.Item>
-                <A href="/trivia/questions/new" match>Submit Question</A>
+                <A href="/trivia/questions/new" match={{ exact: true }}>Submit Question</A>
               </Menu.Item>
               <Menu.Item>
-                <A href="/trivia/categories/new" match>Submit Category</A>
+                <A href="/trivia/categories/new" match={{ exact: true }}>Submit Category</A>
               </Menu.Item>
               <Menu.Item>
-                <A href="/trivia/reports/new" match>Report Question</A>
+                <A href="/trivia/reports/new" match={{ exact: true }}>Report Question</A>
               </Menu.Item>
               <Divider />
               <Menu.Item badge={createTriviaCountsMenuLabel("questions")}>
@@ -165,8 +167,13 @@ const AppNav: Component = () => {
             </Menu>
           </Navbar.Dropdown>
 
-          <Button.A href="/trivia/questions" params={{ test: 123 }} match={{ exact: "withQuery" }}>Questions</Button.A>
-          <Button.A href="/trivia/categories" params={{ test: 123 }} match={{ exact: "withQuery" }}>Categories</Button.A>
+          <Button.A href="/blog/gallery" match>Blog</Button.A>
+          <Show when={isLoggedIn()}>
+            <Button.A href="/trading-chart" match>TChart</Button.A>
+          </Show>
+          <Show when={isAdmin()}>
+            <Button.A href="/users" match>Users</Button.A>
+          </Show>
         </Navbar.Section>
 
         <Navbar.Section>
