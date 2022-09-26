@@ -10,7 +10,7 @@ function ImgWithPlaceholder(props: ComponentProps<typeof Img>) {
   return (
     <>
       <Show when={loading()}>
-        <LoadingPlaceholder width={props.width} height={props.height}>
+        <LoadingPlaceholder width={props.width} height={props.height} style={{ margin: 0 }}>
           <Icon src={iconPhoto} />
         </LoadingPlaceholder>
       </Show>
