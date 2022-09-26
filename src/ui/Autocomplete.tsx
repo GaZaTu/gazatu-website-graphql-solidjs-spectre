@@ -49,7 +49,6 @@ type Props<V, O> = CreateSelectProps<V, O> & {
   onBlur?: (event: FocusEvent) => void
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const createProps = createHTMLMemoHook((props: Props<any, any>) => {
   return {
     get class() {
@@ -109,9 +108,7 @@ function Autocomplete<V, O>(props: Props<V, O> & Omit<ComponentProps<"div">, "on
     return value
   })
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleChange: (typeof selectProps)["onChange"] = (v: any) => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (selectProps.onChange as any)?.(v)
 
     if (!containerProps.name) {
@@ -122,7 +119,6 @@ function Autocomplete<V, O>(props: Props<V, O> & Omit<ComponentProps<"div">, "on
   }
 
   const handleFocus: (typeof selectProps)["onFocus"] = ev => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (selectProps.onFocus as any)?.(ev)
 
     if (ev.cancelBubble) {
@@ -133,7 +129,6 @@ function Autocomplete<V, O>(props: Props<V, O> & Omit<ComponentProps<"div">, "on
   }
 
   const handleBlur: (typeof selectProps)["onBlur"] = ev => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (selectProps.onBlur as any)?.(ev)
 
     if (ev.cancelBubble) {
@@ -165,7 +160,6 @@ function Autocomplete<V, O>(props: Props<V, O> & Omit<ComponentProps<"div">, "on
 
   const options = createMemo(() => {
     const options = select.options
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       ?.filter((o: any) => {
         if (!o) {
           return false
@@ -185,7 +179,6 @@ function Autocomplete<V, O>(props: Props<V, O> & Omit<ComponentProps<"div">, "on
     return options
   })
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const createChip = (value: any, onremove: () => void) => {
     return (
       <Chip>

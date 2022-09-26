@@ -7,7 +7,6 @@ export default defineConfig({
   plugins: [
     eslint(),
     solid({ ssr: true }),
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     visualizer({ filename: "dist/stats.html" }) as any,
   ],
   build: {

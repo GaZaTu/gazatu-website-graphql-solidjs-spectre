@@ -3,13 +3,11 @@ import Button from "./Button"
 import Modal from "./Modal"
 import { ModalStore, useModals } from "./Modal.Store"
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type ModalProps<T = any> = {
   resolve: (value?: T) => void
   reject: (error?: unknown) => void
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type ModalComponent<T = any> = (props: ModalProps<T>) => JSX.Element
 
 const modals = new ModalStore<{ Modal: ModalComponent, props: ModalProps }>()

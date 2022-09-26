@@ -11,6 +11,10 @@ const routes: RouteDefinition[] = [
     component: lazy(() => import("./pages/Login")),
   },
   {
+    path: "/logout",
+    component: lazy(() => import("./pages/Logout")),
+  },
+  {
     path: "/users",
     component: lazy(() => import("./pages/meta/UserList")),
   },

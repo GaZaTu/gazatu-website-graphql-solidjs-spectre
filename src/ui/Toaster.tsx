@@ -15,7 +15,6 @@ const pushNotification = (props: Partial<ComponentProps<typeof ToastWithAnimatio
   })
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const pushSuccess = (message: any) => {
   pushNotification({
     color: "success",
@@ -25,7 +24,6 @@ const pushSuccess = (message: any) => {
   return undefined
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const pushError = (error: any, onclose?: (() => void) | unknown) => {
   console.error(error)
 
@@ -41,7 +39,6 @@ const pushError = (error: any, onclose?: (() => void) | unknown) => {
   pushNotification({
     color: "failure",
     children: error,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     onclose: (typeof onclose === "function") ? (onclose as any) : undefined,
   })
 

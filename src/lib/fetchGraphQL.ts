@@ -15,7 +15,6 @@ type GraphQLOptions = {
   variables?: Record<string, unknown>
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type GraphQLResult<T = any> = {
   message?: string
   errors?: { message?: string }[]
@@ -131,7 +130,6 @@ const createGraphQLResource = <T>(options: GraphQLResourceOptions<T>) => {
 
       try {
         data = await fetchGraphQL<T>({ query, variables })
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (e: any) {
         console.warn("GraphQL error", e)
         error = e

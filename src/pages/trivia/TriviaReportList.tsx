@@ -1,8 +1,8 @@
 import { Title } from "@solidjs/meta"
 import { useNavigate } from "@solidjs/router"
 import { Component, createEffect, createMemo } from "solid-js"
-import fetchGraphQL, { createGraphQLResource, gql } from "../../lib/fetchGraphQL"
-import { Mutation, Query, TriviaReport } from "../../lib/schema.gql"
+import { createGraphQLResource, gql } from "../../lib/fetchGraphQL"
+import { Query, TriviaReport } from "../../lib/schema.gql"
 import { createAuthCheck } from "../../store/auth"
 import Button from "../../ui/Button"
 import Column from "../../ui/Column"
@@ -14,17 +14,7 @@ import Section from "../../ui/Section"
 import Table from "../../ui/Table"
 import { createTableState, tableColumnLink, tableColumnSelect, tableDateCell, tableOnGlobalFilterChange, tableOnPaginationChange, tableOnSortingChange } from "../../ui/Table.Helpers"
 import Toaster from "../../ui/Toaster"
-
-const removeTriviaReports = async (ids: string[]) => {
-  await fetchGraphQL<Mutation>({
-    query: gql`
-      mutation ($ids: [String!]!) {
-        triviaReportRemoveById(ids: $ids)
-      }
-    `,
-    variables: { ids },
-  })
-}
+import { removeTriviaReports } from "./shared-graphql"
 
 const TriviaReportListView: Component<{ questionId?: unknown }> = props => {
   const navigate = useNavigate()

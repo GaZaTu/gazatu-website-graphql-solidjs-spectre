@@ -5,7 +5,7 @@ import { Component, createEffect, createMemo, Show } from "solid-js"
 import { isServer } from "solid-js/web"
 import { nullable, optional, size, string, type } from "superstruct"
 import fetchGraphQL, { createGraphQLResource, gql } from "../../lib/fetchGraphQL"
-import { Mutation, Query, TriviaCategory } from "../../lib/schema.gql"
+import { Mutation, Query, TriviaCategoryInput } from "../../lib/schema.gql"
 import superstructIsRequired from "../../lib/superstructIsRequired"
 import useIdFromParams from "../../lib/useIdFromParams"
 import { createAuthCheck } from "../../store/auth"
@@ -22,28 +22,7 @@ import { createGlobalProgressStateEffect } from "../../ui/Progress.Global"
 import Section from "../../ui/Section"
 import Switch from "../../ui/Switch"
 import Toaster from "../../ui/Toaster"
-
-export const verifyTriviaCategories = async (ids: string[]) => {
-  await fetchGraphQL<Mutation>({
-    query: gql`
-      mutation ($ids: [String!]!) {
-        triviaCategoryVerifyByIds(ids: $ids)
-      }
-    `,
-    variables: { ids },
-  })
-}
-
-export const removeTriviaCategories = async (ids: string[]) => {
-  await fetchGraphQL<Mutation>({
-    query: gql`
-      mutation ($ids: [String!]!) {
-        triviaCategoryRemoveByIds(ids: $ids)
-      }
-    `,
-    variables: { ids },
-  })
-}
+import { removeTriviaCategories, verifyTriviaCategories } from "./shared-graphql"
 
 const TriviaCategorySchema = type({
   name: size(string(), 1, 32),
@@ -91,7 +70,7 @@ const TriviaCategoryView: Component = () => {
     extend: [validator({ struct: formSchema })],
     isRequired: superstructIsRequired.bind(undefined, formSchema),
     onSubmit: async _values => {
-      const input = _values as Partial<TriviaCategory>
+      const input = _values as TriviaCategoryInput
       const res = await fetchGraphQL<Mutation>({
         query: gql`
           mutation ($input: TriviaCategoryInput!) {

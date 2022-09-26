@@ -1,0 +1,221 @@
+type Query {
+  """requires role: admin (or currentUser)"""
+  userById(id: String!): User
+
+  """requires role: admin"""
+  userList: [User!]!
+
+  """"""
+  userRoleList: [UserRole!]!
+
+  """"""
+  userAuthenticate(username: String!, password: String!): Auth!
+
+  """"""
+  triviaCategoryById(id: String!): TriviaCategory
+
+  """"""
+  triviaCategoryList(args: TriviaCategoryListArgs): [TriviaCategory!]!
+
+  """"""
+  triviaQuestionById(id: String!): TriviaQuestion
+
+  """"""
+  triviaQuestionListConnection(args: TriviaQuestionListConnectionArgs): TriviaQuestionListConnection
+
+  """requires role: trivia/admin"""
+  triviaEventsOTP: String!
+
+  """requires role: trivia/admin"""
+  triviaReportById(id: String!): TriviaReport
+
+  """requires role: trivia/admin"""
+  triviaReportList(questionId: String): [TriviaReport!]!
+
+  """requires role: trivia/admin"""
+  triviaCounts: TriviaCounts!
+}
+
+type Mutation {
+  """"""
+  userCreate(username: String!, password: String!): Auth!
+
+  """requires role: admin (or currentUser)"""
+  userUpdate(input: UserInput!): Void
+
+  """requires role: admin (or currentUser)"""
+  userListRemoveByIds(ids: [String!]!): Void
+
+  """requires role: trivia/admin"""
+  triviaCategorySave(input: TriviaCategoryInput!): TriviaCategory!
+
+  """requires role: trivia/admin"""
+  triviaCategoryListVerifyByIds(ids: [String!]!): Void
+
+  """requires role: trivia/admin"""
+  triviaCategoryListRemoveByIds(ids: [String!]!): Void
+
+  """requires role: trivia/admin"""
+  triviaQuestionSave(input: TriviaQuestionInput!): TriviaQuestion!
+
+  """requires role: trivia/admin"""
+  triviaQuestionListVerifyByIds(ids: [String!]!): Void
+
+  """requires role: trivia/admin"""
+  triviaQuestionListDisableByIds(ids: [String!]!): Void
+
+  """"""
+  triviaReportSave(input: TriviaReportInput!): TriviaReport!
+
+  """requires role: trivia/admin"""
+  triviaReportListRemoveById(ids: [String!]!): Void
+
+  """requires role: trivia/admin"""
+  triviaReportListRemoveByQuestionId(questionId: [String!]!): Void
+}
+
+type User {
+  id: String
+  username: String!
+  roles: [UserRole!]!
+  createdAt: String
+  updatedAt: String
+}
+
+type UserRole {
+  id: String
+  name: String!
+  description: String
+}
+
+type Auth {
+  token: String!
+  user: User!
+}
+
+type TriviaCategory {
+  id: String
+  name: String!
+  description: String
+  submitter: String
+  verified: Boolean
+  disabled: Boolean
+  createdAt: String
+  updatedAt: String
+
+  """requires role: trivia/admin"""
+  questionsCount: Int!
+}
+
+input TriviaCategoryListArgs {
+  verified: Boolean = null
+  disabled: Boolean = false
+}
+
+type TriviaQuestion {
+  id: String
+  categories: [TriviaCategory!]!
+  question: String!
+  answer: String!
+  hint1: String
+  hint2: String
+  submitter: String
+  verified: Boolean
+  disabled: Boolean
+  createdAt: String
+  updatedAt: String
+  updatedBy: User
+
+  """requires role: trivia/admin"""
+  reportsCount: Int!
+
+  """requires role: trivia/admin"""
+  reports: [TriviaReport!]!
+}
+
+type TriviaQuestionListConnection {
+  slice: [TriviaQuestion!]!
+  pageIndex: Int!
+  pageCount: Int!
+}
+
+input TriviaQuestionListConnectionArgs {
+  offset: Int = 0
+  limit: Int = 25
+  orderBy: OrderBy
+  search: String
+  verified: Boolean = null
+  disabled: Boolean = false
+  shuffled: Boolean = false
+  includeCategories: [String!]
+  excludeCategories: [String!]
+  includeSubmitters: [String!]
+  excludeSubmitters: [String!]
+  categoryId: String
+}
+
+input OrderBy {
+  col: String!
+  dir: SortDirection
+}
+
+enum SortDirection {
+  ASC
+  DESC
+}
+
+type TriviaReport {
+  id: String
+  question: TriviaQuestion!
+  message: String!
+  submitter: String!
+  createdAt: String
+}
+
+type TriviaCounts {
+  questions: Int!
+  questionsNotVerified: Int!
+  categories: Int!
+  categoriesNotVerified: Int!
+  reports: Int!
+}
+
+scalar Void
+
+input UserInput {
+  id: String
+  username: String!
+  roles: [UserRoleInput!]!
+  createdAt: String
+  updatedAt: String
+}
+
+input UserRoleInput {
+  id: String
+  name: String!
+  description: String
+}
+
+input TriviaCategoryInput {
+  id: String
+  name: String!
+  description: String
+  submitter: String
+}
+
+input TriviaQuestionInput {
+  id: String
+  categories: [TriviaCategoryInput!]!
+  question: String!
+  answer: String!
+  hint1: String
+  hint2: String
+  submitter: String
+}
+
+input TriviaReportInput {
+  id: String
+  question: TriviaQuestionInput!
+  message: String!
+  submitter: String!
+}

@@ -48,7 +48,6 @@ createEffect(() => {
     ...init,
     headers: {
       ...init?.headers,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       "authorization": auth ? `Bearer ${auth.token}` : undefined as any,
     },
   }))

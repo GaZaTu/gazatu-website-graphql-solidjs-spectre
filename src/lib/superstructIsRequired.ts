@@ -1,6 +1,5 @@
 import { Struct } from "superstruct"
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const superstructIsRequired = (validator: Struct<any, any>, path = "") => {
   const struct = path.split(".")
     .reduce((s, p) => {
@@ -12,7 +11,6 @@ const superstructIsRequired = (validator: Struct<any, any>, path = "") => {
         return s.schema
       }
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       return (s.schema as Record<string, any>)[p]
     }, validator)
   if (!struct) {

@@ -6,6 +6,7 @@ const Http404View: Component = () => {
     <Empty>
       <Empty.Header>
         <h1>404</h1>
+        <h2>¯\\_(ツ)_/¯</h2>
       </Empty.Header>
     </Empty>
   )

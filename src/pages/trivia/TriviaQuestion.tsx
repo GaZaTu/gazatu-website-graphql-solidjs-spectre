@@ -3,11 +3,11 @@ import { createDebouncedMemo } from "@solid-primitives/memo"
 import { createStorageSignal } from "@solid-primitives/storage"
 import { Title } from "@solidjs/meta"
 import { useNavigate } from "@solidjs/router"
-import { Component, createEffect, createMemo, For, Show, lazy } from "solid-js"
+import { Component, createEffect, createMemo, For, lazy, Show } from "solid-js"
 import { isServer } from "solid-js/web"
 import { array, nullable, optional, size, string, type } from "superstruct"
 import fetchGraphQL, { createGraphQLResource, gql } from "../../lib/fetchGraphQL"
-import { Mutation, Query, TriviaQuestion } from "../../lib/schema.gql"
+import { Mutation, Query, TriviaQuestionInput } from "../../lib/schema.gql"
 import superstructIsRequired from "../../lib/superstructIsRequired"
 import useIdFromParams from "../../lib/useIdFromParams"
 import { createAuthCheck } from "../../store/auth"
@@ -27,28 +27,7 @@ import { createGlobalProgressStateEffect } from "../../ui/Progress.Global"
 import Section from "../../ui/Section"
 import Switch from "../../ui/Switch"
 import Toaster from "../../ui/Toaster"
-
-export const verifyTriviaQuestions = async (ids: string[]) => {
-  await fetchGraphQL<Mutation>({
-    query: gql`
-      mutation ($ids: [String!]!) {
-        triviaQuestionVerifyByIds(ids: $ids)
-      }
-    `,
-    variables: { ids },
-  })
-}
-
-export const disableTriviaQuestions = async (ids: string[]) => {
-  await fetchGraphQL<Mutation>({
-    query: gql`
-      mutation ($ids: [String!]!) {
-        triviaQuestionDisableByIds(ids: $ids)
-      }
-    `,
-    variables: { ids },
-  })
-}
+import { disableTriviaQuestions, verifyTriviaQuestions } from "./shared-graphql"
 
 const TriviaQuestionSchema = type({
   categories: size(array(type({ id: string() })), 1, 5),
@@ -117,7 +96,6 @@ const TriviaQuestionView: Component = () => {
   const navigate = useNavigate()
 
   const [submitMultiple, setSubmitMultiple] = createStorageSignal("trivia/submit-multiple", false, {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     serializer: (v: any) => JSON.stringify(v),
     deserializer: s => JSON.parse(s),
   })
@@ -130,7 +108,7 @@ const TriviaQuestionView: Component = () => {
     extend: [validator({ struct: formSchema })],
     isRequired: superstructIsRequired.bind(undefined, formSchema),
     onSubmit: async _values => {
-      const input = _values as Partial<TriviaQuestion>
+      const input = _values as TriviaQuestionInput
       const res = await fetchGraphQL<Mutation>({
         query: gql`
           mutation ($input: TriviaQuestionInput!) {
@@ -220,7 +198,6 @@ const TriviaQuestionView: Component = () => {
     filterable: true,
     createable: false,
     key: "name",
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     disable: o => form.data("categories")?.map?.((v: any) => v.id)?.includes(o.id),
   })
 

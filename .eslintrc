@@ -48,6 +48,7 @@
       }
     ],
     "@typescript-eslint/no-non-null-assertion": "off",
+    "@typescript-eslint/no-explicit-any": "off",
     "solid/reactivity": "off",
     "solid/event-handlers": "off"
   },

@@ -7,9 +7,7 @@ import AnchorContext, { Location } from "./A.Context"
 type Props = ComponentProps<"a"> & {
   delta?: number
   url?: URL
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   params?: Record<string, any>
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   state?: any
   replace?: boolean
   scroll?: boolean
@@ -166,7 +164,7 @@ function A(props: Props) {
 
   return (
     <a {..._props}>
-      {fml.children}
+      {fml.children ?? props.href}
     </a>
   )
 }

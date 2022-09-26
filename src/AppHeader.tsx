@@ -1,9 +1,8 @@
-import { gql } from "@solid-primitives/graphql"
 import debounce from "debounce"
 import { Component, createEffect, createMemo, createSignal, onCleanup, Show } from "solid-js"
 import { defaultFetchInfo } from "./lib/fetchFromApi"
-import fetchGraphQL from "./lib/fetchGraphQL"
-import { Query, Subscription, TriviaCounts } from "./lib/schema.gql"
+import fetchGraphQL, { gql } from "./lib/fetchGraphQL"
+import { Query, TriviaCounts } from "./lib/schema.gql"
 import { createAuthCheck, storedAuth } from "./store/auth"
 import A from "./ui/A"
 import Avatar from "./ui/Avatar"
@@ -81,7 +80,7 @@ const AppNav: Component = () => {
     await updateTriviaCounts()
 
     try {
-      const result = await fetchGraphQL<Subscription>({
+      const result = await fetchGraphQL<Query>({
         query: gql`
           query {
             triviaEventsOTP

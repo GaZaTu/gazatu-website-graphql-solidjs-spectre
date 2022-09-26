@@ -1,9 +1,9 @@
 import { Component } from "solid-js"
 
-const BlogGallery: Component = () => {
+const BlogGalleryView: Component = () => {
   return (
     <></>
   )
 }
 
-export default BlogGallery
+export default BlogGalleryView

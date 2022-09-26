@@ -47,7 +47,6 @@ function Navbar(props: Props & ComponentProps<"header">) {
   //     })(),
   //   }))
 
-  //   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   //   return undefined as any
   // }
 

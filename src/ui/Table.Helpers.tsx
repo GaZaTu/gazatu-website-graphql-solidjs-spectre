@@ -8,7 +8,6 @@ import Icon from "./Icon"
 import iconOpen from "./icons/iconOpen"
 import { centerChildren, centerSelf } from "./util/position"
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const tableDateCell = (...[locales, options]: Parameters<typeof Intl.DateTimeFormat>): ColumnDefTemplate<CellContext<any, any>> => {
   const dateFormat = new Intl.DateTimeFormat(locales, {
     year: "numeric",
@@ -30,7 +29,6 @@ const tableDateCell = (...[locales, options]: Parameters<typeof Intl.DateTimeFor
   }
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const tableColumnSelect = <T, V>(): ColumnDef<T, V> => ({
   id: "__select",
   meta: { compact: true },
@@ -42,7 +40,6 @@ const tableColumnSelect = <T, V>(): ColumnDef<T, V> => ({
   ),
 })
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const tableColumnLink = <T, V>(getProps: (row: Row<T>) => ComponentProps<typeof Button.A>): ColumnDef<T, V> => ({
   id: "__link",
   meta: { compact: true },
@@ -59,7 +56,6 @@ const tableOnAnyStateChange = <K extends keyof TableState>(key: K) =>
       if (typeof v === "function") {
         setTableState(state => ({
           ...state,
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           [key]: (v as any)(state[key]!),
         }))
       } else {

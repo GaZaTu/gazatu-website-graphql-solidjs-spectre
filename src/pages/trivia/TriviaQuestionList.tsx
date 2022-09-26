@@ -18,7 +18,7 @@ import Table from "../../ui/Table"
 import { createTableState, tableColumnLink, tableColumnSelect, tableDateCell, tableOnGlobalFilterChange, tableOnPaginationChange, tableOnSortingChange } from "../../ui/Table.Helpers"
 import Toaster from "../../ui/Toaster"
 import { centerSelf } from "../../ui/util/position"
-import { disableTriviaQuestions, verifyTriviaQuestions } from "./TriviaQuestion"
+import { disableTriviaQuestions, verifyTriviaQuestions } from "./shared-graphql"
 
 const TriviaQuestionListView: Component = () => {
   const isTriviaAdmin = createAuthCheck("trivia/admin")

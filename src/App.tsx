@@ -16,10 +16,10 @@ AnchorContext.useNavigate = useNavigate
 
 if (import.meta.env.PROD) {
   setDefaultFetchInfo("https://api.test.gazatu.xyz")
-  setGraphqlEndpoint("https://api.test.gazatu.xyz/graphql")
+  setGraphqlEndpoint("/graphql")
 } else {
   setDefaultFetchInfo("http://localhost:3434")
-  setGraphqlEndpoint("http://localhost:3434/graphql")
+  setGraphqlEndpoint("/graphql")
 }
 
 type Props = {

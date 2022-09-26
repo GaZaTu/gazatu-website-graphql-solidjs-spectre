@@ -63,7 +63,6 @@ function Checkbox(props: Props & ComponentProps<"input">) {
   })
 
   const handleInput: ComponentProps<"input">["oninput"] = ev => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (inputProps.oninput as any)?.(ev)
 
     if (ev.cancelBubble) {
@@ -78,7 +77,6 @@ function Checkbox(props: Props & ComponentProps<"input">) {
   }
 
   const handleBlur: ComponentProps<"input">["onblur"] = ev => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (inputProps.onblur as any)?.(ev)
 
     if (ev.cancelBubble) {

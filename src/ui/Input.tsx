@@ -71,7 +71,6 @@ function Input(props: Props & ComponentProps<"input">) {
   })
 
   const handleInput = (ev: InputEvent & { currentTarget: HTMLInputElement | HTMLTextAreaElement }) => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (_props.oninput as any)?.(ev)
 
     if (ev.cancelBubble) {
@@ -91,7 +90,6 @@ function Input(props: Props & ComponentProps<"input">) {
   }
 
   const handleBlur = (ev: FocusEvent) => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (_props.onblur as any)?.(ev)
 
     if (ev.cancelBubble) {

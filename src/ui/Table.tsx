@@ -23,9 +23,7 @@ declare module "@tanstack/solid-table" {
 export type TableState = _TableState
 
 type TableContext = {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   options: any
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   actions: TableActions<any>
 }
 
@@ -43,7 +41,6 @@ function createContext<TData extends RowData>(options: Partial<TableOptions<TDat
 
   return {
     options,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     actions: createSolidTable<TData>(options as any),
   }
 }
@@ -58,7 +55,6 @@ const getColumnStyle = (columnDef?: ColumnDef<unknown, unknown>, clickable = fal
 })
 
 type Props = {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   context?: TableContext
   striped?: boolean
   hoverable?: boolean
@@ -128,7 +124,6 @@ function Table(props: Props & ComponentProps<"div">) {
                 <tr>
                   <For each={headerGroup.headers}>
                     {header => (
-                      // eslint-disable-next-line @typescript-eslint/no-explicit-any
                       <th colSpan={header.colSpan} onclick={header.column.getToggleSortingHandler()} style={getColumnStyle(header.column.columnDef as any, header.column.getCanSort())}>
                         <Show when={!header.isPlaceholder} fallback={null}>
                           {flexRender(header.column.columnDef.header, header.getContext())}
@@ -167,7 +162,6 @@ function Table(props: Props & ComponentProps<"div">) {
                 <TableRow>
                   <For each={row.getVisibleCells()}>
                     {cell => (
-                      // eslint-disable-next-line @typescript-eslint/no-explicit-any
                       <td style={getColumnStyle(cell.column.columnDef as any)}>
                         {flexRender(cell.column.columnDef.cell, cell.getContext())}
                       </td>
@@ -206,7 +200,6 @@ export default Object.assign(Table, {
 })
 
 type PlaceholderRowProps = {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   actions?: TableActions<any>
 }
 
@@ -215,7 +208,6 @@ const PlaceholderRow = (props: PlaceholderRowProps) => {
     <tr>
       <For each={props.actions?.getVisibleFlatColumns()}>
         {column => (
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           <td style={getColumnStyle(column.columnDef as any)}>
             <LoadingPlaceholder width="100%" height="var(--line-height)" />
           </td>

@@ -3,7 +3,6 @@ import { createStore } from "solid-js/store"
 import type { EffectFunction, NoInfer } from "solid-js/types/reactive/signal"
 
 const createMemoStore = <Next extends Prev, Prev extends {} = Next>(fn: EffectFunction<undefined | NoInfer<Prev>, Next>) => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [store, setStore] = createStore<Next>({} as any)
   createEffect(() => {
     setStore(fn(store))

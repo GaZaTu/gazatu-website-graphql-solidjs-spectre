@@ -6,7 +6,6 @@ import FormGroup from "./Form.Group"
 import "./Label.scss"
 import createHTMLMemoHook from "./util/createHTMLMemoHook"
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Obj = Record<string, any>
 
 type FormConfig<Data extends Obj = Obj, Ext extends Obj = Obj> = NonNullable<Parameters<typeof createForm<Data, Ext>>[0]> & {

@@ -19,7 +19,14 @@
     "noImplicitAny": true,
     "noImplicitReturns": true,
     "noImplicitThis": true,
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+    "plugins": [
+      {
+        "name": "ts-graphql-plugin",
+        "schema": "src/lib/schema.gql",
+        "tag": "gql"
+      }
+    ]
   },
   "include": [
     "src/"
