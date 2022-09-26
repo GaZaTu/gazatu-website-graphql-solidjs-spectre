@@ -10,7 +10,8 @@ import { ThemeColor, ThemeSize } from "./util/theming"
 type Props = {
   size?: ThemeSize
   color?: ThemeColor
-  rounded?: boolean
+  round?: boolean
+  circle?: boolean
   action?: boolean
   block?: boolean
   clear?: boolean
@@ -31,7 +32,8 @@ const createProps = createHTMLMemoHook((props: Props) => {
         "btn": true,
         [`btn-${props.size}`]: !!props.size,
         [`btn-${props.color}`]: !!props.color,
-        "btn-rounded": props.rounded,
+        "btn-round": props.round,
+        "btn-circle": props.circle,
         "btn-action": props.action,
         "btn-block": props.block,
         "btn-clear": props.clear,

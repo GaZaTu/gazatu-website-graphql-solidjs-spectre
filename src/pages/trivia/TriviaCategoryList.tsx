@@ -138,13 +138,13 @@ const TriviaCategoryListView: Component = () => {
           <Column.Row>
             <Show when={isTriviaAdmin()}>
               <Column>
-                <Button color="success" action rounded disabled={!selectedIds().length} onclick={handleVerify}>
+                <Button color="success" action circle disabled={!selectedIds().length} onclick={handleVerify}>
                   <Icon src={iconCheck} />
                 </Button>
               </Column>
 
               <Column>
-                <Button color="failure" action rounded disabled={!selectedIds().length} onclick={handleRemove}>
+                <Button color="failure" action circle disabled={!selectedIds().length} onclick={handleRemove}>
                   <Icon src={iconDelete} />
                 </Button>
               </Column>

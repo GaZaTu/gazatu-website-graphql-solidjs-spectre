@@ -6,7 +6,7 @@ import { ThemeSize } from "./util/theming"
 
 type Props = {
   size?: ThemeSize
-  rounded?: ThemeSize
+  round?: boolean
   block?: boolean
 }
 
@@ -16,7 +16,7 @@ const createProps = createHTMLMemoHook((props: Props) => {
       return classnames({
         "btn-group": true,
         [`btn-group-${props.size}`]: !!props.size,
-        [`btn-group-rounded-${props.rounded}`]: !!props.rounded,
+        "btn-group-round": !!props.round,
         "btn-group-block": props.block,
       })
     },

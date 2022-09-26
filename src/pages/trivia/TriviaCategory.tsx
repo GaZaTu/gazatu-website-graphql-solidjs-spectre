@@ -148,14 +148,14 @@ const TriviaCategoryView: Component = () => {
         <FormGroup>
           <Navbar size="lg">
             <Navbar.Section>
-              <Button type="submit" color="primary" action rounded onclick={form.createSubmitHandler()} disabled={readOnly()} loading={loading()}>
+              <Button type="submit" color="primary" action circle onclick={form.createSubmitHandler()} disabled={readOnly()} loading={loading()}>
                 <Icon src={iconSave} />
               </Button>
             </Navbar.Section>
 
             <Navbar.Section>
               <Show when={isTriviaAdmin()}>
-                <Button color="failure" action rounded onclick={handleRemove} disabled={readOnly() || !id()}>
+                <Button color="failure" action circle onclick={handleRemove} disabled={readOnly() || !id()}>
                   <Icon src={iconDelete} />
                 </Button>
               </Show>

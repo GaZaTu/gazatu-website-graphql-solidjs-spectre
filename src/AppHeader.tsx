@@ -212,7 +212,7 @@ const AppNav: Component = () => {
 
             <Column classList={{ ...centerChildren(true) }}>
               <Show when={storedAuth()} fallback={
-                <Button.A href="/login" color="gray">Login</Button.A>
+                <Button.A href="/login" color="primary" round>Login</Button.A>
               }>
                 <A href="/profile">
                   <Avatar initials={storedAuth()?.user?.username?.slice(0, 2)} />

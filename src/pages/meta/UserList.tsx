@@ -106,7 +106,7 @@ const UserListView: Component = () => {
         <Table context={table} loading={response.loading} loadingSize="lg" striped pageQueryParam="p" toolbar={
           <Column.Row>
             <Column>
-              <Button color="failure" action rounded disabled={!selectedIds().length} onclick={handleRemove}>
+              <Button color="failure" action circle disabled={!selectedIds().length} onclick={handleRemove}>
                 <Icon src={iconDelete} />
               </Button>
             </Column>

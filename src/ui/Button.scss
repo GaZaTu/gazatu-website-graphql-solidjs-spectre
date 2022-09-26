@@ -226,8 +226,14 @@
     }
   }
 
-  &.btn-rounded,
-  .btn-group-rounded & {
+  &.btn-round,
+  .btn-group-round & {
+    border-radius: $unit-5;
+    padding-left: $unit-5;
+    padding-right: $unit-5;
+  }
+
+  &.btn-circle {
     border-radius: 50%;
   }
 }

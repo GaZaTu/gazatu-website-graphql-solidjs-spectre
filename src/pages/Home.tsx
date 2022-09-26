@@ -11,7 +11,7 @@ const HomeView: Component = () => {
   return (
     <>
       <Section size="xl" marginY>
-        <ImgWithPlaceholder src={gazatuApus} alt="gazatu apus" width={500} height={126} />
+        <ImgWithPlaceholder src={gazatuApus} alt="gazatu apus" width={500} height={125} />
       </Section>
 
       <Section size="xl" marginY>
