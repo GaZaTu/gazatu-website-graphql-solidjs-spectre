@@ -10,12 +10,14 @@ function ImgWithPlaceholder(props: ComponentProps<typeof Img>) {
   return (
     <>
       <Show when={loading()}>
-        <LoadingPlaceholder width={props.width} height={props.height} style={{ margin: 0, "max-width": "100%" }}>
+        <LoadingPlaceholder width={props.width} height={props.height} style2={props.style}>
           <Icon src={iconPhoto} />
         </LoadingPlaceholder>
       </Show>
 
-      <Img {...props} onload={() => setLoading(false)} style={{ display: loading() ? "none" : undefined, "max-width": "100%" }} />
+      <div style={{ display: "flex" }}>
+        <Img {...props} onload={() => setLoading(false)} style={{ display: loading() ? "none" : undefined, ...(props.style as any) }} />
+      </div>
     </>
   )
 }

@@ -11,10 +11,11 @@
 }
 
 .loading-placeholder {
-  margin: 0 auto;
+  // margin: 0 auto;
+  margin: 0;
   background-color: rgba($body-bg-monochrome--rgb-triplet, 0.2);
   border-radius: $control-border-radius;
-  overflow: hidden;
+  // overflow: hidden;
 
   &.inline {
     display: inline-block;

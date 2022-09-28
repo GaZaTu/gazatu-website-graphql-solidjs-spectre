@@ -11,7 +11,9 @@ const HomeView: Component = () => {
   return (
     <>
       <Section size="xl" marginY>
-        <ImgWithPlaceholder src={gazatuApus} alt="gazatu apus" width={500} height={125} />
+        <div>
+          <ImgWithPlaceholder src={gazatuApus} alt="gazatu apus" width={500} height={125.17} style={{ "max-width": "100%", height: "auto" }} />
+        </div>
       </Section>
 
       <Section size="xl" marginY>
