@@ -1,6 +1,7 @@
+import { createIntersectionObserver } from "@solid-primitives/intersection-observer"
 import { Title } from "@solidjs/meta"
 import { useLocation } from "@solidjs/router"
-import { Component, createEffect, createMemo, For } from "solid-js"
+import { Component, ComponentProps, createEffect, createMemo, createSignal, For } from "solid-js"
 import { defaultFetchInfo } from "../../lib/fetchFromApi"
 import { createGraphQLResource, gql } from "../../lib/fetchGraphQL"
 import { BlogEntry, Query } from "../../lib/schema.gql"
@@ -22,10 +23,10 @@ import { centerSelf } from "../../ui/util/position"
 import "./BlogGallery.scss"
 
 const BlogGalleryView: Component = () => {
-  const [tableState] = createTableState({
+  const [tableState, setTableState] = createTableState({
     pagination: {
       pageIndex: 0,
-      pageSize: 32,
+      pageSize: 50,
     },
   })
 
@@ -41,7 +42,6 @@ const BlogGalleryView: Component = () => {
             imageFileExtension
             createdAt
           }
-          pageIndex
           pageCount
         }
       }
@@ -57,6 +57,13 @@ const BlogGalleryView: Component = () => {
       },
     },
     onError: Toaster.pushError,
+    infinite: (prev, next) => {
+      const prevArray = prev?.blogEntryListConnection?.slice ?? []
+      const nextArray = next.blogEntryListConnection?.slice
+
+      nextArray?.unshift(...prevArray)
+      return next
+    },
   })
 
   createGlobalProgressStateEffect(() => response.loading)
@@ -82,18 +89,29 @@ const BlogGalleryView: Component = () => {
       }, {} as Record<string, LinkedBlogEntry[]>)
   })
 
-  // const handleRemove = (id: string) => {
-  //   return async () => {
-  //     if (!await ModalPortal.confirm("Delete the selected blog entries?")) {
-  //       return
-  //     }
+  const [targets, setTargets] = createSignal<HTMLElement[]>([])
+  createIntersectionObserver(targets, entries => {
+    if (response.loading || (tableState.pagination?.pageIndex ?? 0) >= (response.data?.blogEntryListConnection?.pageCount ?? 0)) {
+      return
+    }
 
-  //     await Toaster.try(async () => {
-  //       await removeBlogEntries([id])
-  //       response.refresh()
-  //     })
-  //   }
-  // }
+    const lastTarget = targets()[targets().length - 1]
+    if (!lastTarget) {
+      return
+    }
+
+    if (!entries.find(e => e.target === lastTarget)?.isIntersecting) {
+      return
+    }
+
+    setTableState(state => ({
+      ...state,
+      pagination: {
+        pageIndex: (state.pagination?.pageIndex ?? 0) + 1,
+        pageSize: (state.pagination?.pageSize ?? 0),
+      },
+    }))
+  })
 
   return (
     <>
@@ -105,7 +123,7 @@ const BlogGalleryView: Component = () => {
       <Section size="xl" marginY flex style={{ "flex-grow": 1 }}>
         <For each={Object.entries(groups() ?? {})}>
           {([date, entries]) => (
-            <BlogEntryGroup date={date} entries={entries} refresh={response.refresh} />
+            <BlogEntryGroup ref={el => setTargets(s => [...s, el])} date={date} entries={entries} refresh={response.refresh} />
           )}
         </For>
       </Section>
@@ -128,6 +146,19 @@ const BlogEntryPreview: Component<BlogEntryPreviewProps> = props => {
   // const isAdmin = createAuthCheck("admin")
 
   const location = useLocation()
+
+  // const handleRemove = (id: string) => {
+  //   return async () => {
+  //     if (!await ModalPortal.confirm("Delete the selected blog entries?")) {
+  //       return
+  //     }
+
+  //     await Toaster.try(async () => {
+  //       await removeBlogEntries([id])
+  //       response.refresh()
+  //     })
+  //   }
+  // }
 
   createEffect(() => {
     if (location.query.entry !== props.entry.id) {
@@ -168,6 +199,7 @@ const BlogEntryPreview: Component<BlogEntryPreviewProps> = props => {
 }
 
 type BlogEntryGroupProps = {
+  ref?: ComponentProps<typeof Section>["ref"]
   date: string
   entries: LinkedBlogEntry[]
   refresh: () => void
@@ -175,7 +207,7 @@ type BlogEntryGroupProps = {
 
 const BlogEntryGroup: Component<BlogEntryGroupProps> = props => {
   return (
-    <Section marginY>
+    <Section ref={props.ref} marginY>
       <h5>{props.date}</h5>
       <Column.Row gaps="sm">
         <For each={props.entries}>

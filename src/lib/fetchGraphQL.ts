@@ -75,6 +75,7 @@ type GraphQLResourceOptions<T, I extends T = T> = Omit<GraphQLOptions, "variable
   initialValue?: I
   onError?: (error: Error) => void
   variables?: Record<string, unknown> | Accessor<Record<string, unknown> | undefined>
+  infinite?: (prev: T | undefined, next: T) => T
 }
 
 const createGraphQLResource = <T>(options: GraphQLResourceOptions<T>) => {
@@ -138,7 +139,7 @@ const createGraphQLResource = <T>(options: GraphQLResourceOptions<T>) => {
           setState(state => ({
             ...state,
             loading: false,
-            data,
+            data: (data && options.infinite) ? options.infinite(state.data, data) : data,
             error,
           }))
         }
