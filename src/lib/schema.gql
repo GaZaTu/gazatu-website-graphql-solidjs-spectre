@@ -92,6 +92,8 @@ type BlogEntry {
   title: String!
   message: String
   imageFileExtension: String
+  imageWidth: Int
+  imageHeight: Int
   createdAt: String
 }
 
@@ -218,6 +220,8 @@ input BlogEntryInput {
   title: String!
   message: String
   imageFileExtension: String
+  imageWidth: Int
+  imageHeight: Int
 }
 
 scalar Void

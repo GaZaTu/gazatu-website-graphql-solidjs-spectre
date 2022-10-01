@@ -39,6 +39,8 @@ export interface BlogEntry {
     title?: string;
     message?: string | null;
     imageFileExtension?: string | null;
+    imageWidth?: number | null;
+    imageHeight?: number | null;
     createdAt?: string | null;
 }
 export interface BlogEntryListConnection {
@@ -153,6 +155,8 @@ export interface BlogEntryInput {
     title: string;
     message?: string | null;
     imageFileExtension?: string | null;
+    imageWidth?: number | null;
+    imageHeight?: number | null;
 }
 export type Void = unknown;
 export interface UserInput {

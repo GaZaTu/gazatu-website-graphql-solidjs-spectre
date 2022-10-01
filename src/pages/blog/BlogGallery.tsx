@@ -40,6 +40,8 @@ const BlogGalleryView: Component = () => {
             title
             message
             imageFileExtension
+            imageWidth
+            imageHeight
             createdAt
           }
           pageCount
@@ -192,7 +194,7 @@ const BlogEntryPreview: Component<BlogEntryPreviewProps> = props => {
   return (
     <Figure class="preview">
       <A href="" params={{ entry: props.entry.id }} keepExistingParams>
-        <ImgWithPlaceholder src={`${defaultFetchInfo()}/blog/entries/${props.entry.id}/preview.webp`} alt="" responsive />
+        <ImgWithPlaceholder src={`${defaultFetchInfo()}/blog/entries/${props.entry.id}/preview.webp`} alt="" responsive style={{ "--width": props.entry.imageWidth ?? 0, "--height": props.entry.imageHeight ?? 0 }} />
       </A>
     </Figure>
   )
