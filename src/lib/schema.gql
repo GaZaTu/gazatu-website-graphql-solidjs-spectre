@@ -1,4 +1,10 @@
 type Query {
+  """"""
+  blogEntryById(id: String!): BlogEntry
+
+  """"""
+  blogEntryListConnection(args: BlogEntryListConnectionArgs): BlogEntryListConnection
+
   """requires role: admin (or currentUser)"""
   userById(id: String!): User
 
@@ -37,6 +43,12 @@ type Query {
 }
 
 type Mutation {
+  """requires role: admin"""
+  blogEntrySave(input: BlogEntryInput!): BlogEntry!
+
+  """requires role: admin"""
+  blogEntryListRemoveByIds(ids: [String!]!): Void
+
   """"""
   userCreate(username: String!, password: String!): Auth!
 
@@ -72,6 +84,26 @@ type Mutation {
 
   """requires role: trivia/admin"""
   triviaReportListRemoveByQuestionId(questionId: [String!]!): Void
+}
+
+type BlogEntry {
+  id: String
+  story: String!
+  title: String!
+  message: String
+  imageFileExtension: String
+  createdAt: String
+}
+
+type BlogEntryListConnection {
+  slice: [BlogEntry!]!
+  pageIndex: Int!
+  pageCount: Int!
+}
+
+input BlogEntryListConnectionArgs {
+  offset: Int = 0
+  limit: Int = 25
 }
 
 type User {
@@ -178,6 +210,14 @@ type TriviaCounts {
   categories: Int!
   categoriesNotVerified: Int!
   reports: Int!
+}
+
+input BlogEntryInput {
+  id: String
+  story: String!
+  title: String!
+  message: String
+  imageFileExtension: String
 }
 
 scalar Void

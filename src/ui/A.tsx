@@ -40,7 +40,7 @@ const createProps = (_props: Props) => {
   const navigate = AnchorContext.useNavigate()
 
   const url = createMemo(() => {
-    if (!componentProps.href) {
+    if (componentProps.href === undefined) {
       return {
         asURL: undefined,
         asHref: undefined,
@@ -51,6 +51,10 @@ const createProps = (_props: Props) => {
     const asURL = (() => {
       if (componentProps.url) {
         return componentProps.url
+      }
+
+      if (!componentProps.href) {
+        return hrefToURL(location?.pathname)
       }
 
       const asURL = hrefToURL(componentProps.href)
@@ -65,6 +69,7 @@ const createProps = (_props: Props) => {
       }
 
       for (const [key, value] of Object.entries(componentProps.params ?? {})) {
+        asURL.searchParams.delete(key)
         asURL.searchParams.append(key, value)
       }
     }

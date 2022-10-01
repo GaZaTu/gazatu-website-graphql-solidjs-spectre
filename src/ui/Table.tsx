@@ -1,5 +1,5 @@
 import { createDebouncedMemo } from "@solid-primitives/memo"
-import { ColumnDef, createSolidTable, flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, RowData, Table as TableActions, TableOptions, TableState as _TableState } from "@tanstack/solid-table"
+import { createSolidTable, flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, RowData, Table as TableActions, TableOptions, TableState as _TableState } from "@tanstack/solid-table"
 import classnames from "classnames"
 import { ComponentProps, createEffect, createSignal, For, JSX, mergeProps, Show, splitProps } from "solid-js"
 import Column from "./Column"
@@ -44,15 +44,6 @@ function createContext<TData extends RowData>(options: Partial<TableOptions<TDat
     actions: createSolidTable<TData>(options as any),
   }
 }
-
-const getColumnStyle = (columnDef?: ColumnDef<unknown, unknown>, clickable = false): JSX.CSSProperties => ({
-  "width": columnDef?.meta?.compact ? "1%" : (columnDef?.size ? `${columnDef?.size}px` : undefined),
-  "min-width": columnDef?.minSize ? `${columnDef?.minSize}px` : undefined,
-  "max-width": columnDef?.maxSize ? `${columnDef?.maxSize}px` : undefined,
-
-  "cursor": clickable ? "pointer" : undefined,
-  "user-select": clickable ? "none" : undefined,
-})
 
 type Props = {
   context?: TableContext
@@ -118,13 +109,29 @@ function Table(props: Props & ComponentProps<"div">) {
 
       <div class="table-scroll-container">
         <table class={createTableClassName(tableProps)}>
+          <colgroup>
+            <Show when={__.context?.actions.getHeaderGroups()[0]} keyed>
+              {headerGroup => (
+                <For each={headerGroup.headers}>
+                  {({ column: { columnDef }}) => (
+                    <col style={{
+                      "width": columnDef?.meta?.compact ? "1%" : (columnDef?.size ? `${columnDef?.size}px` : undefined),
+                      "min-width": columnDef?.minSize ? `${columnDef?.minSize}px` : undefined,
+                      "max-width": columnDef?.maxSize ? `${columnDef?.maxSize}px` : undefined,
+                    }} />
+                  )}
+                </For>
+              )}
+            </Show>
+          </colgroup>
+
           <thead>
             <For each={__.context?.actions.getHeaderGroups()}>
               {headerGroup => (
                 <tr>
                   <For each={headerGroup.headers}>
                     {header => (
-                      <th colSpan={header.colSpan} onclick={header.column.getToggleSortingHandler()} style={getColumnStyle(header.column.columnDef as any, header.column.getCanSort())}>
+                      <th colSpan={header.colSpan} onclick={header.column.getToggleSortingHandler()} class={`${header.column.getCanSort() ? "th-clickable" : ""}`}>
                         <Show when={!header.isPlaceholder} fallback={null}>
                           {flexRender(header.column.columnDef.header, header.getContext())}
                           {{ asc: " 🔼", desc: " 🔽" }[header.column.getIsSorted() as string] ?? undefined}
@@ -162,7 +169,7 @@ function Table(props: Props & ComponentProps<"div">) {
                 <TableRow>
                   <For each={row.getVisibleCells()}>
                     {cell => (
-                      <td style={getColumnStyle(cell.column.columnDef as any)}>
+                      <td>
                         {flexRender(cell.column.columnDef.cell, cell.getContext())}
                       </td>
                     )}
@@ -207,8 +214,8 @@ const PlaceholderRow = (props: PlaceholderRowProps) => {
   return (
     <tr>
       <For each={props.actions?.getVisibleFlatColumns()}>
-        {column => (
-          <td style={getColumnStyle(column.columnDef as any)}>
+        {() => (
+          <td>
             <LoadingPlaceholder width="100%" height="var(--line-height)" />
           </td>
         )}

@@ -1,5 +1,7 @@
 export interface Query {
     __typename?: "Query";
+    blogEntryById?: BlogEntry | null;
+    blogEntryListConnection?: BlogEntryListConnection | null;
     userById?: User | null;
     userList?: User[];
     userRoleList?: UserRole[];
@@ -15,6 +17,8 @@ export interface Query {
 }
 export interface Mutation {
     __typename?: "Mutation";
+    blogEntrySave?: BlogEntry;
+    blogEntryListRemoveByIds?: Void | null;
     userCreate?: Auth;
     userUpdate?: Void | null;
     userListRemoveByIds?: Void | null;
@@ -27,6 +31,25 @@ export interface Mutation {
     triviaReportSave?: TriviaReport;
     triviaReportListRemoveById?: Void | null;
     triviaReportListRemoveByQuestionId?: Void | null;
+}
+export interface BlogEntry {
+    __typename?: "BlogEntry";
+    id?: string | null;
+    story?: string;
+    title?: string;
+    message?: string | null;
+    imageFileExtension?: string | null;
+    createdAt?: string | null;
+}
+export interface BlogEntryListConnection {
+    __typename?: "BlogEntryListConnection";
+    slice?: BlogEntry[];
+    pageIndex?: number;
+    pageCount?: number;
+}
+export interface BlogEntryListConnectionArgs {
+    offset?: number | null;
+    limit?: number | null;
 }
 export interface User {
     __typename?: "User";
@@ -123,6 +146,13 @@ export interface TriviaCounts {
     categories?: number;
     categoriesNotVerified?: number;
     reports?: number;
+}
+export interface BlogEntryInput {
+    id?: string | null;
+    story: string;
+    title: string;
+    message?: string | null;
+    imageFileExtension?: string | null;
 }
 export type Void = unknown;
 export interface UserInput {

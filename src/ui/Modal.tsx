@@ -32,6 +32,7 @@ const createProps = createHTMLMemoHook((props: Props) => {
 function Modal(props: Props & ComponentProps<"div">) {
   const [fml] = splitProps(props, ["children"])
   const [_props] = createProps(props)
+  const [outerProps, innerProps] = splitProps(_props, ["class"])
 
   const context = {
     active: () => !!props.active,
@@ -40,9 +41,9 @@ function Modal(props: Props & ComponentProps<"div">) {
   }
 
   return (
-    <div {..._props}>
+    <div {...outerProps}>
       <A class="modal-overlay" href={props.oncloseHref} onclick={props.onclose} />
-      <div class="modal-container">
+      <div class="modal-container" {...innerProps}>
         <ModalContext.Provider value={context}>
           {fml.children}
         </ModalContext.Provider>

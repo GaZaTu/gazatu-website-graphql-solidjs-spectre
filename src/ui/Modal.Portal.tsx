@@ -1,4 +1,4 @@
-import { For, JSX } from "solid-js"
+import { Component, For, JSX } from "solid-js"
 import Button from "./Button"
 import Modal from "./Modal"
 import { ModalStore, useModals } from "./Modal.Store"
@@ -8,7 +8,7 @@ type ModalProps<T = any> = {
   reject: (error?: unknown) => void
 }
 
-type ModalComponent<T = any> = (props: ModalProps<T>) => JSX.Element
+type ModalComponent<T = any> = Component<ModalProps<T>>
 
 const modals = new ModalStore<{ Modal: ModalComponent, props: ModalProps }>()
 

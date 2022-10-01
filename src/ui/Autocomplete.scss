@@ -29,6 +29,10 @@
       border: 0;
       margin-left: 0;
       padding: calc(var(--control-padding-y-md) - var(--unit-h)) calc(var(--control-padding-x-md) - var(--unit-h));
+
+      &:focus-visible {
+        outline: unset;
+      }
     }
   }
 

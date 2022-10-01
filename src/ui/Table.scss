@@ -43,6 +43,11 @@
   }
   th {
     border-bottom-width: $border-width-lg;
+
+    &.th-clickable {
+      cursor: pointer;
+      user-select: none;
+    }
   }
 
   &.table-loading {

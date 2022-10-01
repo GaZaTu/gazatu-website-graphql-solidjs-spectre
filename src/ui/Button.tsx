@@ -18,6 +18,7 @@ type Props = {
   outlined?: boolean
   active?: boolean
   loading?: boolean
+  disabled?: boolean
 
   type?: "button" | "submit" | "reset"
 }
@@ -39,6 +40,7 @@ const createProps = createHTMLMemoHook((props: Props) => {
         "btn-clear": props.clear,
         "btn-outlined": props.outlined,
         "btn-active": props.active,
+        "disabled": props.disabled,
         ...loading(props.loading ? "sm" : undefined),
       })
     },
