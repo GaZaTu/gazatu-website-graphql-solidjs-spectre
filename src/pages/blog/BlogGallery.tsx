@@ -209,10 +209,10 @@ const BlogEntryGroup: Component<BlogEntryGroupProps> = props => {
   return (
     <Section ref={props.ref} marginY>
       <h5>{props.date}</h5>
-      <Column.Row gaps="sm">
+      <Column.Row gaps="md">
         <For each={props.entries}>
           {entry => (
-            <Column>
+            <Column class="preview-column">
               <BlogEntryPreview entry={entry} />
             </Column>
           )}

@@ -28,7 +28,7 @@ function ImgWithPlaceholder(_props: Props & ComponentProps<typeof Img>) {
   }
 
   createEffect(async () => {
-    if (!fml.src || !visible()) {
+    if (!fml.src || !visible() || loaded()) {
       return
     }
 
@@ -39,9 +39,9 @@ function ImgWithPlaceholder(_props: Props & ComponentProps<typeof Img>) {
 
     const response = await fetch(fml.src)
     const blob = await response.blob()
-    const src = await readFile(blob, { how: "readAsDataURL" })
+    const url = await readFile(blob, { how: "readAsDataURL" })
 
-    setSrc(src)
+    setSrc(url)
     setLoading(false)
   })
 
