@@ -1,9 +1,10 @@
+import { createVisibilityObserver } from "@solid-primitives/intersection-observer"
 import { ComponentProps, createEffect, createSignal, Show, splitProps } from "solid-js"
-import readFile from "../lib/readFile"
 import Icon from "./Icon"
 import iconPhoto from "./icons/iconPhoto"
 import Img from "./Img"
 import LoadingPlaceholder from "./LoadingPlaceholder"
+import readFile from "./util/readFile"
 
 type Props = {
   useFetch?: boolean
@@ -12,19 +13,22 @@ type Props = {
 function ImgWithPlaceholder(_props: Props & ComponentProps<typeof Img>) {
   const [fml, props] = splitProps(_props, ["src"])
 
+  const [placeholder, setPlaceholder] = createSignal<HTMLElement>()
+  const useVisibilityObserver = createVisibilityObserver()
+  const visible = useVisibilityObserver(placeholder)
+
   const [loading, setLoading] = createSignal(true)
-  const [visible, setVisible] = createSignal(false)
+  const [loaded, setLoaded] = createSignal(false)
 
   const [src, setSrc] = createSignal<string>()
 
-  const SetVisible = () => {
-    console.log("setVisible")
-    setVisible(true)
+  const SetLoaded = () => {
+    setLoaded(true)
     return null
   }
 
   createEffect(async () => {
-    if (!fml.src) {
+    if (!fml.src || !visible()) {
       return
     }
 
@@ -52,11 +56,11 @@ function ImgWithPlaceholder(_props: Props & ComponentProps<typeof Img>) {
   return (
     <>
       <div style={{ display: "flex" }}>
-        <Img {...props} src={src()} onload={onload} style={{ display: visible() ? "block" : "none", ...(props.style as any) }} />
+        <Img {...props} src={src()} onload={onload} style={{ display: loaded() ? "block" : "none", ...(props.style as any) }} />
       </div>
 
-      <Show when={loading()} fallback={<SetVisible />}>
-        <LoadingPlaceholder width={props.width} height={props.height} style2={props.style}>
+      <Show when={loading()} fallback={<SetLoaded />}>
+        <LoadingPlaceholder ref={setPlaceholder} width={props.width} height={props.height} style2={props.style}>
           <Icon src={iconPhoto} />
         </LoadingPlaceholder>
       </Show>
