@@ -11,7 +11,6 @@ import { createAuthCheck, storedAuth } from "../../store/auth"
 import Autocomplete from "../../ui/Autocomplete"
 import Button from "../../ui/Button"
 import Form from "../../ui/Form"
-import FormGroup from "../../ui/Form.Group"
 import Icon from "../../ui/Icon"
 import iconSave from "../../ui/icons/iconSave"
 import Input from "../../ui/Input"
@@ -66,11 +65,10 @@ const UserView: Component = () => {
   createGlobalProgressStateEffect(() => response.loading)
 
   const formSchema = UserSchema
-  const form = Form.createContext({
-    extend: [validator({ struct: formSchema })],
+  const form = Form.createContext<UserInput>({
+    extend: [validator<any>({ struct: formSchema })],
     isRequired: superstructIsRequired.bind(undefined, formSchema),
-    onSubmit: async _values => {
-      const input = _values as UserInput
+    onSubmit: async input => {
       await fetchGraphQL<Mutation>({
         query: gql`
           mutation ($input: UserInput!) {
@@ -109,15 +107,15 @@ const UserView: Component = () => {
   return (
     <Section size="xl" marginY>
       <Form context={form} horizontal>
-        <FormGroup label="Username">
+        <Form.Group label="Username">
           <Input type="text" name="username" readOnly ifEmpty={null} />
-        </FormGroup>
+        </Form.Group>
 
-        <FormGroup label="Roles">
+        <Form.Group label="Roles">
           <Autocomplete name="roles" {...roles} multiple readOnly={readOnly()} />
-        </FormGroup>
+        </Form.Group>
 
-        <FormGroup>
+        <Form.Group>
           <Navbar size="lg">
             <Navbar.Section>
               <Button type="submit" color="primary" action circle onclick={form.createSubmitHandler()} disabled={readOnly()} loading={loading()}>
@@ -125,7 +123,7 @@ const UserView: Component = () => {
               </Button>
             </Navbar.Section>
           </Navbar>
-        </FormGroup>
+        </Form.Group>
       </Form>
     </Section>
   )

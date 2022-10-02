@@ -66,6 +66,10 @@ function Input(props: Props & ComponentProps<"input">) {
       return undefined
     }
 
+    if (_props.type === "file") {
+      return ""
+    }
+
     const value = form.getValue(_props.name) ?? ""
     return value
   })
@@ -78,6 +82,17 @@ function Input(props: Props & ComponentProps<"input">) {
     }
 
     if (!_props.name) {
+      return
+    }
+
+    if (_props.type === "file") {
+      const fileList = (ev.currentTarget as HTMLInputElement).files
+      const fileArray = [] as File[]
+      for (let i = 0; i < (fileList?.length ?? 0); i++) {
+        fileArray.push(fileList!.item(i)!)
+      }
+
+      form.setValue(_props.name, fileArray)
       return
     }
 

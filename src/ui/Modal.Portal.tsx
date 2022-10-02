@@ -3,12 +3,12 @@ import Button from "./Button"
 import Modal from "./Modal"
 import { ModalStore, useModals } from "./Modal.Store"
 
-type ModalProps<T = any> = {
+export type ModalProps<T = any> = {
   resolve: (value?: T) => void
   reject: (error?: unknown) => void
 }
 
-type ModalComponent<T = any> = Component<ModalProps<T>>
+export type ModalComponent<T = any> = Component<ModalProps<T>>
 
 const modals = new ModalStore<{ Modal: ModalComponent, props: ModalProps }>()
 

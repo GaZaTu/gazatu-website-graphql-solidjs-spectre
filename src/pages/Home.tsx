@@ -19,7 +19,7 @@ const HomeView: Component = () => {
       <Section size="xl" marginY>
         <Button.Group>
           <Button.A href="/trivia/questions/new" color="gray">Submit Trivia Question</Button.A>
-          <Button.A href="/trivia/category/new" color="gray">Submit Trivia Category</Button.A>
+          <Button.A href="/trivia/categories/new" color="gray">Submit Trivia Category</Button.A>
         </Button.Group>
       </Section>
 

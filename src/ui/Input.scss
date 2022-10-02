@@ -45,10 +45,9 @@
     width: auto;
   }
 
-  // Input types
-  &[type="file"] {
-    height: auto;
-  }
+  // &[type="file"] {
+  //   height: auto;
+  // }
 
   &.form-inline {
     display: inline-block;

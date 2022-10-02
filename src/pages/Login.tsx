@@ -78,11 +78,10 @@ const LoginForm: Component<{ isRegister?: boolean }> = props => {
   const navigate = useNavigate()
 
   const formSchema = props.isRegister ? RegisterUserSchema : AuthenticateSchema
-  const form = Form.createContext({
-    extend: [validator({ struct: formSchema })],
+  const form = Form.createContext<Record<string, unknown>>({
+    extend: [validator<any>({ struct: formSchema })],
     isRequired: superstructIsRequired.bind(undefined, formSchema),
-    onSubmit: async _values => {
-      const input = _values as Record<string, unknown>
+    onSubmit: async input => {
       const res = await fetchGraphQL<Mutation & Query>({
         query: props.isRegister ? gqlRegisterUser : gqlAuthenticate,
         variables: { ...input },

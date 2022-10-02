@@ -16,7 +16,6 @@ import Button from "../../ui/Button"
 import Card from "../../ui/Card"
 import Column from "../../ui/Column"
 import Form from "../../ui/Form"
-import FormGroup from "../../ui/Form.Group"
 import Icon from "../../ui/Icon"
 import iconDelete from "../../ui/icons/iconDelete"
 import iconSave from "../../ui/icons/iconSave"
@@ -98,11 +97,10 @@ const TriviaQuestionView: Component = () => {
   }
 
   const formSchema = TriviaQuestionSchema
-  const form = Form.createContext({
-    extend: [validator({ struct: formSchema })],
+  const form = Form.createContext<TriviaQuestionInput>({
+    extend: [validator<any>({ struct: formSchema })],
     isRequired: superstructIsRequired.bind(undefined, formSchema),
-    onSubmit: async _values => {
-      const input = _values as TriviaQuestionInput
+    onSubmit: async input => {
       const res = await fetchGraphQL<Mutation>({
         query: gql`
           mutation ($input: TriviaQuestionInput!) {
@@ -221,31 +219,31 @@ const TriviaQuestionView: Component = () => {
         <Column.Row>
           <Column>
             <Form context={form} horizontal>
-              <FormGroup label="Categories" hint={(form.touched("categories") && !form.data("categories")?.length) ? "pick `General Knowledge` if this question does not have a category" : undefined}>
+              <Form.Group label="Categories" hint={(form.touched("categories") && !form.data("categories")?.length) ? "pick `General Knowledge` if this question does not have a category" : undefined}>
                 <Autocomplete name="categories" {...categories} multiple readOnly={readOnly()} />
-              </FormGroup>
+              </Form.Group>
 
-              <FormGroup label="Question">
+              <Form.Group label="Question">
                 <Input type="text" name="question" readOnly={readOnly()} ifEmpty={null} multiline style={{ "min-height": "calc(var(--control-height-md) * 3)" }} />
-              </FormGroup>
+              </Form.Group>
 
-              <FormGroup label="Answer">
+              <Form.Group label="Answer">
                 <Input type="text" name="answer" readOnly={readOnly()} ifEmpty={null} />
-              </FormGroup>
+              </Form.Group>
 
-              <FormGroup label="Hint 1">
+              <Form.Group label="Hint 1">
                 <Input type="text" name="hint1" readOnly={readOnly()} ifEmpty={null} multiline style={{ "min-height": "calc(var(--control-height-md) * 2)" }} />
-              </FormGroup>
+              </Form.Group>
 
-              <FormGroup label="Hint 2">
+              <Form.Group label="Hint 2">
                 <Input type="text" name="hint2" readOnly={readOnly()} ifEmpty={null} multiline style={{ "min-height": "calc(var(--control-height-md) * 2)" }} />
-              </FormGroup>
+              </Form.Group>
 
-              <FormGroup label="Submitter">
+              <Form.Group label="Submitter">
                 <Input type="text" name="submitter" readOnly={readOnly()} ifEmpty={null} />
-              </FormGroup>
+              </Form.Group>
 
-              <FormGroup>
+              <Form.Group>
                 <Navbar size="lg">
                   <Navbar.Section>
                     <Column.Row>
@@ -273,14 +271,14 @@ const TriviaQuestionView: Component = () => {
                     </Show>
                   </Navbar.Section>
                 </Navbar>
-              </FormGroup>
+              </Form.Group>
             </Form>
 
-            <FormGroup horizontal>
+            <Form.Group horizontal>
               <Switch checked={verified()} oninput={handleVerify} disabled={readOnly() || !id() || verified()} style={{ color: verified() ? "var(--success)" : "var(--failure)", "font-weight": "bold" }}>
                 Verified
               </Switch>
-            </FormGroup>
+            </Form.Group>
           </Column>
 
           <Column xxl={4} sm={12}>

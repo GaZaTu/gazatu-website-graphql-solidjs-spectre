@@ -16,7 +16,6 @@ type GraphQLOptions = {
 }
 
 type GraphQLResult<T = any> = {
-  message?: string
   errors?: { message?: string }[]
   data: T | null
 }
@@ -36,14 +35,9 @@ const fetchGraphQL = async<T>(options: GraphQLOptions) => {
     }),
   })
 
-  const json = await response.json() as GraphQLResult<T>
+  const json = await response.json() as GraphQLResult<T> | undefined
 
-  const errorMessageGraphQL = json?.errors?.[0]?.message
-  if (errorMessageGraphQL) {
-    throw new GraphQLError(errorMessageGraphQL)
-  }
-
-  const errorMessage = json?.message
+  const errorMessage = json?.errors?.[0]?.message
   if (errorMessage) {
     throw new GraphQLError(errorMessage)
   }
@@ -52,7 +46,7 @@ const fetchGraphQL = async<T>(options: GraphQLOptions) => {
     throw new GraphQLError(response.statusText)
   }
 
-  if (!json.data) {
+  if (!json?.data) {
     throw new GraphQLError("Unexpected")
   }
 

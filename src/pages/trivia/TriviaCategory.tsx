@@ -12,7 +12,6 @@ import { createAuthCheck } from "../../store/auth"
 import Button from "../../ui/Button"
 import Column from "../../ui/Column"
 import Form from "../../ui/Form"
-import FormGroup from "../../ui/Form.Group"
 import Icon from "../../ui/Icon"
 import iconDelete from "../../ui/icons/iconDelete"
 import iconSave from "../../ui/icons/iconSave"
@@ -67,11 +66,10 @@ const TriviaCategoryView: Component = () => {
   const navigate = useNavigate()
 
   const formSchema = TriviaCategorySchema
-  const form = Form.createContext({
-    extend: [validator({ struct: formSchema })],
+  const form = Form.createContext<TriviaCategoryInput>({
+    extend: [validator<any>({ struct: formSchema })],
     isRequired: superstructIsRequired.bind(undefined, formSchema),
-    onSubmit: async _values => {
-      const input = _values as TriviaCategoryInput
+    onSubmit: async input => {
       const res = await fetchGraphQL<Mutation>({
         query: gql`
           mutation ($input: TriviaCategoryInput!) {
@@ -137,19 +135,19 @@ const TriviaCategoryView: Component = () => {
         <Column.Row>
           <Column>
             <Form context={form} horizontal>
-              <FormGroup label="Name">
+              <Form.Group label="Name">
                 <Input type="text" name="name" readOnly={readOnly()} ifEmpty={null} />
-              </FormGroup>
+              </Form.Group>
 
-              <FormGroup label="Description">
+              <Form.Group label="Description">
                 <Input type="text" name="description" readOnly={readOnly()} ifEmpty={null} />
-              </FormGroup>
+              </Form.Group>
 
-              <FormGroup label="Submitter">
+              <Form.Group label="Submitter">
                 <Input type="text" name="submitter" readOnly={readOnly()} ifEmpty={null} />
-              </FormGroup>
+              </Form.Group>
 
-              <FormGroup>
+              <Form.Group>
                 <Navbar size="lg">
                   <Navbar.Section>
                     <Button type="submit" color="primary" action circle onclick={form.createSubmitHandler()} disabled={readOnly()} loading={loading()}>
@@ -165,14 +163,14 @@ const TriviaCategoryView: Component = () => {
                     </Show>
                   </Navbar.Section>
                 </Navbar>
-              </FormGroup>
+              </Form.Group>
             </Form>
 
-            <FormGroup horizontal>
+            <Form.Group horizontal>
               <Switch checked={verified()} oninput={handleVerify} disabled={readOnly() || !id() || verified()} style={{ color: verified() ? "var(--success)" : "var(--failure)", "font-weight": "bold" }}>
                 Verified
               </Switch>
-            </FormGroup>
+            </Form.Group>
           </Column>
 
           <Column xxl={4} sm={12} />

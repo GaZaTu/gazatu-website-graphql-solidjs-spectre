@@ -1,20 +1,26 @@
+import { validator } from "@felte/validator-superstruct"
 import { createIntersectionObserver } from "@solid-primitives/intersection-observer"
 import { Title } from "@solidjs/meta"
 import { useLocation } from "@solidjs/router"
 import { Component, ComponentProps, createEffect, createMemo, createSignal, For } from "solid-js"
-import { defaultFetchInfo } from "../../lib/fetchFromApi"
-import { createGraphQLResource, gql } from "../../lib/fetchGraphQL"
-import { BlogEntry, Query } from "../../lib/schema.gql"
+import { any, array, nullable, optional, size, string, type } from "superstruct"
+import { defaultFetchInfo, fetchJson } from "../../lib/fetchFromApi"
+import fetchGraphQL, { createGraphQLResource, gql } from "../../lib/fetchGraphQL"
+import { BlogEntry, BlogEntryInput, Mutation, Query } from "../../lib/schema.gql"
+import superstructIsRequired from "../../lib/superstructIsRequired"
 import A from "../../ui/A"
 import Button from "../../ui/Button"
 import Column from "../../ui/Column"
 import Figure from "../../ui/Figure"
+import Form from "../../ui/Form"
 import Icon from "../../ui/Icon"
 import iconArrowLeft from "../../ui/icons/iconArrowLeft"
 import iconArrowRight from "../../ui/icons/iconArrowRight"
+import iconUpload from "../../ui/icons/iconUpload"
 import ImgWithPlaceholder from "../../ui/ImgWithPlaceholder"
+import Input from "../../ui/Input"
 import Modal from "../../ui/Modal"
-import ModalPortal from "../../ui/Modal.Portal"
+import ModalPortal, { ModalComponent } from "../../ui/Modal.Portal"
 import { createGlobalProgressStateEffect } from "../../ui/Progress.Global"
 import Section from "../../ui/Section"
 import { createTableState } from "../../ui/Table.Helpers"
@@ -59,12 +65,16 @@ const BlogGalleryView: Component = () => {
       },
     },
     onError: Toaster.pushError,
-    infinite: (prev, next) => {
-      const prevArray = prev?.blogEntryListConnection?.slice ?? []
-      const nextArray = next.blogEntryListConnection?.slice
+    infinite: (prevData, nextData) => {
+      const prev = prevData?.blogEntryListConnection
+      const next = nextData.blogEntryListConnection
 
-      nextArray?.unshift(...prevArray)
-      return next
+      if (prev?.pageIndex === next?.pageIndex) {
+        return nextData
+      }
+
+      next?.slice?.unshift(...(prev?.slice ?? []))
+      return nextData
     },
   })
 
@@ -115,11 +125,29 @@ const BlogGalleryView: Component = () => {
     }))
   })
 
+  const handleUpload = async () => {
+    await Toaster.try(async () => {
+      await ModalPortal.push(BlogEntryUploadModal)
+
+      response.refresh()
+    })
+  }
+
   return (
     <>
       <Section size="xl" marginY>
-        <Title>Blog</Title>
-        <h3>Blog</h3>
+        <Column.Row>
+          <Column xxl={4} md={6} sm={12}>
+            <Title>Blog</Title>
+            <h3>Blog</h3>
+          </Column>
+
+          <Column xxl="auto" offset="ml">
+            <Button color="primary" action circle onclick={handleUpload}>
+              <Icon src={iconUpload} />
+            </Button>
+          </Column>
+        </Column.Row>
       </Section>
 
       <For each={Object.entries(groups() ?? {})}>
@@ -242,3 +270,95 @@ const BlogEntryGroup: Component<BlogEntryGroupProps> = props => {
 //     </Section>
 //   )
 // }
+
+const BlogEntryUploadSchema = type({
+  files: size(array(any()), 1, 1),
+  story: size(string(), 1, 128),
+  title: size(string(), 1, 128),
+  message: optional(nullable(size(string(), 0, 256))),
+})
+
+const BlogEntryUploadModal: ModalComponent = modal => {
+  const formSchema = BlogEntryUploadSchema
+  const form = Form.createContext<BlogEntryInput & { files: File[] }>({
+    extend: [validator<any>({ struct: formSchema })],
+    isRequired: superstructIsRequired.bind(undefined, formSchema),
+    onSubmit: async _input => {
+      const {
+        files: [image],
+        ...input
+      } = _input
+
+      const res = await fetchGraphQL<Mutation>({
+        query: gql`
+          mutation ($input: BlogEntryInput!) {
+            blogEntrySave(input: $input) {
+              id
+            }
+          }
+        `,
+        variables: { input },
+      })
+
+      try {
+        await fetchJson(`/blog/entries/${res.blogEntrySave?.id}/image.webp`, {
+          method: "POST",
+          body: image,
+        })
+      } catch (error) {
+        await removeBlogEntries([res.blogEntrySave!.id!])
+
+        throw error
+      }
+
+      modal.resolve()
+      return "Created new blog entry"
+    },
+    onSuccess: Toaster.pushSuccess,
+    onError: Toaster.pushError,
+    initialValues: {
+      story: new Date().toISOString().slice(0, "yyyy-MM-dd".length),
+      title: new Date().toISOString().slice("yyyy-MM-dd".length + 1),
+    },
+  })
+
+  return (
+    <Modal onclose={modal.resolve} active>
+      <Modal.Body>
+        <Form context={form} horizontal>
+          <Form.Group label="Image">
+            <Input type="file" name="files" accept="image/*" />
+          </Form.Group>
+
+          <Form.Group label="Story">
+            <Input type="text" name="story" ifEmpty={null} />
+          </Form.Group>
+
+          <Form.Group label="Title">
+            <Input type="text" name="title" ifEmpty={null} />
+          </Form.Group>
+
+          <Form.Group label="Message">
+            <Input type="text" name="message" ifEmpty={null} multiline style={{ "min-height": "calc(var(--control-height-md) * 2)" }} />
+          </Form.Group>
+        </Form>
+      </Modal.Body>
+
+      <Modal.Footer>
+        <Button color="primary" onclick={form.createSubmitHandler()}>OK</Button>
+        <Button color="link" onclick={modal.resolve}>Cancel</Button>
+      </Modal.Footer>
+    </Modal>
+  )
+}
+
+export const removeBlogEntries = async (ids: string[]) => {
+  await fetchGraphQL<Mutation>({
+    query: gql`
+      mutation ($ids: [String!]!) {
+        blogEntryListRemoveByIds(ids: $ids)
+      }
+    `,
+    variables: { ids },
+  })
+}
