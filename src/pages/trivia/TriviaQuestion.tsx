@@ -45,7 +45,7 @@ const TriviaQuestionView: Component = () => {
 
   const response = createGraphQLResource<Query>({
     query: gql`
-      query ($isTriviaAdmin: Boolean!, $id: String!, $isNew: Boolean!) {
+      query ($id: String!, $isNew: Boolean!) {
         triviaQuestionById(id: $id) @skip(if: $isNew) {
           id
           question
@@ -63,12 +63,6 @@ const TriviaQuestionView: Component = () => {
           disabled
           createdAt
           updatedAt
-          reports @include(if: $isTriviaAdmin) {
-            id
-            message
-            submitter
-            createdAt
-          }
         }
         triviaCategoryList {
           id

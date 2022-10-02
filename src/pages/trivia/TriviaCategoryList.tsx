@@ -79,12 +79,14 @@ const TriviaCategoryListView: Component = () => {
         header: "Created",
         cell: tableDateCell(),
         maxSize: 100,
+        enableGlobalFilter: false,
       },
       {
         accessorKey: "questionsCount",
         header: "Questions",
         cell: info => info.getValue() ?? "N/A",
         maxSize: 100,
+        enableGlobalFilter: false,
       },
       {
         accessorKey: "verified",
@@ -94,6 +96,7 @@ const TriviaCategoryListView: Component = () => {
           <Icon src={info.getValue() ? iconCheck : undefined} style={{ color: "var(--success)" }} classList={{ ...centerSelf(true) }} />
         ),
         maxSize: 100,
+        enableGlobalFilter: false,
       },
     ],
     state: tableState,

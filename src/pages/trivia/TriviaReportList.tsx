@@ -1,5 +1,6 @@
 import { Title } from "@solidjs/meta"
 import { useNavigate } from "@solidjs/router"
+import { ColumnDef } from "@tanstack/solid-table"
 import { Component, createEffect, createMemo } from "solid-js"
 import { createGraphQLResource, gql } from "../../lib/fetchGraphQL"
 import { Query, TriviaReport } from "../../lib/schema.gql"
@@ -61,29 +62,32 @@ const TriviaReportListView: Component<{ questionId?: unknown }> = props => {
     get data() {
       return response.data?.triviaReportList ?? []
     },
-    columns: [
-      tableColumnSelect(),
-      tableColumnLink(row => ({ href: `/trivia/questions/${row.original.question?.id}` })),
-      {
-        accessorKey: "question.question",
-        header: "Question",
-      },
-      {
-        accessorKey: "message",
-        header: "Message",
-      },
-      {
-        accessorKey: "submitter",
-        header: "Submitter",
-        maxSize: 100,
-      },
-      {
-        accessorKey: "createdAt",
-        header: "Created",
-        cell: tableDateCell(),
-        maxSize: 100,
-      },
-    ],
+    get columns(): ColumnDef<TriviaReport, any>[] {
+      return [
+        tableColumnSelect(),
+        tableColumnLink(row => ({ href: `/trivia/questions/${row.original.question?.id}` })),
+        ...(!props.questionId ? [{
+          accessorKey: "question.question",
+          header: "Question",
+        }] : []),
+        {
+          accessorKey: "message",
+          header: "Message",
+        },
+        {
+          accessorKey: "submitter",
+          header: "Submitter",
+          maxSize: 100,
+        },
+        {
+          accessorKey: "createdAt",
+          header: "Created",
+          cell: tableDateCell(),
+          maxSize: 100,
+          enableGlobalFilter: false,
+        },
+      ]
+    },
     state: tableState,
     onPaginationChange: tableOnPaginationChange(setTableState),
     onSortingChange: tableOnSortingChange(setTableState),
