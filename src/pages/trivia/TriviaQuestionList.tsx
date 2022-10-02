@@ -20,7 +20,7 @@ import Toaster from "../../ui/Toaster"
 import { centerSelf } from "../../ui/util/position"
 import { disableTriviaQuestions, verifyTriviaQuestions } from "./shared-graphql"
 
-const TriviaQuestionListView: Component = () => {
+const TriviaQuestionListView: Component<{ categoryId?: unknown }> = props => {
   const isTriviaAdmin = createAuthCheck("trivia/admin")
 
   const location = useLocation()
@@ -83,6 +83,9 @@ const TriviaQuestionListView: Component = () => {
           return location.query.verified ? (location.query.verified === "true") : undefined
         },
         disabled: false,
+        get categoryId() {
+          return props.categoryId
+        },
       },
     },
     onError: Toaster.pushError,

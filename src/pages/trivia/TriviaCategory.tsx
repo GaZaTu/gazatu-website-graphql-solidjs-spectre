@@ -1,7 +1,7 @@
 import { validator } from "@felte/validator-superstruct"
 import { Title } from "@solidjs/meta"
 import { useNavigate } from "@solidjs/router"
-import { Component, createEffect, createMemo, Show } from "solid-js"
+import { Component, createEffect, createMemo, lazy, Show } from "solid-js"
 import { isServer } from "solid-js/web"
 import { nullable, optional, size, string, type } from "superstruct"
 import fetchGraphQL, { createGraphQLResource, gql } from "../../lib/fetchGraphQL"
@@ -10,6 +10,7 @@ import superstructIsRequired from "../../lib/superstructIsRequired"
 import useIdFromParams from "../../lib/useIdFromParams"
 import { createAuthCheck } from "../../store/auth"
 import Button from "../../ui/Button"
+import Column from "../../ui/Column"
 import Form from "../../ui/Form"
 import FormGroup from "../../ui/Form.Group"
 import Icon from "../../ui/Icon"
@@ -128,47 +129,61 @@ const TriviaCategoryView: Component = () => {
   }
 
   return (
-    <Section size="lg" marginY>
-      <Title>Trivia Category</Title>
-      <h3>Trivia Category</h3>
+    <>
+      <Section size="xl" marginY>
+        <Title>Trivia Category</Title>
+        <h3>Trivia Category</h3>
 
-      <Form context={form} horizontal>
-        <FormGroup label="Name">
-          <Input type="text" name="name" readOnly={readOnly()} ifEmpty={null} />
-        </FormGroup>
+        <Column.Row>
+          <Column>
+            <Form context={form} horizontal>
+              <FormGroup label="Name">
+                <Input type="text" name="name" readOnly={readOnly()} ifEmpty={null} />
+              </FormGroup>
 
-        <FormGroup label="Description">
-          <Input type="text" name="description" readOnly={readOnly()} ifEmpty={null} />
-        </FormGroup>
+              <FormGroup label="Description">
+                <Input type="text" name="description" readOnly={readOnly()} ifEmpty={null} />
+              </FormGroup>
 
-        <FormGroup label="Submitter">
-          <Input type="text" name="submitter" readOnly={readOnly()} ifEmpty={null} />
-        </FormGroup>
+              <FormGroup label="Submitter">
+                <Input type="text" name="submitter" readOnly={readOnly()} ifEmpty={null} />
+              </FormGroup>
 
-        <FormGroup>
-          <Navbar size="lg">
-            <Navbar.Section>
-              <Button type="submit" color="primary" action circle onclick={form.createSubmitHandler()} disabled={readOnly()} loading={loading()}>
-                <Icon src={iconSave} />
-              </Button>
-            </Navbar.Section>
+              <FormGroup>
+                <Navbar size="lg">
+                  <Navbar.Section>
+                    <Button type="submit" color="primary" action circle onclick={form.createSubmitHandler()} disabled={readOnly()} loading={loading()}>
+                      <Icon src={iconSave} />
+                    </Button>
+                  </Navbar.Section>
 
-            <Navbar.Section>
-              <Show when={isTriviaAdmin()}>
-                <Button color="failure" action circle onclick={handleRemove} disabled={readOnly() || !id()}>
-                  <Icon src={iconDelete} />
-                </Button>
-              </Show>
-            </Navbar.Section>
-          </Navbar>
-        </FormGroup>
-      </Form>
+                  <Navbar.Section>
+                    <Show when={isTriviaAdmin()}>
+                      <Button color="failure" action circle onclick={handleRemove} disabled={readOnly() || !id()}>
+                        <Icon src={iconDelete} />
+                      </Button>
+                    </Show>
+                  </Navbar.Section>
+                </Navbar>
+              </FormGroup>
+            </Form>
 
-      <FormGroup label="Verified" horizontal>
-        <Switch checked={verified()} oninput={handleVerify} disabled={readOnly() || !id() || verified()} style={{ color: verified() ? "var(--success)" : "var(--failure)", "font-weight": "bold" }} />
-      </FormGroup>
-    </Section>
+            <FormGroup label="Verified" horizontal>
+              <Switch checked={verified()} oninput={handleVerify} disabled={readOnly() || !id() || verified()} style={{ color: verified() ? "var(--success)" : "var(--failure)", "font-weight": "bold" }} />
+            </FormGroup>
+          </Column>
+
+          <Column xxl={4} sm={12} />
+        </Column.Row>
+      </Section>
+
+      <Show when={id() && isTriviaAdmin()}>
+        <TriviaQuestionList categoryId={id()} />
+      </Show>
+    </>
   )
 }
 
 export default TriviaCategoryView
+
+const TriviaQuestionList = lazy(() => import("./TriviaQuestionList"))

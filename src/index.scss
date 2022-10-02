@@ -169,6 +169,10 @@ body,
   height: 100%;
 }
 
+body {
+  overflow-y: scroll;
+}
+
 #root,
 #AppMain {
   display: flex;
@@ -192,22 +196,3 @@ body,
     text-align: center;
   }
 }
-
-// @media (min-width: $size-md) {
-//   *::-webkit-scrollbar {
-//     width: 8px;
-//   }
-
-//   *::-webkit-scrollbar-track {
-//     background: rgba(var(--body-bg-monochrome--rgb-triplet), .5);
-//   }
-
-//   *::-webkit-scrollbar-thumb {
-//     background: rgba(var(--body-fg-monochrome--rgb-triplet), .6);
-//     border-radius: 16px;
-//   }
-
-//   *::-webkit-scrollbar-thumb:hover {
-//     background: rgba(var(--body-fg-monochrome--rgb-triplet), .4);
-//   }
-// }

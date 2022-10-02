@@ -122,13 +122,11 @@ const BlogGalleryView: Component = () => {
         <h3>Blog</h3>
       </Section>
 
-      <Section size="xl" marginY flex style={{ "flex-grow": 1 }}>
-        <For each={Object.entries(groups() ?? {})}>
-          {([date, entries]) => (
-            <BlogEntryGroup ref={el => setTargets(s => [...s, el])} date={date} entries={entries} refresh={response.refresh} />
-          )}
-        </For>
-      </Section>
+      <For each={Object.entries(groups() ?? {})}>
+        {([date, entries]) => (
+          <BlogEntryGroup ref={el => setTargets(s => [...s, el])} date={date} entries={entries} refresh={response.refresh} />
+        )}
+      </For>
     </>
   )
 }
@@ -209,7 +207,7 @@ type BlogEntryGroupProps = {
 
 const BlogEntryGroup: Component<BlogEntryGroupProps> = props => {
   return (
-    <Section ref={props.ref} marginY>
+    <Section ref={props.ref} size="xl" marginY>
       <h5>{props.date}</h5>
       <Column.Row gaps="md">
         <For each={props.entries}>
@@ -223,3 +221,24 @@ const BlogEntryGroup: Component<BlogEntryGroupProps> = props => {
     </Section>
   )
 }
+
+// const BlogEntryGroupPlaceholder: Component = () => {
+//   return (
+//     <Section size="xl" marginY>
+//       <h5>
+//         <LoadingPlaceholder width="8rem" height="var(--line-height)" />
+//       </h5>
+//       <Column.Row gaps="md">
+//         <For each={new Array(4)}>
+//           {() => (
+//             <Column class="preview-column">
+//               <Figure class="preview">
+//                 <ImgWithPlaceholder responsive style={{ "--width": 200, "--height": 200 }} />
+//               </Figure>
+//             </Column>
+//           )}
+//         </For>
+//       </Column.Row>
+//     </Section>
+//   )
+// }
