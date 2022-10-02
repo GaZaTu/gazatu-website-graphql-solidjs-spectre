@@ -183,7 +183,8 @@ body,
 #AppMain {
   flex-grow: 1;
 
-  > noscript {
+  > noscript,
+  .noscript {
     padding: var(--unit-4);
     background: var(--warning);
     color: var(--warning-text);

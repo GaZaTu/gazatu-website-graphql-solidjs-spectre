@@ -12,7 +12,7 @@ const AppMain: Component = () => {
 
   return (
     <main id="AppMain">
-      <noscript>You need to enable JavaScript to use this app!</noscript>
+      <noscript class="noscript">You need to enable JavaScript to use this app!</noscript>
 
       <Suspense>
         <Route />
