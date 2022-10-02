@@ -2,22 +2,22 @@
 
 // Shapes
 .s-rounded-xs {
-  border-radius: $border-radius-xs;
+  border-radius: $border-radius-xs !important;
 }
 
 .s-rounded-sm {
-  border-radius: $border-radius-sm;
+  border-radius: $border-radius-sm !important;
 }
 
 .s-rounded-md {
-  border-radius: $border-radius-md;
+  border-radius: $border-radius-md !important;
 }
 
 .s-rounded-lg {
-  border-radius: $border-radius-lg;
+  border-radius: $border-radius-lg !important;
 }
 
 .s-rounded-xl,
 .s-circle {
-  border-radius: 50%;
+  border-radius: 50% !important;
 }
