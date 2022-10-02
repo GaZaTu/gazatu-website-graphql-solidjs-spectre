@@ -9,8 +9,9 @@
     display: flex;
     flex-wrap: wrap;
     height: auto;
-    min-height: $unit-8;
+    min-height: $control-height-md;
     padding: $unit-h;
+    padding-top: $unit-1;
 
     &.is-focused {
       box-shadow: 0 0 0 .1rem rgba($primary--rgb-triplet, .2);
