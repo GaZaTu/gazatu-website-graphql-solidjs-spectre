@@ -69,9 +69,9 @@ const BlogGalleryView: Component = () => {
       const prev = prevData?.blogEntryListConnection
       const next = nextData.blogEntryListConnection
 
-      if (prev?.pageIndex === next?.pageIndex) {
-        return nextData
-      }
+      // if ((tableState.pagination?.pageIndex ?? 0) === (next?.pageIndex ?? 0)) {
+      //   return nextData
+      // }
 
       next?.slice?.unshift(...(prev?.slice ?? []))
       return nextData
@@ -129,6 +129,7 @@ const BlogGalleryView: Component = () => {
     await Toaster.try(async () => {
       await ModalPortal.push(BlogEntryUploadModal)
 
+      response.clear()
       response.refresh()
     })
   }
