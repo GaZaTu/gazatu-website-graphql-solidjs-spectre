@@ -29,7 +29,7 @@ import Toaster from "../../ui/Toaster"
 import { disableTriviaQuestions, verifyTriviaQuestions } from "./shared-graphql"
 
 const TriviaQuestionSchema = type({
-  categories: size(array(type({ id: string() })), 1, 5),
+  categories: size(array(type({ name: string() })), 1, 5),
   question: size(string(), 1, 256),
   answer: size(string(), 1, 64),
   hint1: optional(nullable(size(string(), 0, 256))),
@@ -188,7 +188,7 @@ const TriviaQuestionView: Component = () => {
 
   const categories = Autocomplete.createOptions(() => response.data?.triviaCategoryList ?? [], {
     filterable: true,
-    createable: false,
+    createable: true,
     key: "name",
     disable: o => form.data("categories")?.map?.((v: any) => v.id)?.includes(o.id),
   })

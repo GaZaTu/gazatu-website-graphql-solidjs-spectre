@@ -54,7 +54,7 @@ const TriviaCategoryListView: Component = () => {
 
   const [tableState, setTableState] = createTableState({
     sorting: [
-      { id: "createdAt", desc: true },
+      { id: "name", desc: false },
     ],
   }, { useSearchParams: true })
 

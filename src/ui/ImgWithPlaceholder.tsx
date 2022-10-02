@@ -55,8 +55,8 @@ function ImgWithPlaceholder(_props: Props & ComponentProps<typeof Img>) {
 
   return (
     <>
-      <div style={{ display: "flex" }}>
-        <Img {...props} src={src()} onload={onload} style={{ display: loaded() ? "block" : "none", ...(props.style as any) }} />
+      <div style={{ display: loaded() ? "flex" : "none" }}>
+        <Img {...props} src={src()} onload={onload} style={props.style} />
       </div>
 
       <Show when={loading()} fallback={<SetLoaded />}>

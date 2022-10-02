@@ -325,6 +325,10 @@ const BlogEntryUploadModal: ModalComponent = modal => {
 
   return (
     <Modal onclose={modal.resolve} active>
+      <Modal.Header>
+        <h5>Add Blog Entry</h5>
+      </Modal.Header>
+
       <Modal.Body>
         <Form context={form} horizontal>
           <Form.Group label="Image">
