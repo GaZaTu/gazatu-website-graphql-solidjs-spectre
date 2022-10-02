@@ -181,7 +181,7 @@ function Table(props: Props & ComponentProps<"div">) {
         </table>
       </div>
 
-      <Column.Row class="table-pagination" style={{ background: "var(--body-bg)", position: "sticky", bottom: 0 }}>
+      <Column.Row class="table-pagination">
         <Column xxl={8} md={6} sm={12} />
 
         <Column xxl={4} md={6} sm={12}>

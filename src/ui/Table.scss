@@ -67,3 +67,9 @@
   flex-grow: 1;
   overflow-x: auto;
 }
+
+.columns.table-pagination {
+  background: rgba($body-bg--rgb-triplet, 0.925);
+  position: sticky;
+  bottom: 0;
+}
