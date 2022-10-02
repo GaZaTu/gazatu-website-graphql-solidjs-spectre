@@ -42,7 +42,7 @@ export {
   useShowAppHeaderEffect,
 }
 
-const AppNav: Component = () => {
+const AppHeader: Component = () => {
   const isLoggedIn = createAuthCheck()
   const isAdmin = createAuthCheck("admin")
   const isTriviaAdmin = createAuthCheck("trivia/admin")
@@ -227,4 +227,4 @@ const AppNav: Component = () => {
   )
 }
 
-export default AppNav
+export default AppHeader

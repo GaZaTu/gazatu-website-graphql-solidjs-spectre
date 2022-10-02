@@ -168,8 +168,10 @@ const TriviaCategoryView: Component = () => {
               </FormGroup>
             </Form>
 
-            <FormGroup label="Verified" horizontal>
-              <Switch checked={verified()} oninput={handleVerify} disabled={readOnly() || !id() || verified()} style={{ color: verified() ? "var(--success)" : "var(--failure)", "font-weight": "bold" }} />
+            <FormGroup horizontal>
+              <Switch checked={verified()} oninput={handleVerify} disabled={readOnly() || !id() || verified()} style={{ color: verified() ? "var(--success)" : "var(--failure)", "font-weight": "bold" }}>
+                Verified
+              </Switch>
             </FormGroup>
           </Column>
 

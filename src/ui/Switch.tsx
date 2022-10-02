@@ -23,7 +23,7 @@ const createProps = createHTMLMemoHook((props: Props) => {
   }
 })
 
-function Checkbox(props: Props & ComponentProps<"input">) {
+function Switch(props: Props & ComponentProps<"input">) {
   const [containerProps, inputProps] = splitProps(props, [
     "children",
     "class",
@@ -47,12 +47,13 @@ function Checkbox(props: Props & ComponentProps<"input">) {
     <label {..._containerProps}>
       <input {...inputProps} type="checkbox" />
       <i class="form-icon" />
-      <Show when={formGroup.label() || formGroup.labelAsString()} fallback={containerProps.children}>
+      {containerProps.children}
+      <Show when={formGroup.label() || formGroup.labelAsString()}>
         {formGroup.label() ?? formGroup.labelAsString()}
       </Show>
     </label>
   )
 }
 
-export default Object.assign(Checkbox, {
+export default Object.assign(Switch, {
 })
