@@ -12,7 +12,7 @@ const HomeView: Component = () => {
     <>
       <Section size="xl" marginY>
         <div>
-          <ImgWithPlaceholder src={gazatuApus} alt="gazatu apus" width={500} height={125.17} responsive />
+          <ImgWithPlaceholder src={gazatuApus} alt="gazatu apus" width={500} responsive style={{ "max-width": "100%", "aspect-ratio": "auto 691 / 173" }} />
         </div>
       </Section>
 

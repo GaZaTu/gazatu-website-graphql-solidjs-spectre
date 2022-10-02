@@ -248,6 +248,7 @@
     &:first-child:not(:last-child) {
       border-bottom-right-radius: 0;
       border-top-right-radius: 0;
+      margin-left: calc($border-width-md * -1);
     }
     &:not(:first-child):not(:last-child) {
       border-radius: 0;
