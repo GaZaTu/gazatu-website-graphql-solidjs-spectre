@@ -1,4 +1,4 @@
-.preview-column {
+.column.preview-column {
   margin-bottom: var(--layout-spacing-md);
   max-width: 50%;
 }
@@ -31,7 +31,7 @@
 }
 
 @media (min-width: 480px) {
-  .preview-column {
+  .column.preview-column {
     max-width: 100%;
     flex: 0;
   }

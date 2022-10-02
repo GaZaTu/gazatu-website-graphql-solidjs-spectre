@@ -169,7 +169,7 @@ const AppHeader: Component = () => {
 
           <Button.A href="/blog/gallery" match>Blog</Button.A>
           <Show when={isLoggedIn()}>
-            <Button.A href="/trading-chart" match>TChart</Button.A>
+            <Button.A href="/trading/chart" match>TChart</Button.A>
           </Show>
           <Show when={isAdmin()}>
             <Button.A href="/users" match>Users</Button.A>
