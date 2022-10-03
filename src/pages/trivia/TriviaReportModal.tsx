@@ -53,8 +53,8 @@ const TriviaReportModal: Component<Props> = modal => {
         <h5>Report trivia question</h5>
       </Modal.Header>
 
-      <Modal.Body>
-        <Form context={form} horizontal>
+      <Form context={form} horizontal>
+        <Modal.Body>
           <Form.Group label="Message">
             <Input type="text" name="message" ifEmpty={null} multiline style={{ "min-height": "calc(var(--control-height-md) * 2)" }} />
           </Form.Group>
@@ -62,13 +62,13 @@ const TriviaReportModal: Component<Props> = modal => {
           <Form.Group label="Submitter">
             <Input type="text" name="submitter" ifEmpty={null} />
           </Form.Group>
-        </Form>
-      </Modal.Body>
+        </Modal.Body>
 
-      <Modal.Footer>
-        <Button color="primary" onclick={form.createSubmitHandler()} loading={form.isSubmitting()}>OK</Button>
-        <Button color="link" onclick={modal.resolve}>Cancel</Button>
-      </Modal.Footer>
+        <Modal.Footer>
+          <Button type="submit" color="primary" onclick={form.createSubmitHandler()} loading={form.isSubmitting()}>OK</Button>
+          <Button color="link" onclick={modal.resolve}>Cancel</Button>
+        </Modal.Footer>
+      </Form>
     </Modal>
   )
 }

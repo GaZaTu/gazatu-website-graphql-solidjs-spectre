@@ -331,8 +331,8 @@ const BlogEntryUploadModal: ModalComponent = modal => {
         <h5>Add Blog Entry</h5>
       </Modal.Header>
 
-      <Modal.Body>
-        <Form context={form} horizontal>
+      <Form context={form} horizontal>
+        <Modal.Body>
           <Form.Group label="Image">
             <Input type="file" name="files" accept="image/*" />
           </Form.Group>
@@ -348,13 +348,13 @@ const BlogEntryUploadModal: ModalComponent = modal => {
           <Form.Group label="Message">
             <Input type="text" name="message" ifEmpty={null} multiline style={{ "min-height": "calc(var(--control-height-md) * 2)" }} />
           </Form.Group>
-        </Form>
-      </Modal.Body>
+        </Modal.Body>
 
-      <Modal.Footer>
-        <Button color="primary" onclick={form.createSubmitHandler()} loading={form.isSubmitting()}>OK</Button>
-        <Button color="link" onclick={modal.resolve}>Cancel</Button>
-      </Modal.Footer>
+        <Modal.Footer>
+          <Button type="submit" color="primary" onclick={form.createSubmitHandler()} loading={form.isSubmitting()}>OK</Button>
+          <Button color="link" onclick={modal.resolve}>Cancel</Button>
+        </Modal.Footer>
+      </Form>
     </Modal>
   )
 }
