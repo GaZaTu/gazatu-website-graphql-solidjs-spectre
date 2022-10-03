@@ -1,7 +1,7 @@
 // import { faBookmark, faCompress, faEuroSign, faExpand, faSearch, faTimes } from "@fortawesome/free-solid-svg-icons"
 import { createStorageSignal } from "@solid-primitives/storage"
 import { useSearchParams } from "@solidjs/router"
-import { BarData, ColorType, createChart, IChartApi, IPriceLine, LineStyle } from "lightweight-charts"
+import * as charts from "lightweight-charts"
 import { Component, ComponentProps, createEffect, createMemo, createRenderEffect, createSignal, For, onCleanup } from "solid-js"
 import { Subscription, TraderepublicAggregateHistoryLightData, TraderepublicAggregateHistoryLightSub, TraderepublicHomeInstrumentExchangeData, TraderepublicInstrumentData, TraderepublicStockDetailsData, TraderepublicWebsocket } from "../../lib/traderepublic"
 import A from "../../ui/A"
@@ -322,7 +322,7 @@ const ChartView: Component = props => {
   // }, [portfolio])
 
   const [chartContainer, setChartContainer] = createSignal<HTMLDivElement>()
-  let chart = undefined as IChartApi | undefined
+  let chart = undefined as charts.IChartApi | undefined
 
   createEffect((cleanupPreviousEffect?: () => void) => {
     const isin = search.isin
@@ -339,10 +339,10 @@ const ChartView: Component = props => {
     }
 
     if (!chart) {
-      chart = createChart(chartContainer()!, {
+      chart = charts.createChart(chartContainer()!, {
         layout: {
           background: {
-            type: ColorType.Solid,
+            type: charts.ColorType.Solid,
             color: "#1E222D",
           },
           textColor: "#D9D9D9",
@@ -383,8 +383,8 @@ const ChartView: Component = props => {
     const series = chart.addCandlestickSeries({
     })
 
-    let currentBar = { time: 0 } as BarData
-    let previousClose: IPriceLine | undefined
+    let currentBar = { time: 0 } as charts.BarData
+    let previousClose: charts.IPriceLine | undefined
 
     void (async () => {
       if (isin.length !== 12) {
@@ -503,7 +503,7 @@ const ChartView: Component = props => {
               color: "gray",
               lineVisible: true,
               lineWidth: 1,
-              lineStyle: LineStyle.Dotted,
+              lineStyle: charts.LineStyle.Dotted,
               axisLabelVisible: false,
               title: "previous close",
             })
