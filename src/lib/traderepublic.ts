@@ -470,6 +470,10 @@ export class TraderepublicWebsocket {
   }
 
   async connect() {
+    if (typeof window === "undefined") {
+      return
+    }
+
     clearInterval(this._inactivityTimeout)
     this._inactivityTimeout = setInterval(() => {
       if (!this.active) {
@@ -564,6 +568,10 @@ export class TraderepublicWebsocket {
   }
 
   close() {
+    if (typeof window === "undefined") {
+      return
+    }
+
     if (this._socket?.readyState === WebSocket.OPEN) {
       this._socket.close()
     }

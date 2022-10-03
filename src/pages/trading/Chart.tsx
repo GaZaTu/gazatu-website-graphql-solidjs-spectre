@@ -1,7 +1,6 @@
-// import { faBookmark, faCompress, faEuroSign, faExpand, faSearch, faTimes } from "@fortawesome/free-solid-svg-icons"
 import { createStorageSignal } from "@solid-primitives/storage"
 import { useSearchParams } from "@solidjs/router"
-import * as charts from "lightweight-charts"
+import type { BarData, IChartApi, IPriceLine } from "lightweight-charts"
 import { Component, ComponentProps, createEffect, createMemo, createRenderEffect, createSignal, For, onCleanup } from "solid-js"
 import { Subscription, TraderepublicAggregateHistoryLightData, TraderepublicAggregateHistoryLightSub, TraderepublicHomeInstrumentExchangeData, TraderepublicInstrumentData, TraderepublicStockDetailsData, TraderepublicWebsocket } from "../../lib/traderepublic"
 import A from "../../ui/A"
@@ -321,13 +320,13 @@ const ChartView: Component = props => {
   // }, [portfolio])
 
   const [chartContainer, setChartContainer] = createSignal<HTMLDivElement>()
-  let chart = undefined as charts.IChartApi | undefined
+  let chart = undefined as IChartApi | undefined
 
-  createEffect((cleanupPreviousEffect?: () => void) => {
+  createEffect(async (cleanupPreviousEffect?: Promise<() => void>) => {
     const isin = search.isin
     const range = timeRange()
 
-    cleanupPreviousEffect?.()
+    void (await cleanupPreviousEffect)?.()
     const effect = {
       cancelled: false,
       subscriptions: [] as Subscription[],
@@ -338,10 +337,15 @@ const ChartView: Component = props => {
     }
 
     if (!chart) {
-      chart = charts.createChart(chartContainer()!, {
+      const {
+        createChart,
+        ColorType,
+      } = await import("lightweight-charts")
+
+      chart = createChart(chartContainer()!, {
         layout: {
           background: {
-            type: charts.ColorType.Solid,
+            type: ColorType.Solid,
             color: "#1E222D",
           },
           textColor: "#D9D9D9",
@@ -382,8 +386,8 @@ const ChartView: Component = props => {
     const series = chart.addCandlestickSeries({
     })
 
-    let currentBar = { time: 0 } as charts.BarData
-    let previousClose: charts.IPriceLine | undefined
+    let currentBar = { time: 0 } as BarData
+    let previousClose: IPriceLine | undefined
 
     void (async () => {
       if (isin.length !== 12) {
@@ -502,7 +506,7 @@ const ChartView: Component = props => {
               color: "gray",
               lineVisible: true,
               lineWidth: 1,
-              lineStyle: charts.LineStyle.Dotted,
+              lineStyle: 1, // LineStyle.Dotted,
               axisLabelVisible: false,
               title: "previous close",
             })
