@@ -2,7 +2,7 @@ import { Title } from "@solidjs/meta"
 import { useLocation } from "@solidjs/router"
 import { Component, createMemo, For, Show } from "solid-js"
 import { createGraphQLResource, gql } from "../../lib/fetchGraphQL"
-import { Query, TriviaCategory, TriviaQuestion } from "../../lib/schema.gql"
+import { Query, TriviaCategory, TriviaQuestion, TriviaQuestionInput } from "../../lib/schema.gql"
 import { createAuthCheck } from "../../store/auth"
 import A from "../../ui/A"
 import Button from "../../ui/Button"
@@ -11,6 +11,7 @@ import Column from "../../ui/Column"
 import Icon from "../../ui/Icon"
 import iconCheck from "../../ui/icons/iconCheck"
 import iconDelete from "../../ui/icons/iconDelete"
+import iconFlag from "../../ui/icons/iconFlag"
 import ModalPortal from "../../ui/Modal.Portal"
 import { createGlobalProgressStateEffect } from "../../ui/Progress.Global"
 import Section from "../../ui/Section"
@@ -164,9 +165,23 @@ const TriviaQuestionListView: Component<{ categoryId?: unknown }> = props => {
     },
   })
 
-  const selectedIds = createMemo(() => {
-    return table.actions.getSelectedRowModel().flatRows.map(r => r.original.id!)
+  const selectedRows = createMemo(() => {
+    return table.actions.getSelectedRowModel().flatRows.map(r => r.original)
   })
+
+  const selectedIds = createMemo(() => {
+    return selectedRows().map(r => r.id!)
+  })
+
+  const handleReport = async () => {
+    await Toaster.try(async () => {
+      const { default: TriviaReportModal } = await import("./TriviaReportModal")
+
+      await ModalPortal.push(modal => (
+        <TriviaReportModal {...modal} question={selectedRows()[0] as TriviaQuestionInput} />
+      ))
+    })
+  }
 
   const handleVerify = async () => {
     await Toaster.try(async () => {
@@ -198,6 +213,12 @@ const TriviaQuestionListView: Component<{ categoryId?: unknown }> = props => {
       <Section marginY flex style={{ "flex-grow": 1 }}>
         <Table context={table} loading={response.loading} loadingSize="lg" striped pageQueryParam="i" toolbar={
           <Column.Row>
+            <Column>
+              <Button color="warning" action circle disabled={selectedIds().length !== 1} onclick={handleReport}>
+                <Icon src={iconFlag} />
+              </Button>
+            </Column>
+
             <Show when={isTriviaAdmin()}>
               <Column>
                 <Button color="success" action circle disabled={!selectedIds().length} onclick={handleVerify}>
