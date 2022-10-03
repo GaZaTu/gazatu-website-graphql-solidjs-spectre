@@ -17,7 +17,6 @@ import Toaster from "../../ui/Toaster"
 import "./Chart.css"
 import SymbolInfo from "./SymbolInfo"
 import SymbolSearch from "./SymbolSearch"
-// import SymbolSearch from "./SymbolSearch"
 import WatchList from "./WatchList"
 
 const dateFormat = new Intl.DateTimeFormat(undefined, {
