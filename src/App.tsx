@@ -18,7 +18,7 @@ if (import.meta.env.PROD) {
   setDefaultFetchInfo("https://api.test.gazatu.xyz")
   setGraphqlEndpoint("/graphql")
 } else {
-  setDefaultFetchInfo("http://localhost:3434")
+  setDefaultFetchInfo("http://127.0.0.1:3434")
   setGraphqlEndpoint("/graphql")
 }
 

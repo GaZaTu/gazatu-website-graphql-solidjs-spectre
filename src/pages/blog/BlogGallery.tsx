@@ -205,7 +205,9 @@ const BlogEntryPreview: Component<BlogEntryPreviewProps> = props => {
               <Icon src={iconArrowRight} />
             </Button.A>
 
-            <ImgWithPlaceholder src={`${defaultFetchInfo()}/blog/entries/${props.entry.id}/image.${props.entry.imageFileExtension}`} alt="" responsive classList={{ ...centerSelf(true) }} useFetch />
+            <A href={`${defaultFetchInfo()}/blog/entries/${props.entry.id}/image.${props.entry.imageFileExtension}`}>
+              <ImgWithPlaceholder src={`${defaultFetchInfo()}/blog/entries/${props.entry.id}/image.${props.entry.imageFileExtension}`} alt="" responsive classList={{ ...centerSelf(true) }} useFetch />
+            </A>
 
             <Figure.Caption>
               <h4>{props.entry.story}</h4>
