@@ -107,21 +107,19 @@ const createTableState = (defaults: Partial<TableState>, options?: { useSearchPa
     globalFilter: getSearchParam("q", "", String),
   })
 
-  createEffect(() => {
-    if (!options?.useSearchParams) {
-      return
-    }
-
-    const query = new URLSearchParams(location?.search)
-    setSearchParam("q", "", query, tableState.globalFilter)
-
-    navigate?.(`?${query}`, {
-      scroll: false,
-    })
-  })
-
   createEffect((prevGlobalFilter?: string) => {
     if (prevGlobalFilter !== undefined && prevGlobalFilter !== tableState.globalFilter) {
+      if (options?.useSearchParams) {
+        const query = new URLSearchParams(location?.search)
+        query.delete("q")
+        query.delete("i")
+        setSearchParam("q", "", query, tableState.globalFilter)
+
+        navigate?.(`?${query}`, {
+          scroll: false,
+        })
+      }
+
       setTableState(state => ({
         ...state,
         pagination: {
