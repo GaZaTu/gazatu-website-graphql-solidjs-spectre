@@ -19,6 +19,11 @@ if (typeof window !== "undefined") {
     const { render } = await import("solid-js/web")
     render(main, root)
   }
+
+  const registrations = await navigator.serviceWorker.getRegistrations()
+  for (const registration of registrations) {
+    registration.unregister()
+  }
 }
 
 export const prerender: EntryFileExports["prerender"] = async context => {
