@@ -51,6 +51,10 @@ const routes: RouteDefinition[] = [
     component: lazy(() => import("./pages/blog/BlogGallery")),
   },
   {
+    path: "/trading/chart",
+    component: lazy(() => import("./pages/trading/Chart")),
+  },
+  {
     path: "**",
     component: lazy(() => import("./pages/Http404")),
   },

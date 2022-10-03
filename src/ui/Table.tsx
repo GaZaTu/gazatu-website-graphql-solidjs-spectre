@@ -1,5 +1,5 @@
 import { createDebouncedMemo } from "@solid-primitives/memo"
-import { createSolidTable, flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, RowData, Table as TableActions, TableOptions, TableState as _TableState } from "@tanstack/solid-table"
+import { createSolidTable, flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, Row, RowData, Table as TableActions, TableOptions, TableState as _TableState } from "@tanstack/solid-table"
 import classnames from "classnames"
 import { ComponentProps, createEffect, createSignal, For, JSX, mergeProps, Show, splitProps } from "solid-js"
 import Column from "./Column"
@@ -48,20 +48,21 @@ function createContext<TData extends RowData>(options: Partial<TableOptions<TDat
 type Props = {
   context?: TableContext
   striped?: boolean
-  hoverable?: boolean
   scrollable?: boolean
   filterable?: boolean
   loading?: boolean
   loadingSize?: "sm" | "lg"
   toolbar?: JSX.Element
   pageQueryParam?: string
+  hidePagination?: boolean
+  onclickRow?: (row: Row<any>) => unknown
 }
 
 const createTableClassName = (props: Props) => {
   return classnames({
     "table": true,
     "table-striped": props.striped,
-    "table-hover": props.hoverable,
+    "table-hover": !!props.onclickRow,
     "table-scroll": props.scrollable,
     "table-loading": props.loading,
   })
@@ -70,13 +71,14 @@ const createTableClassName = (props: Props) => {
 function Table(props: Props & ComponentProps<"div">) {
   const [tableProps, __, containerProps] = splitProps(props, [
     "striped",
-    "hoverable",
     "scrollable",
     "filterable",
     "loading",
     "loadingSize",
     "toolbar",
     "pageQueryParam",
+    "hidePagination",
+    "onclickRow",
   ], [
     "context",
   ])
@@ -166,7 +168,7 @@ function Table(props: Props & ComponentProps<"div">) {
               </Show>
             )}>
               {row => (
-                <TableRow>
+                <TableRow onclick={() => tableProps.onclickRow?.(row)}>
                   <For each={row.getVisibleCells()}>
                     {cell => (
                       <td>
@@ -181,22 +183,24 @@ function Table(props: Props & ComponentProps<"div">) {
         </table>
       </div>
 
-      <Column.Row class="table-pagination">
-        <Column xxl={8} md={6} sm={12} />
+      <Show when={!tableProps.hidePagination}>
+        <Column.Row class="table-pagination">
+          <Column xxl={8} md={6} sm={12} />
 
-        <Column xxl={4} md={6} sm={12}>
-          <Pagination
-            pageIndex={__.context?.actions.getState().pagination.pageIndex}
-            onPageIndexChange={page => __.context?.actions.setPageIndex(page)}
-            pageCount={getPageCount()}
-            // hasNext={__.context?.state.getCanNextPage() ?? false}
-            // hasPrev={__.context?.state.getCanPreviousPage() ?? false}
-            loading={tableProps.loading}
-            pageQueryParam={tableProps.pageQueryParam}
-            compact
-          />
-        </Column>
-      </Column.Row>
+          <Column xxl={4} md={6} sm={12}>
+            <Pagination
+              pageIndex={__.context?.actions.getState().pagination.pageIndex}
+              onPageIndexChange={page => __.context?.actions.setPageIndex(page)}
+              pageCount={getPageCount()}
+              // hasNext={__.context?.state.getCanNextPage() ?? false}
+              // hasPrev={__.context?.state.getCanPreviousPage() ?? false}
+              loading={tableProps.loading}
+              pageQueryParam={tableProps.pageQueryParam}
+              compact
+            />
+          </Column>
+        </Column.Row>
+      </Show>
     </div>
   )
 }

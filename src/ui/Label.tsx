@@ -6,7 +6,7 @@ import { ThemeColor } from "./util/theming"
 
 type Props = {
   color?: ThemeColor
-  rounded?: boolean
+  round?: boolean
 }
 
 const createProps = createHTMLMemoHook((props: Props) => {
@@ -15,7 +15,7 @@ const createProps = createHTMLMemoHook((props: Props) => {
       return classnames({
         "label": true,
         [`label-${props.color}`]: !!props.color,
-        "label-rounded": props.rounded,
+        "label-rounded": props.round,
       })
     },
   }

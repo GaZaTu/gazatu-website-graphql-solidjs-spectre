@@ -29,6 +29,8 @@
   &.table-hover:not(.table-loading) {
     tbody {
       tr {
+        cursor: pointer;
+
         &:hover {
           background: rgba($body-bg-monochrome--rgb-triplet, 0.75);
         }

@@ -352,7 +352,7 @@ const BlogEntryUploadModal: ModalComponent = modal => {
       </Modal.Body>
 
       <Modal.Footer>
-        <Button color="primary" onclick={form.createSubmitHandler()}>OK</Button>
+        <Button color="primary" onclick={form.createSubmitHandler()} loading={form.isSubmitting()}>OK</Button>
         <Button color="link" onclick={modal.resolve}>Cancel</Button>
       </Modal.Footer>
     </Modal>
