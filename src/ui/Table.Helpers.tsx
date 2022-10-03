@@ -76,9 +76,9 @@ const createTableState = (defaults: Partial<TableState>, options?: { useSearchPa
   const location = A.Context.useLocation()
   const navigate = A.Context.useNavigate()
 
-  const getSearchParam = (key: string, def: InstanceType<typeof type>, type: (typeof String) | (typeof Number)) => {
+  const getSearchParam = <T extends {}>(key: string, def: string, type: (str: string) => T): T => {
     if (!options?.useSearchParams) {
-      return def
+      return type(def)
     }
 
     return type(new URLSearchParams(location?.search).get(key) ?? def)
@@ -99,7 +99,7 @@ const createTableState = (defaults: Partial<TableState>, options?: { useSearchPa
 
   const [tableState, setTableState] = createStore<Partial<TableState>>({
     pagination: {
-      pageIndex: 0,
+      pageIndex: Math.max(getSearchParam("i", "1", Number), 1) - 1,
       pageSize: 25,
     },
     sorting: [],
@@ -118,6 +118,20 @@ const createTableState = (defaults: Partial<TableState>, options?: { useSearchPa
     navigate?.(`?${query}`, {
       scroll: false,
     })
+  })
+
+  createEffect((prevGlobalFilter?: string) => {
+    if (prevGlobalFilter !== undefined && prevGlobalFilter !== tableState.globalFilter) {
+      setTableState(state => ({
+        ...state,
+        pagination: {
+          pageIndex: 0,
+          pageSize: state.pagination?.pageSize ?? 25,
+        },
+      }))
+    }
+
+    return tableState.globalFilter
   })
 
   return [tableState, setTableState] as const

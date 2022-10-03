@@ -118,7 +118,7 @@ const TriviaReportListView: Component<{ questionId?: unknown }> = props => {
       </Section>
 
       <Section size="xl" marginY flex style={{ "flex-grow": 1 }}>
-        <Table context={table} loading={response.loading} loadingSize="lg" striped pageQueryParam="p" toolbar={
+        <Table context={table} loading={response.loading} loadingSize="lg" striped pageQueryParam="i" toolbar={
           <Column.Row>
             <Column>
               <Button color="failure" action circle disabled={!selectedIds().length} onclick={handleRemove}>

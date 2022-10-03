@@ -46,29 +46,27 @@ function Pagination(props: Props & ComponentProps<"nav">) {
         pages.push(i)
       } else if (i === pageIndex - 2) {
         pages.push(-1)
-        pages.push(i)
+        // pages.push(i)
       } else if (i === pageIndex - 1) {
+        pages.push(i)
+      }
+
+      if (i === firstIndex) {
+        // ignore
+      } else if (i === pageCount - 1) {
         pages.push(i)
       } else if (i === pageIndex) {
         pages.push(i)
       } else if (i === pageIndex + 1) {
         pages.push(i)
       } else if (i === pageIndex + 2) {
-        pages.push(i)
-      } else if (i === pageCount - 1) {
-        if ((i - pageIndex + 1) > 1) {
-          pages.push(-1)
-        }
-
-        pages.push(i)
+        // pages.push(i)
+        pages.push(-1)
       }
     }
 
     return pages
   })
-
-  // const location = A.Context.useLocation()
-  // const navigate = A.Context.useNavigate()
 
   const onclick = (event: MouseEvent & { currentTarget: HTMLElement }) => {
     const page = event.currentTarget.dataset.page
@@ -97,12 +95,12 @@ function Pagination(props: Props & ComponentProps<"nav">) {
   })
 
   const pageQueryParams = (page: number) => {
-    if (!_props.pageQueryParam) {
+    if (!_props.pageQueryParam || page === -1) {
       return undefined
     }
 
     return {
-      [_props.pageQueryParam]: page,
+      [_props.pageQueryParam]: page + 1,
     }
   }
 

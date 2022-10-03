@@ -137,7 +137,7 @@ const TriviaCategoryListView: Component = () => {
       </Section>
 
       <Section size="xl" marginY flex style={{ "flex-grow": 1 }}>
-        <Table context={table} loading={response.loading} loadingSize="lg" striped pageQueryParam="p" toolbar={
+        <Table context={table} loading={response.loading} loadingSize="lg" striped pageQueryParam="i" toolbar={
           <Column.Row>
             <Show when={isTriviaAdmin()}>
               <Column>
