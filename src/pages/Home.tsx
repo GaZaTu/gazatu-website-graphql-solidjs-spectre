@@ -6,6 +6,8 @@ import Button from "../ui/Button"
 import ImgWithPlaceholder from "../ui/ImgWithPlaceholder"
 import Section from "../ui/Section"
 import gazatuApus from "../assets/gazatu-apus3.webp"
+import Column from "../ui/Column"
+import { rounded } from "../ui/util/shapes"
 
 const HomeView: Component = () => {
   return (
@@ -17,10 +19,15 @@ const HomeView: Component = () => {
       </Section>
 
       <Section size="xl" marginY>
-        <Button.Group>
-          <Button.A href="/trivia/questions/new" color="gray">Submit Trivia Question</Button.A>
-          <Button.A href="/trivia/categories/new" color="gray">Submit Trivia Category</Button.A>
-        </Button.Group>
+        <Column.Row>
+          <Column xxl="auto">
+            <Button.A href="/trivia/questions/new" color="primary" classList={{ ...rounded("sm") }}>Submit Trivia Question</Button.A>
+          </Column>
+
+          <Column xxl="auto">
+            <Button.A href="/trivia/categories/new" color="primary" classList={{ ...rounded("sm") }}>Submit Trivia Category</Button.A>
+          </Column>
+        </Column.Row>
       </Section>
 
       <Section size="xl" marginY>

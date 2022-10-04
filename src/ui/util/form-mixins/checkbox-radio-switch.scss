@@ -29,7 +29,8 @@
   }
 
   .form-icon {
-    border: $border-width-md solid $body-bg-monochrome;
+    border-width: $border-width-md;
+    border-style: solid;
     cursor: pointer;
     display: inline-block;
     position: absolute;

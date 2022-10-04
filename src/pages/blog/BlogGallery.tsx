@@ -243,7 +243,7 @@ const BlogEntryGroup: Component<BlogEntryGroupProps> = props => {
       <Column.Row gaps="md">
         <For each={props.entries}>
           {entry => (
-            <Column class="preview-column">
+            <Column xxl="auto" class="preview-column">
               <BlogEntryPreview entry={entry} />
             </Column>
           )}

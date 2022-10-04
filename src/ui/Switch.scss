@@ -6,6 +6,7 @@
   .form-icon {
     background: $body-bg-monochrome;
     background-clip: padding-box;
+    border-color: $body-bg-monochrome;
     border-radius: calc($unit-2 + $border-width-md);
     height: calc($unit-4 + $border-width-md * 2);
     left: 0;
