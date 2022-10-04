@@ -138,7 +138,7 @@ const BlogGalleryView: Component = () => {
     <>
       <Section size="xl" marginY>
         <Column.Row>
-          <Column xxl={4} md={6} sm={12}>
+          <Column>
             <Title>Blog</Title>
             <h3>Blog</h3>
           </Column>

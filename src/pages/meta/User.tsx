@@ -1,6 +1,7 @@
 import { validator } from "@felte/validator-superstruct"
+import { Title } from "@solidjs/meta"
 import { useLocation } from "@solidjs/router"
-import { Component, createEffect, createMemo } from "solid-js"
+import { Component, createEffect, createMemo, Show } from "solid-js"
 import { isServer } from "solid-js/web"
 import { array, size, string, type } from "superstruct"
 import fetchGraphQL, { createGraphQLResource, gql } from "../../lib/fetchGraphQL"
@@ -10,6 +11,7 @@ import useIdFromParams from "../../lib/useIdFromParams"
 import { createAuthCheck, storedAuth } from "../../store/auth"
 import Autocomplete from "../../ui/Autocomplete"
 import Button from "../../ui/Button"
+import Column from "../../ui/Column"
 import Form from "../../ui/Form"
 import Icon from "../../ui/Icon"
 import iconSave from "../../ui/icons/iconSave"
@@ -32,7 +34,7 @@ const UserView: Component = () => {
     return (location.pathname === "/profile") ? storedAuth()?.user?.id : idParam()
   })
 
-  // const isSelf = createMemo(() => id() === storedAuth()?.user?.id)
+  const isSelf = createMemo(() => id() === storedAuth()?.user?.id)
 
   const isAdmin = createAuthCheck("admin")
 
@@ -104,28 +106,49 @@ const UserView: Component = () => {
     disable: o => form.data("roles")?.map?.((v: any) => v.id)?.includes(o.id),
   })
 
+  const handleCopyAuthToken = async () => {
+    await navigator.clipboard.writeText(storedAuth()!.token!)
+  }
+
   return (
-    <Section size="xl" marginY>
-      <Form context={form} horizontal>
-        <Form.Group label="Username">
-          <Input type="text" name="username" readOnly ifEmpty={null} />
-        </Form.Group>
+    <>
+      <Section size="xl" marginY>
+        <Column.Row>
+          <Column>
+            <Title>{isSelf() ? "Profile" : "User"}</Title>
+            <h3>{isSelf() ? "Profile" : "User"}</h3>
+          </Column>
 
-        <Form.Group label="Roles">
-          <Autocomplete name="roles" {...roles} multiple readOnly={readOnly()} />
-        </Form.Group>
+          <Show when={isSelf()}>
+            <Column xxl="auto" offset="ml">
+              <Button onclick={handleCopyAuthToken} color="gray">Copy Auth-Token</Button>
+            </Column>
+          </Show>
+        </Column.Row>
+      </Section>
 
-        <Form.Group>
-          <Navbar size="lg">
-            <Navbar.Section>
-              <Button type="submit" color="primary" action circle onclick={form.createSubmitHandler()} disabled={readOnly()} loading={loading()}>
-                <Icon src={iconSave} />
-              </Button>
-            </Navbar.Section>
-          </Navbar>
-        </Form.Group>
-      </Form>
-    </Section>
+      <Section size="xl" marginY>
+        <Form context={form} horizontal>
+          <Form.Group label="Username">
+            <Input type="text" name="username" readOnly ifEmpty={null} />
+          </Form.Group>
+
+          <Form.Group label="Roles">
+            <Autocomplete name="roles" {...roles} multiple readOnly={readOnly()} />
+          </Form.Group>
+
+          <Form.Group>
+            <Navbar size="lg">
+              <Navbar.Section>
+                <Button type="submit" color="primary" action circle onclick={form.createSubmitHandler()} disabled={readOnly()} loading={loading()}>
+                  <Icon src={iconSave} />
+                </Button>
+              </Navbar.Section>
+            </Navbar>
+          </Form.Group>
+        </Form>
+      </Section>
+    </>
   )
 }
 

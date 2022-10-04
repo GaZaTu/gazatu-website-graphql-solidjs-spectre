@@ -1,7 +1,7 @@
 import { Component, Show } from "solid-js"
 
 export const vscodeDarkPlus = {
-  keyword: "#569cd6",
+  keyword: "#75c0ff", // "#569cd6",
   number: "#b5cea8",
   string: "#ce915b",
   symbol: "#d4d4d4",
