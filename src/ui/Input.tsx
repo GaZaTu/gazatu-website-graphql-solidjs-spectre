@@ -120,9 +120,9 @@ function Input(props: Props & ComponentProps<"input">) {
 
   const createInput = () => (
     <Show when={_props.multiline} fallback={
-      <input value={value()} oninput={handleInput} onblur={handleBlur} placeholder={formGroup.labelAsString()} {..._props} />
+      <input value={value()} oninput={handleInput} onblur={handleBlur} placeholder={formGroup.labelAsString() ?? _props.placeholder} {..._props} />
     }>
-      <textarea value={value()} oninput={handleInput} onblur={handleBlur} placeholder={formGroup.labelAsString()} {..._props as {}} />
+      <textarea value={value()} oninput={handleInput} onblur={handleBlur} placeholder={formGroup.labelAsString() ?? _props.placeholder} {..._props as {}} />
     </Show>
   )
 
