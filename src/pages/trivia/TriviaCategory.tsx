@@ -168,7 +168,7 @@ const TriviaCategoryView: Component = () => {
 
             <Form.Group horizontal>
               <Switch checked={verified()} oninput={handleVerify} disabled={readOnly() || !id() || verified()} style={{ color: verified() ? "var(--success)" : "var(--failure)", "font-weight": "bold" }}>
-                Verified
+                <span>Verified</span>
               </Switch>
             </Form.Group>
           </Column>
@@ -177,7 +177,7 @@ const TriviaCategoryView: Component = () => {
         </Column.Row>
       </Section>
 
-      <Show when={id() && isTriviaAdmin()}>
+      <Show when={id()}>
         <TriviaQuestionList categoryId={id()} />
       </Show>
     </>

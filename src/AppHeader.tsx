@@ -194,7 +194,7 @@ const AppHeader: Component = () => {
                   <Menu.Item>
                     <FormGroup>
                       <Switch checked={computedColorScheme() === "dark"} onclick={() => setColorScheme((computedColorScheme() === "dark") ? "light" : "dark")}>
-                        Dark Theme
+                        <span>Dark Theme</span>
                       </Switch>
                     </FormGroup>
                   </Menu.Item>

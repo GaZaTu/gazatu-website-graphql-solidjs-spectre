@@ -92,7 +92,7 @@ const SymbolSearchModal: Component<SymbolSearchModalProps> = props => {
   })
 
   return (
-    <Modal onclose={props.reject} active style={{ padding: 0 }}>
+    <Modal onclose={props.reject} active style={{ padding: 0, "min-height": "50vh" }}>
       <Modal.Body>
         <SymbolSearch
           search={search()}

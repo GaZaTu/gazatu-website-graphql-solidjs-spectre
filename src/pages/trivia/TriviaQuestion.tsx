@@ -256,7 +256,7 @@ const TriviaQuestionView: Component = () => {
                       <Column>
                         <Show when={!id()}>
                           <Switch checked={!!submitMultiple()} oninput={toggleSubmitMultiple}>
-                            Batch
+                            <span>Batch</span>
                           </Switch>
                         </Show>
                       </Column>
@@ -276,7 +276,7 @@ const TriviaQuestionView: Component = () => {
 
             <Form.Group horizontal>
               <Switch checked={verified()} oninput={handleVerify} disabled={readOnly() || !id() || verified()} style={{ color: verified() ? "var(--success)" : "var(--failure)", "font-weight": "bold" }}>
-                Verified
+                <span>Verified</span>
               </Switch>
             </Form.Group>
           </Column>

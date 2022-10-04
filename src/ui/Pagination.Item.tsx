@@ -35,7 +35,7 @@ function PaginationItem(props: Props & Omit<ComponentProps<"li">, "onclick">) {
   return (
     <li {..._props} onclick={undefined}>
       {(props.queryParams || props.onclick) && (
-        <A href="" params={props.queryParams} keepExistingParams onclick={props.onclick} tabIndex={props.disabled ? -1 : undefined}>{fml.children}</A>
+        <A href={props.queryParams ? "" : undefined} params={props.queryParams} keepExistingParams replace onclick={props.onclick} tabIndex={props.disabled ? -1 : undefined}>{fml.children}</A>
       )}
       {(!props.queryParams && !props.onclick) && (
         <span>{fml.children}</span>
