@@ -139,9 +139,6 @@ const AppHeader: Component = () => {
               <Menu.Item>
                 <A href="/trivia/categories/new" match={{ exact: true }}>Submit Category</A>
               </Menu.Item>
-              <Menu.Item>
-                <A href="/trivia/reports/new" match={{ exact: true }}>Report Question</A>
-              </Menu.Item>
               <Divider />
               <Menu.Item badge={createTriviaCountsMenuLabel("questions")}>
                 <A href="/trivia/questions" match={{ exact: "withQuery" }}>Questions</A>
