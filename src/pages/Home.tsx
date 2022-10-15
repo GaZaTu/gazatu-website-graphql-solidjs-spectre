@@ -5,7 +5,7 @@ import A from "../ui/A"
 import Button from "../ui/Button"
 import ImgWithPlaceholder from "../ui/ImgWithPlaceholder"
 import Section from "../ui/Section"
-import gazatuApus from "../assets/gazatu-apus3.webp"
+import gazatuApus from "../assets/gazatu-apus.webp"
 import Column from "../ui/Column"
 import { rounded } from "../ui/util/shapes"
 
