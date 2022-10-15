@@ -1,6 +1,6 @@
-import classnames from "classnames"
 import { combineProps } from "@solid-primitives/props"
-import { ComponentProps, createEffect, createMemo, splitProps } from "solid-js"
+import classnames from "classnames"
+import { ComponentProps, createMemo, createRenderEffect, splitProps } from "solid-js"
 import { createStore } from "solid-js/store"
 import AnchorContext, { Location } from "./A.Context"
 
@@ -140,7 +140,7 @@ const createProps = (_props: Props) => {
   })
 
   const [derivedProps, setDerivedProps] = createStore<typeof nativeProps>({})
-  createEffect(() => {
+  createRenderEffect(() => {
     const { asHref, isExternal } = url()
 
     const _active = active()
