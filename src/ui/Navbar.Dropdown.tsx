@@ -24,9 +24,9 @@ function NavbarDropdown(props: Props & ComponentProps<typeof Dropdown>) {
   ])
 
   return (
-    <Dropdown {...dropdownProps} toggle={(
-      <Button.A color="link" match={toggleProps.matchHref ? { href: toggleProps.matchHref } : undefined}>
-        <span>{toggleProps.toggle}</span>
+    <Dropdown {...dropdownProps} toggle={toggle => (
+      <Button.A color="link" match={toggleProps.matchHref ? { href: toggleProps.matchHref } : undefined} {...toggle}>
+        <span>{toggleProps.toggle({})}</span>
         <Icon src={iconArrowDown} />
       </Button.A>
     )}>

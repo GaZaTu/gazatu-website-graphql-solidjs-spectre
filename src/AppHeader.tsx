@@ -131,7 +131,9 @@ const AppHeader: Component = () => {
             <Navbar.Burger expanded={expanded()} onclick={() => setExpanded(v => !v)} aria-label="navigation" />
           </Navbar.Brand>
 
-          <Navbar.Dropdown toggle={<span {...badge(triviaTodos())}>Trivia</span>} matchHref="/trivia">
+          <Navbar.Dropdown toggle={toggle => (
+            <span {...badge(triviaTodos())} {...toggle}>Trivia</span>
+          )} matchHref="/trivia">
             <Menu style={{ "min-width": "12rem" }}>
               <Menu.Item>
                 <A href="/trivia/questions/new" match={{ exact: true }}>Submit Question</A>
@@ -182,8 +184,8 @@ const AppHeader: Component = () => {
             </Column>
 
             <Column classList={{ ...centerChildren(true) }}>
-              <Dropdown right toggle={(
-                <Button.A action>
+              <Dropdown right toggle={toggle => (
+                <Button.A action {...toggle}>
                   <Icon src={iconMoreVert} />
                 </Button.A>
               )}>
