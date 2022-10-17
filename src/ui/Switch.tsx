@@ -1,5 +1,5 @@
 import classnames from "classnames"
-import { ComponentProps, createEffect, Show, splitProps, useContext } from "solid-js"
+import { ComponentProps, createRenderEffect, Show, splitProps, useContext } from "solid-js"
 import FormGroupContext from "./Form.Group.Context"
 import "./Switch.scss"
 import createHTMLMemoHook from "./util/createHTMLMemoHook"
@@ -36,7 +36,7 @@ function Switch(props: Props & ComponentProps<"input">) {
   const [_containerProps] = createProps(containerProps)
 
   const formGroup = useContext(FormGroupContext)
-  createEffect(() => {
+  createRenderEffect(() => {
     formGroup.setInputId(inputProps.id)
     formGroup.setInputName(inputProps.name)
 

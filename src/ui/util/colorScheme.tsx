@@ -1,6 +1,6 @@
 import { usePrefersDark } from "@solid-primitives/media"
 import { createStorageSignal } from "@solid-primitives/storage"
-import { createEffect, createMemo } from "solid-js"
+import { createMemo, createRenderEffect } from "solid-js"
 
 export type ColorScheme = "light" | "dark" | null
 
@@ -27,7 +27,7 @@ const computedColorScheme = createMemo(() => {
 })
 
 const useColorSchemeEffect = () => {
-  createEffect(() => {
+  createRenderEffect(() => {
     if (typeof window === "undefined") {
       return
     }

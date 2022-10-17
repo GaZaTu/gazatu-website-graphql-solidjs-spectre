@@ -111,7 +111,12 @@ const LoginForm: Component<{ isRegister?: boolean }> = props => {
       </Form.Group>
 
       <Form.Group label={(
-        <span {...tooltip("sent over TLS1.3, hashed using argon2")}>Password {props.isRegister && (<A href="https://github.com/GaZaTu/gazatu-api-graphql-pgsql/blob/master/src/graphql/user/auth/auth.resolver.ts#L91" tabIndex={-1}>(Server)</A>)}</span>
+        <span {...tooltip("sent over TLS1.3, hashed using argon2")}>
+          <span>Password </span>
+          {props.isRegister && (
+            <A href="https://github.com/GaZaTu/gazatu-api-graphql-sqlite/blob/0d1276d6419c92f6d04c47fe567bd99320c450fe/src/schema/misc/user.ts#L262" tabIndex={-1}>(Server)</A>
+          )}
+        </span>
       )} labelAsString="Password">
         <Input type="password" name="password" />
       </Form.Group>
@@ -121,14 +126,16 @@ const LoginForm: Component<{ isRegister?: boolean }> = props => {
           <Input type="password" name="password2" />
         </Form.Group>
 
-        <Form.Group label="I agree to sacrifice my soul and firstborn to dankman overlord pajlada">
-          <Checkbox name="__check" />
+        <Form.Group>
+          <Checkbox name="__check">
+            <span>I agree to sacrifice my soul and firstborn to dankman overlord pajlada</span>
+          </Checkbox>
         </Form.Group>
       </Show>
 
       <Form.Group>
         <Button type="submit" color="primary" onclick={form.createSubmitHandler()} loading={loading()}>
-          {props.isRegister ? "Register" : "Login"}
+          <span>{props.isRegister ? "Register" : "Login"}</span>
         </Button>
       </Form.Group>
     </Form>

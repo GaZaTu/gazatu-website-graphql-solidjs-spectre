@@ -1,6 +1,6 @@
 import { createOptions as _createOptions, createSelect } from "@thisbeyond/solid-select"
 import classnames from "classnames"
-import { ComponentProps, createEffect, createMemo, createSignal, For, JSX, mergeProps, on, Show, splitProps, useContext } from "solid-js"
+import { ComponentProps, createEffect, createMemo, createRenderEffect, createSignal, For, JSX, mergeProps, on, Show, splitProps, useContext } from "solid-js"
 import A from "./A"
 import "./Autocomplete.scss"
 import Button from "./Button"
@@ -88,7 +88,7 @@ function Autocomplete<V, O>(props: Props<V, O> & Omit<ComponentProps<"div">, "on
   const form = useContext(FormContext)
 
   const formGroup = useContext(FormGroupContext)
-  createEffect(() => {
+  createRenderEffect(() => {
     formGroup.setInputId(containerProps.id)
     formGroup.setInputName(containerProps.name)
   })

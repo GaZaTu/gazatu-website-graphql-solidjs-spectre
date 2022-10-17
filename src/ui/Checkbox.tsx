@@ -1,12 +1,12 @@
 import classnames from "classnames"
-import { ComponentProps, createEffect, createMemo, Show, splitProps, useContext } from "solid-js"
+import { ComponentProps, createMemo, createRenderEffect, Show, splitProps, useContext } from "solid-js"
 import "./Checkbox.scss"
+import FormContext from "./Form.Context"
+import FormGroupContext from "./Form.Group.Context"
 import createHTMLMemoHook from "./util/createHTMLMemoHook"
 import "./util/form-mixins/checkbox-radio.scss"
 import "./util/form-mixins/checkbox-radio-switch.scss"
 import { ThemeSize } from "./util/theming"
-import FormContext from "./Form.Context"
-import FormGroupContext from "./Form.Group.Context"
 
 type Props = {
   size?: ThemeSize
@@ -42,7 +42,7 @@ function Checkbox(props: Props & ComponentProps<"input">) {
   const form = useContext(FormContext)
 
   const formGroup = useContext(FormGroupContext)
-  createEffect(() => {
+  createRenderEffect(() => {
     formGroup.setInputId(inputProps.id)
     formGroup.setInputName(inputProps.name)
 

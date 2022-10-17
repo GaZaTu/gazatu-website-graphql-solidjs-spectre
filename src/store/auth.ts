@@ -9,8 +9,9 @@ const [storedAuth, _setStoredAuth] = createSignal<Auth | null>(null)
 const setStoredAuth: (typeof _setStoredAuth) = value => {
   if (typeof value === "function") {
     return _setStoredAuth(prev => {
-      keyval.set(STORAGE_KEY, value)
-      return value(prev)
+      const next = value(prev)
+      keyval.set(STORAGE_KEY, next)
+      return next
     })
   } else {
     keyval.set(STORAGE_KEY, value)

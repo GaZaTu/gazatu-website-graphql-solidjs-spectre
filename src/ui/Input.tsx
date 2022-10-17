@@ -1,5 +1,5 @@
 import classnames from "classnames"
-import { ComponentProps, createEffect, createMemo, Show, splitProps, useContext } from "solid-js"
+import { ComponentProps, createMemo, createRenderEffect, Show, splitProps, useContext } from "solid-js"
 import FormContext from "./Form.Context"
 import FormGroupContext from "./Form.Group.Context"
 import Icon from "./Icon"
@@ -48,7 +48,7 @@ function Input(props: Props & ComponentProps<"input">) {
   const form = useContext(FormContext)
 
   const formGroup = useContext(FormGroupContext)
-  createEffect(() => {
+  createRenderEffect(() => {
     if (_props.id) {
       formGroup.setInputId(_props.id)
     }
