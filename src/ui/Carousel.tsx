@@ -1,10 +1,7 @@
 import classnames from "classnames"
 import { ComponentProps, splitProps } from "solid-js"
-import CardBody from "./Card.Body"
-import CardFooter from "./Card.Footer"
-import CardHeader from "./Card.Header"
-import CardImage from "./Card.Image"
-import "./Card.scss"
+import CarouselButton from "./Carousel.Button"
+import "./Carousel.scss"
 import createHTMLMemoHook from "./util/createHTMLMemoHook"
 
 type Props = {
@@ -14,27 +11,28 @@ const createProps = createHTMLMemoHook((props: Props) => {
   return {
     get class() {
       return classnames({
-        "card": true,
+        "carousel": true,
       })
     },
   }
 })
 
-function Card(props: Props & ComponentProps<"div">) {
+function Carousel(props: Props & ComponentProps<"div">) {
   const [fml] = splitProps(props, ["children"])
   const [_props] = createProps(props)
 
   return (
     <div {..._props}>
-      {fml.children}
+      <div class="carousel-container">
+        <figure class="carousel-item checked">
+          {fml.children}
+        </figure>
+      </div>
     </div>
   )
 }
 
-export default Object.assign(Card, {
+export default Object.assign(Carousel, {
   createProps,
-  Body: CardBody,
-  Header: CardHeader,
-  Footer: CardFooter,
-  Image: CardImage,
+  Button: CarouselButton,
 })

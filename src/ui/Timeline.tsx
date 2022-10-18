@@ -1,10 +1,7 @@
 import classnames from "classnames"
 import { ComponentProps, splitProps } from "solid-js"
-import CardBody from "./Card.Body"
-import CardFooter from "./Card.Footer"
-import CardHeader from "./Card.Header"
-import CardImage from "./Card.Image"
-import "./Card.scss"
+import TimelineItem from "./Timeline.Item"
+import "./Timeline.scss"
 import createHTMLMemoHook from "./util/createHTMLMemoHook"
 
 type Props = {
@@ -14,13 +11,13 @@ const createProps = createHTMLMemoHook((props: Props) => {
   return {
     get class() {
       return classnames({
-        "card": true,
+        "timeline": true,
       })
     },
   }
 })
 
-function Card(props: Props & ComponentProps<"div">) {
+function Timeline(props: Props & ComponentProps<"div">) {
   const [fml] = splitProps(props, ["children"])
   const [_props] = createProps(props)
 
@@ -31,10 +28,7 @@ function Card(props: Props & ComponentProps<"div">) {
   )
 }
 
-export default Object.assign(Card, {
+export default Object.assign(Timeline, {
   createProps,
-  Body: CardBody,
-  Header: CardHeader,
-  Footer: CardFooter,
-  Image: CardImage,
+  Item: TimelineItem,
 })

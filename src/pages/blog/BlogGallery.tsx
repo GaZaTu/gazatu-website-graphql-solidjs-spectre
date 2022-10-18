@@ -24,6 +24,7 @@ import ModalPortal, { ModalComponent } from "../../ui/Modal.Portal"
 import { createGlobalProgressStateEffect } from "../../ui/Progress.Global"
 import Section from "../../ui/Section"
 import { createTableState } from "../../ui/Table.Helpers"
+import Timeline from "../../ui/Timeline"
 import Toaster from "../../ui/Toaster"
 import { centerSelf } from "../../ui/util/position"
 import "./BlogGallery.scss"
@@ -151,11 +152,15 @@ const BlogGalleryView: Component = () => {
         </Column.Row>
       </Section>
 
-      <For each={Object.entries(groups() ?? {})}>
-        {([date, entries]) => (
-          <BlogEntryGroup ref={el => setTargets(s => [...s, el])} date={date} entries={entries} refresh={response.refresh} />
-        )}
-      </For>
+      <Section size="xl" marginY style={{ "padding-left": 0, "padding-right": "0.25rem" }}>
+        <Timeline>
+          <For each={Object.entries(groups() ?? {})}>
+            {([date, entries]) => (
+              <BlogEntryGroup ref={el => setTargets(s => [...s, el])} date={date} entries={entries} refresh={response.refresh} />
+            )}
+          </For>
+        </Timeline>
+      </Section>
     </>
   )
 }
@@ -198,10 +203,10 @@ const BlogEntryPreview: Component<BlogEntryPreviewProps> = props => {
       <Modal size="md" onclose={modal.resolve} oncloseHref="" active style={{ padding: "unset", "max-width": "1440px" }}>
         <Modal.Body style={{ padding: "unset", overflow: "unset" }}>
           <Figure class="blog-entry-image">
-            <Button.A href="" params={{ entry: props.entry.prevEntryId }} onclick={modal.resolve} keepExistingParams class="go-left" disabled={!props.entry.prevEntryId} action circle color="primary">
+            <Button.A href="" params={{ entry: props.entry.prevEntryId }} onclick={modal.resolve} keepExistingParams class="go-left" disabled={!props.entry.prevEntryId} size="lg" action color="primary">
               <Icon src={iconArrowLeft} />
             </Button.A>
-            <Button.A href="" params={{ entry: props.entry.nextEntryId }} onclick={modal.resolve} keepExistingParams class="go-right" disabled={!props.entry.nextEntryId} action circle color="primary">
+            <Button.A href="" params={{ entry: props.entry.nextEntryId }} onclick={modal.resolve} keepExistingParams class="go-right" disabled={!props.entry.nextEntryId} size="lg" action color="primary">
               <Icon src={iconArrowRight} />
             </Button.A>
 
@@ -230,7 +235,7 @@ const BlogEntryPreview: Component<BlogEntryPreviewProps> = props => {
 }
 
 type BlogEntryGroupProps = {
-  ref?: ComponentProps<typeof Section>["ref"]
+  ref?: ComponentProps<typeof Timeline.Item>["ref"]
   date: string
   entries: LinkedBlogEntry[]
   refresh: () => void
@@ -238,7 +243,7 @@ type BlogEntryGroupProps = {
 
 const BlogEntryGroup: Component<BlogEntryGroupProps> = props => {
   return (
-    <Section ref={props.ref} size="xl" marginY>
+    <Timeline.Item ref={props.ref} id={props.date}>
       <h5>{props.date}</h5>
       <Column.Row gaps="md">
         <For each={props.entries}>
@@ -249,7 +254,7 @@ const BlogEntryGroup: Component<BlogEntryGroupProps> = props => {
           )}
         </For>
       </Column.Row>
-    </Section>
+    </Timeline.Item>
   )
 }
 
