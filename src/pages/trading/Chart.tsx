@@ -35,6 +35,20 @@ const numberCompactFormat = new Intl.NumberFormat(undefined, {
   notation: "compact",
 })
 
+const calculateExponentialMovingAverage = (data: TraderepublicAggregateHistoryLightData["aggregates"], timePeriodInDays: number) => {
+  const emaData = [
+    { time: data[0].time, value: data[0].close },
+  ]
+
+  const k = 2 / (timePeriodInDays + 1)
+  for (let i = 1; i < data.length; i++) {
+    const value = (data[i].close * k) + (emaData[i - 1].value * (1 - k))
+    emaData.push({ time: data[i].time, value })
+  }
+
+  return emaData
+}
+
 type SymbolSearchModalProps = {
   socket: TraderepublicWebsocket
   initialSearch?: string
@@ -383,6 +397,9 @@ const ChartView: Component = props => {
       })
     }
 
+    const ema = chart.addLineSeries({
+    })
+
     const series = chart.addCandlestickSeries({
     })
 
@@ -463,6 +480,18 @@ const ChartView: Component = props => {
         if (barTimeToLive > (10 * 60)) {
           priceBeforeChart = history.aggregates[0]?.close ?? 0
         }
+
+        const begin = history.aggregates[0].time
+        const end = history.lastAggregateEndTime
+        const timePeriodInDays = (end - begin) / (24 * 60 * 60 * 1000)
+
+        ema.setData(
+          calculateExponentialMovingAverage(history.aggregates, timePeriodInDays)
+            .map(({ time, value }) => ({
+              time: mapUnixToUTC(time),
+              value,
+            }))
+        )
       } else {
         if (range === "30s") {
           barTimeToLive = 30 as const
