@@ -398,6 +398,10 @@ const ChartView: Component = props => {
     }
 
     const ema = chart.addLineSeries({
+      baseLineVisible: false,
+      crosshairMarkerVisible: false,
+      priceLineVisible: false,
+      lastValueVisible: false,
     })
 
     const series = chart.addCandlestickSeries({
@@ -483,15 +487,17 @@ const ChartView: Component = props => {
 
         const begin = history.aggregates[0].time
         const end = history.lastAggregateEndTime
-        const timePeriodInDays = (end - begin) / (24 * 60 * 60 * 1000)
+        const timePeriodInDays = Math.ceil((end - begin) / (24 * 60 * 60 * 1000))
 
-        ema.setData(
-          calculateExponentialMovingAverage(history.aggregates, timePeriodInDays)
-            .map(({ time, value }) => ({
-              time: mapUnixToUTC(time),
-              value,
-            }))
-        )
+        if (timePeriodInDays > 1) {
+          ema.setData(
+            calculateExponentialMovingAverage(history.aggregates, timePeriodInDays)
+              .map(({ time, value }) => ({
+                time: mapUnixToUTC(time),
+                value,
+              }))
+          )
+        }
       } else {
         if (range === "30s") {
           barTimeToLive = 30 as const
@@ -552,6 +558,8 @@ const ChartView: Component = props => {
               close: data.last.price,
             }
 
+            // TODO
+
             series.update({
               ...currentBar,
             })
@@ -586,6 +594,7 @@ const ChartView: Component = props => {
 
     return () => {
       chart?.removeSeries(series)
+      chart?.removeSeries(ema)
 
       setInstrument(undefined)
       setExchange(undefined)
