@@ -77,7 +77,7 @@ export const setupPrerender: EntryFileExports["setupPrerender"] = async () => {
           matches: "^(.*)/__id$",
           template: `
             location ~ ^{{$1}}/[^/]+ {
-              limit_req zone=mylimit burst=20 nodelay;
+              limit_req zone=default burst=20 nodelay;
               try_files $uri {{$0}}/index.html =404;
             }
           `,
