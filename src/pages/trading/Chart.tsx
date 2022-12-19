@@ -1,5 +1,6 @@
+import { SMA } from "@debut/indicators"
 import { createStorageSignal } from "@solid-primitives/storage"
-import { useSearchParams } from "@solidjs/router"
+import { useNavigate, useSearchParams } from "@solidjs/router"
 import type { BarData, IChartApi, IPriceLine } from "lightweight-charts"
 import { Component, ComponentProps, createEffect, createMemo, createRenderEffect, createSignal, For, onCleanup } from "solid-js"
 import { Subscription, TraderepublicAggregateHistoryLightData, TraderepublicAggregateHistoryLightSub, TraderepublicHomeInstrumentExchangeData, TraderepublicInstrumentData, TraderepublicStockDetailsData, TraderepublicWebsocket } from "../../lib/traderepublic"
@@ -12,6 +13,8 @@ import iconSearch from "../../ui/icons/iconSearch"
 import Label from "../../ui/Label"
 import Modal from "../../ui/Modal"
 import ModalPortal from "../../ui/Modal.Portal"
+import Table from "../../ui/Table"
+import { createTableState } from "../../ui/Table.Helpers"
 import Toaster from "../../ui/Toaster"
 import "./Chart.css"
 import SymbolInfo from "./SymbolInfo"
@@ -34,20 +37,6 @@ const numberCompactFormat = new Intl.NumberFormat(undefined, {
   maximumFractionDigits: 2,
   notation: "compact",
 })
-
-const calculateExponentialMovingAverage = (data: TraderepublicAggregateHistoryLightData["aggregates"], timePeriodInDays: number) => {
-  const emaData = [
-    { time: data[0].time, value: data[0].close },
-  ]
-
-  const k = 2 / (timePeriodInDays + 1)
-  for (let i = 1; i < data.length; i++) {
-    const value = (data[i].close * k) + (emaData[i - 1].value * (1 - k))
-    emaData.push({ time: data[i].time, value })
-  }
-
-  return emaData
-}
 
 type SymbolSearchModalProps = {
   socket: TraderepublicWebsocket
@@ -151,6 +140,8 @@ const intradayHistory = {
 const ChartView: Component = props => {
   const [search, setSearch] = useSearchParams()
 
+  const navigate = useNavigate()
+
   const [timeRange, setTimeRange] = createStorageSignal("CHART_TIME_RANGE2", "1d" as "30s" | "60s" | TraderepublicAggregateHistoryLightSub["range"], {
     serializer: (v: any) => JSON.stringify(v),
     deserializer: s => JSON.parse(s),
@@ -163,6 +154,7 @@ const ChartView: Component = props => {
     current: 0,
     previous: 0,
   })
+  const [, setPrice] = createSignal(0)
 
   const socket = new TraderepublicWebsocket("DE")
   Toaster.try(async () => {
@@ -397,12 +389,14 @@ const ChartView: Component = props => {
       })
     }
 
-    const ema = chart.addLineSeries({
+    const movingAverageSeries = chart.addLineSeries({
       baseLineVisible: false,
       crosshairMarkerVisible: false,
       priceLineVisible: false,
       lastValueVisible: false,
     })
+
+    let movingAverageData = new SMA(0)
 
     const series = chart.addCandlestickSeries({
     })
@@ -489,14 +483,16 @@ const ChartView: Component = props => {
         const end = history.lastAggregateEndTime
         const timePeriodInDays = Math.ceil((end - begin) / (24 * 60 * 60 * 1000))
 
-        if (timePeriodInDays > 1) {
-          ema.setData(
-            calculateExponentialMovingAverage(history.aggregates, timePeriodInDays)
-              .map(({ time, value }) => ({
-                time: mapUnixToUTC(time),
-                value,
-              }))
-          )
+        movingAverageData = new SMA(Math.min(timePeriodInDays, 25))
+
+        for (const aggregate of history.aggregates) {
+          const time = mapUnixToUTC(aggregate.time)
+          const value = movingAverageData.nextValue(aggregate.close)
+
+          movingAverageSeries.update({
+            time,
+            value,
+          })
         }
       } else {
         if (range === "30s") {
@@ -590,11 +586,17 @@ const ChartView: Component = props => {
           })
         })
       )
+
+      // effect.subscriptions.push(
+      //   socket.priceForOrder(instrument).subscribe(({ price }) => {
+      //     setPrice(price)
+      //   })
+      // )
     })()
 
     return () => {
       chart?.removeSeries(series)
-      chart?.removeSeries(ema)
+      chart?.removeSeries(movingAverageSeries)
 
       setInstrument(undefined)
       setExchange(undefined)
@@ -603,6 +605,7 @@ const ChartView: Component = props => {
         current: 0,
         previous: 0,
       })
+      setPrice(0)
 
       effect.cancelled = true
       effect.subscriptions.forEach(s => s.unsubscribe())
@@ -683,6 +686,82 @@ const ChartView: Component = props => {
   //   })
   // }
 
+  createEffect(() => {
+    if (!search.warrants) {
+      return
+    }
+
+    void (async () => {
+      const isin = search.isin
+      const derivatives = await socket.derivatives(isin)
+
+      try {
+        await ModalPortal.push(modal => {
+          const [tableState, setTableState] = createTableState({})
+
+          const table = Table.createContext({
+            get data() {
+              return derivatives.results
+            },
+            columns: [
+              {
+                accessorKey: "symbol",
+                header: "SYMBOL",
+                meta: { compact: true },
+                maxSize: 100,
+                enableSorting: false,
+              },
+              {
+                accessorKey: "description",
+                header: "DESCRIPTION",
+                enableSorting: false,
+              },
+              {
+                accessorKey: "type",
+                header: "TYPE",
+                meta: { compact: true },
+                maxSize: 100,
+                enableSorting: false,
+              },
+            ],
+            state: tableState,
+            // onGlobalFilterChange: tableOnGlobalFilterChange(setTableState),
+            manualFiltering: true,
+          })
+
+          return (
+            <Modal size="md" onclose={modal.reject} active>
+              <Modal.Body>
+                <For each={derivatives.results}>
+                  {derivative => (
+                    <p>
+                      <A href={`/trading/chart?isin=${derivative.isin}`} onclick={modal.resolve}>{derivative.isin}</A>
+                    </p>
+                  )}
+                </For>
+                {/* <Table context={table} loading={props.loading} loadingSize="sm" striped hidePagination onclickRow={row => props.onSymbolClick?.(row.original)} toolbar={
+                  <Column.Row classList={{ ...centerChildren(true) }} style={{ height: "100%" }} gaps="sm">
+                    <For each={props.filters}>
+                      {filter => (
+                        <Column>
+                          <A onclick={() => props.onFilterChange?.(filter)}>
+                            <Label round color={filter.active ? "primary" : undefined}>{filter.name}</Label>
+                          </A>
+                        </Column>
+                      )}
+                    </For>
+                  </Column.Row>
+                } /> */}
+              </Modal.Body>
+            </Modal>
+          )
+        })
+      } catch {
+        navigate(`/trading/chart?isin=${isin}`)
+      }
+    })()
+  })
+
   return (
     <div style={{ display: "flex", "flex-direction": "column", "flex-grow": 1, background: "#1e222d", "box-shadow": "-10px 0px 13px -7px #161616, 10px 0px 13px -7px #161616, 5px 5px 15px 5px rgb(0 0 0 / 0%)" }}>
       <Column.Row gaps="none" style={{ "flex-grow": 1 }}>
@@ -730,17 +809,26 @@ const ChartView: Component = props => {
             open={exchange()?.open}
             meta={[
               {
+                key: "DERIVATIVES",
+                value: instrument()?.derivativeProductCount.vanillaWarrant && "Warrants",
+                href: `/trading/chart?isin=${instrument()?.isin}&warrants=true`,
+              },
+              {
+                key: "UNDERLYING",
+                value: instrument()?.derivativeInfo && instrument()!.derivativeInfo!.underlying.shortName,
+                href: `/trading/chart?isin=${instrument()?.derivativeInfo?.underlying.isin}`,
+              },
+              // {
+              //   key: "ASK",
+              //   value: price() && numberCompactFormat.format(price()),
+              // },
+              {
                 key: "MARKET CAP",
                 value: details() && numberCompactFormat.format(details()!.company.marketCapSnapshot),
               },
               {
                 key: "P/E",
                 value: details() && numberCompactFormat.format(details()!.company.peRatioSnapshot),
-              },
-              {
-                key: "UNDERLYING",
-                value: instrument()?.derivativeInfo && instrument()!.derivativeInfo!.underlying.shortName,
-                href: `/test/chart?isin=${instrument()?.derivativeInfo?.underlying.isin}`,
               },
               {
                 key: "TYPE",

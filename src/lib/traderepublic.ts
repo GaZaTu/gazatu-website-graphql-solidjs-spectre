@@ -25,30 +25,34 @@ export type TraderepublicInstrumentData = {
     firstSeen: number
     lastSeen: number
     firstTradingDay: number | null
-    tradingTimes: unknown
-    fractionalTrading: unknown
+    lastTradingDay: number | null
+    tradingTimes: unknown | null
+    fractionalTrading: unknown | null
+    settlementRoute: string
+    weight: unknown | null
   }[]
   jurisdictions: {
     [key: string]: {
       active: boolean
-      kidLink: string
+      kidLink: string | null
       kidRequired: boolean
       savable: boolean
       fractionalTradingAllowed: boolean
+      proprietaryTradable: boolean
     }
   }
   dividends: unknown[]
   splits: unknown[]
   cfi: string
   name: string
-  typeId: string
+  typeId: "stock" | "fund" | "derivative" | "crypto"
   wkn: string
   legacyTypeChar: string
   isin: string
-  priceFactory: number
+  priceFactor: number
   shortName: string
   homeSymbol: string
-  intlSymbol: string
+  intlSymbol: string | null
   homeNsin: string
   tags: {
     type: string
@@ -56,8 +60,12 @@ export type TraderepublicInstrumentData = {
     name: string
     icon: string
   }[]
-  derivativeProductCount: unknown
-  derivativeProductCategories: unknown[]
+  derivativeProductCount: {
+    knockOutProduct?: number
+    factorCertificate?: number
+    vanillaWarrant?: number
+  }
+  derivativeProductCategories: ("knockOutProduct" | "factorCertificate" | "vanillaWarrant")[]
   company: {
     name: string
     description: string | null
@@ -72,21 +80,21 @@ export type TraderepublicInstrumentData = {
   shareType: string | null
   custodyType: string | null
   kidRequired: boolean
-  kidLink: string
+  kidLink: string | null
   tradable: boolean
   fundInfo: {
     ter: string
-    underlyingClass: string
+    underlyingClass: string | null
     currency: string | null
     market: string | null
     method: string | null
     useOfProfits: string
+    useOfProfitsDisplayName: string
     index: string | null
     ucits: boolean
     legalFormType: string
     domicile: string
     launchDate: string
-    useOfProfitsDisplayName: string
   } | null
   derivativeInfo: {
     categoryType: string
@@ -133,18 +141,20 @@ export type TraderepublicInstrumentData = {
   }
   savable: boolean
   fractionalTradingAllowed: boolean
-  issuer: string
-  issuerDisplayName: string
-  notionalCurrency: string
+  proprietaryTradable: boolean
+  issuer: string | null
+  issuerDisplayName: string | null
+  notionalCurrency: string | null
   additionalBuyWarning: string | null
   warningMessage: string | null
   noTradeVolume: boolean
   additionalBuyWarnings: {
     [lang: string]: string
-  }
+  } | null
   warningMessages: {
     [lang: string]: string
-  }
+  } | null
+  usesWeightsForExchanges: boolean
 }
 
 export type TraderepublicStockDetailsSub = {
@@ -161,23 +171,51 @@ export type TraderepublicStockDetailsData = {
     tickerSymbol: string
     peRatioSnapshot: number
     pbRatioSnapshot: number
-    dividendYieldSnapshot: number
-    earningsCall: unknown
+    dividendYieldSnapshot: number | null
+    earningsCall: unknown | null
     marketCapSnapshot: number
-    dailyCloseYearSD: unknown
+    dailyCloseYearSD: unknown | null
     beta: number
     countryCode: string
-    ceoName: string
-    cfoName: string
-    cooName: string
+    ceoName: string | null
+    cfoName: string | null
+    cooName: string | null
     employeeCount: number
   }
-  similarStocks: unknown[]
-  expectedDividend: unknown
+  similarStocks: {
+    isin: string
+    name: string
+    tags: {
+      id: string
+      type: string
+      name: string
+      icon: string
+    }[]
+  }[]
+  expectedDividend: unknown | null
   dividends: unknown[]
   totalDivendendCount: number
-  events: unknown[]
-  analystRating: unknown
+  events: {
+    id: string
+    title: string
+    timestamp: number
+    description: string
+    webcastUrl: string | null
+  }[]
+  analystRating: {
+    targetPrice: {
+      average: number
+      high: number
+      low: number
+    }
+    recommendations: {
+      buy: number
+      outperform: number
+      hold: number
+      underperform: number
+      sell: number
+    }
+  }
   hasKpis: boolean
 }
 
@@ -208,7 +246,8 @@ export type TraderepublicHomeInstrumentExchangeData = {
 
 export type TraderepublicTickerSub = {
   type: "ticker"
-  id: string
+  id?: string
+  isin: string
   exchange: string
 }
 
@@ -231,7 +270,8 @@ export type TraderepublicTickerData = {
 
 export type TraderepublicAggregateHistoryLightSub = {
   type: "aggregateHistoryLight"
-  id: string
+  id?: string
+  isin: string
   exchange: string
   range: "1d" | "5d" | "1m" | "3m" | "1y" | "max"
 }
@@ -277,10 +317,104 @@ export type TraderepublicNeonSearchData = {
       name: string
     }[]
     type: string
-    subtitle: string | null
+    subtitle?: string | null
     derivativeProductCategories: string[]
+    mappedEtfIndexName?: string
+    etfDescription?: string
   }[]
   resultCount: number
+}
+
+export type TraderepublicNeonNewsSub = {
+  type: "neonNews"
+  isin: string
+}
+
+export type TraderepublicNeonNewsData = {
+  id: string
+  createdAt: number
+  provider: string
+  headline: string
+  summary: string
+  url: string
+}[]
+
+export type TraderepublicPerformanceSub = {
+  type: "performance"
+  id?: string
+  isin: string
+  exchange: string
+}
+
+export type TraderepublicPerformanceData = {
+  id: string
+  high_1d: string
+  low_1d: string
+  price_5d: string
+  price_1m: string
+  price_3m: string
+  price_6m: string
+  price_1y: string
+  price_3y: string
+  price_5y: string
+  high_52w: string
+  low_52w: string
+}
+
+export type TraderepublicPriceForOrderSub = {
+  type: "priceForOrder"
+  parameters: {
+    exchangeId: string
+    instrumentId: string
+    type: "buy"
+  }
+}
+
+export type TraderepublicPriceForOrderData = {
+  currencyId: string
+  price: number
+  priceFactor: number
+  time: number
+}
+
+export type TraderepublicDerivativesSub = {
+  type: "derivatives"
+  jurisdiction: string
+  lang: string
+  underlying: string
+  productCategory: "vanillaWarrant"
+  strike: 0
+  sortBy: "strike"
+  sortDirection: "asc" | "desc"
+  optionType: "call" | "put"
+  pageSize: number
+  after: string
+}
+
+export type TraderepublicDerivativesData = {
+  results: {
+    isin: string
+    optionType: "call" | "put"
+    productCategoryName: string
+    barrier: number | null
+    leverage: number
+    strike: number
+    size: number
+    factor: number | null
+    delta: number
+    currency: string
+    expiry: string
+    issuerDisplayName: string
+    issuer: string
+  }[]
+  resultCount: number
+  issuerCount: {
+    [issuer: string]: number
+  }
+  cursors: {
+    before: string | null
+    after: string | null
+  }
 }
 
 export class TraderepublicWebsocket {
@@ -319,11 +453,43 @@ export class TraderepublicWebsocket {
   private _sub(sub: TraderepublicTickerSub): Observable<TraderepublicTickerData>
   private _sub(sub: TraderepublicAggregateHistoryLightSub): Observable<TraderepublicAggregateHistoryLightData>
   private _sub(sub: TraderepublicNeonSearchSub): Observable<TraderepublicNeonSearchData>
-  private _sub(sub: TraderepublicInstrumentSub | TraderepublicStockDetailsSub | TraderepublicHomeInstrumentExchangeSub | TraderepublicTickerSub | TraderepublicAggregateHistoryLightSub | TraderepublicNeonSearchSub): Observable<TraderepublicInstrumentData | TraderepublicStockDetailsData | TraderepublicHomeInstrumentExchangeData | TraderepublicTickerData | TraderepublicAggregateHistoryLightData | TraderepublicNeonSearchData> {
+  private _sub(sub: TraderepublicNeonNewsSub): Observable<TraderepublicNeonNewsData>
+  private _sub(sub: TraderepublicPerformanceSub): Observable<TraderepublicPerformanceData>
+  private _sub(sub: TraderepublicPriceForOrderSub): Observable<TraderepublicPriceForOrderData>
+  private _sub(sub: TraderepublicDerivativesSub): Observable<TraderepublicDerivativesData>
+  private _sub(sub:
+    TraderepublicInstrumentSub |
+    TraderepublicStockDetailsSub |
+    TraderepublicHomeInstrumentExchangeSub |
+    TraderepublicTickerSub |
+    TraderepublicAggregateHistoryLightSub |
+    TraderepublicNeonSearchSub |
+    TraderepublicNeonNewsSub |
+    TraderepublicPerformanceSub |
+    TraderepublicPriceForOrderSub |
+    TraderepublicDerivativesSub
+  ): Observable<
+    TraderepublicInstrumentData |
+    TraderepublicStockDetailsData |
+    TraderepublicHomeInstrumentExchangeData |
+    TraderepublicTickerData |
+    TraderepublicAggregateHistoryLightData |
+    TraderepublicNeonSearchData |
+    TraderepublicNeonNewsData |
+    TraderepublicPerformanceData |
+    TraderepublicPriceForOrderData |
+    TraderepublicDerivativesData
+  > {
     return {
       subscribe: (onValue: (data: any) => unknown, onError?: (error: unknown) => unknown) => {
-        if (sub.type === "ticker" || sub.type === "aggregateHistoryLight") {
-          sub.id = `${sub.id}.${sub.exchange}`
+        if (
+          sub.type === "ticker" ||
+          sub.type === "aggregateHistoryLight" ||
+          sub.type === "performance"
+        ) {
+          if (!sub.id) {
+            sub.id = `${sub.isin}.${sub.exchange}`
+          }
         }
 
         const number = ++this._counter
@@ -407,7 +573,7 @@ export class TraderepublicWebsocket {
 
     return this._sub({
       type: "ticker",
-      id: isin,
+      isin: isin,
       exchange: exchange!,
     })
   }
@@ -424,7 +590,7 @@ export class TraderepublicWebsocket {
 
     return this._sub({
       type: "aggregateHistoryLight",
-      id: isin,
+      isin: isin,
       exchange: exchange!,
       range,
     }).toPromise()
@@ -467,6 +633,57 @@ export class TraderepublicWebsocket {
 
     return this._sub(sub).toPromise()
       .then(data => data.results)
+  }
+
+  news(isin: string | TraderepublicInstrumentData) {
+    if (typeof isin === "object") {
+      isin = isin.isin
+    }
+
+    return this._sub({
+      type: "neonNews",
+      isin: isin,
+    }).toPromise()
+  }
+
+  priceForOrder(isin: string | TraderepublicInstrumentData, exchange?: string | TraderepublicHomeInstrumentExchangeData) {
+    if (typeof isin === "object") {
+      exchange = isin.exchangeIds[0]
+      isin = isin.isin
+    }
+
+    if (typeof exchange === "object") {
+      exchange = exchange.exchangeId
+    }
+
+    return this._sub({
+      type: "priceForOrder",
+      parameters: {
+        exchangeId: exchange!,
+        instrumentId: isin,
+        type: "buy",
+      },
+    })
+  }
+
+  derivatives(isin: string | TraderepublicInstrumentData, category: TraderepublicDerivativesSub["productCategory"] = "vanillaWarrant", type: TraderepublicDerivativesSub["optionType"] = "call", after = "0") {
+    if (typeof isin === "object") {
+      isin = isin.isin
+    }
+
+    return this._sub({
+      type: "derivatives",
+      jurisdiction: this._jurisdiction,
+      lang: "en",
+      underlying: isin,
+      productCategory: category,
+      strike: 0,
+      sortBy: "strike",
+      sortDirection: "asc",
+      optionType: type,
+      pageSize: 50,
+      after: after,
+    }).toPromise()
   }
 
   async connect() {
