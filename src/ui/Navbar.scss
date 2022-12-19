@@ -123,6 +123,16 @@
       padding-bottom: $unit-2;
       // overflow: hidden;
 
+      &:not(.navbar-expanded) {
+        &.navbar-sm {
+          min-height: unset;
+        }
+
+        &.navbar-lg {
+          min-height: unset;
+        }
+      }
+
       .navbar-section {
         min-width: 100%;
 

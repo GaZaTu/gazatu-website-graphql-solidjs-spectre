@@ -118,7 +118,7 @@ const AppHeader: Component = () => {
   const [expanded, setExpanded] = createSignal(false)
 
   return (
-    <Navbar id="AppHeader" size="lg" filled style={{ display: !showAppHeader() ? "none" : "flex", "min-height": "unset" }} responsive expanded={expanded()}>
+    <Navbar id="AppHeader" size="lg" filled style={{ display: !showAppHeader() ? "none" : "flex" }} responsive expanded={expanded()}>
       <GlobalProgress />
 
       <Section size="xl">
