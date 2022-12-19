@@ -118,7 +118,7 @@ const AppHeader: Component = () => {
   const [expanded, setExpanded] = createSignal(false)
 
   return (
-    <Navbar id="AppHeader" size="lg" filled style={{ display: !showAppHeader() ? "none" : "flex" }} responsive expanded={expanded()}>
+    <Navbar id="AppHeader" size="lg" filled style={{ display: !showAppHeader() ? "none" : "flex", "min-height": "unset" }} responsive expanded={expanded()}>
       <GlobalProgress />
 
       <Section size="xl">
@@ -177,13 +177,13 @@ const AppHeader: Component = () => {
 
         <Navbar.Section>
           <Column.Row gaps="sm">
-            <Column classList={{ ...centerChildren(true) }}>
+            <Column class={`${centerChildren(true)}`}>
               <Button.A href="http://github.com/GaZaTu/gazatu-website-graphql-solidjs-spectre" color="link" action>
                 <ImgWithPlaceholder src={(computedColorScheme() === "dark") ? "/static/github-octocat.dark.min.svg" : "/static/github-octocat.min.svg"} alt="github" width={26} height={26} />
               </Button.A>
             </Column>
 
-            <Column classList={{ ...centerChildren(true) }}>
+            <Column class={`${centerChildren(true)}`}>
               <Dropdown right toggle={toggle => (
                 <Button.A action {...toggle}>
                   <Icon src={iconMoreVert} />
@@ -210,7 +210,7 @@ const AppHeader: Component = () => {
               </Dropdown>
             </Column>
 
-            <Column classList={{ ...centerChildren(true) }}>
+            <Column class={`${centerChildren(true)}`}>
               <Show when={storedAuth()} fallback={
                 <Button.A href="/login" color="primary" round>Login</Button.A>
               }>

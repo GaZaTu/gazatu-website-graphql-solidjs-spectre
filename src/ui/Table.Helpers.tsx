@@ -33,10 +33,10 @@ const tableColumnSelect = <T, V>(): ColumnDef<T, V> => ({
   id: "__select",
   meta: { compact: true },
   header: info => (
-    <Checkbox checked={info.table.getIsAllPageRowsSelected()} indeterminate={info.table.getIsSomePageRowsSelected()} onclick={info.table.getToggleAllPageRowsSelectedHandler()} classList={{ ...centerChildren(true) }} />
+    <Checkbox checked={info.table.getIsAllPageRowsSelected()} indeterminate={info.table.getIsSomePageRowsSelected()} onclick={info.table.getToggleAllPageRowsSelectedHandler()} class={`${centerChildren(true)}`} />
   ),
   cell: info => (
-    <Checkbox checked={info.row.getIsSelected()} onclick={info.row.getToggleSelectedHandler()} disabled={!info.row.getCanSelect()} classList={{ ...centerChildren(true) }} />
+    <Checkbox checked={info.row.getIsSelected()} onclick={info.row.getToggleSelectedHandler()} disabled={!info.row.getCanSelect()} class={`${centerChildren(true)}`} />
   ),
 })
 
@@ -44,7 +44,7 @@ const tableColumnLink = <T, V>(getProps: (row: Row<T>) => ComponentProps<typeof 
   id: "__link",
   meta: { compact: true },
   cell: info => (
-    <Button.A {...getProps(info.row)} classList={{ ...centerSelf(true) }} action>
+    <Button.A {...getProps(info.row)} class={`${centerSelf(true)}`} action>
       <Icon src={iconOpen} />
     </Button.A>
   ),

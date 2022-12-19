@@ -100,11 +100,11 @@ function Table(props: Props & ComponentProps<"div">) {
   return (
     <div class="table-container" {...containerProps}>
       <Column.Row class="table-toolbar">
-        <Column xxl={4} md={6} sm={12} classList={{ ...marginT(2) }}>
-          <Input value={__.context?.actions.getState().globalFilter ?? ""} oninput={ev => setGlobalFilter(ev.currentTarget.value)} iconSrcLeft={iconSearch} classList={{ ...rounded("lg") }} placeholder="Search..." />
+        <Column xxl={4} md={6} sm={12} class={`${marginT(2)}`}>
+          <Input value={__.context?.actions.getState().globalFilter ?? ""} oninput={ev => setGlobalFilter(ev.currentTarget.value)} iconSrcLeft={iconSearch} class={`${rounded("lg")}`} placeholder="Search..." />
         </Column>
 
-        <Column xxl="auto" offset="ml" classList={{ ...marginT(2) }}>
+        <Column xxl="auto" offset="ml" class={`${marginT(2)}`}>
           {tableProps.toolbar}
         </Column>
       </Column.Row>
@@ -150,7 +150,7 @@ function Table(props: Props & ComponentProps<"div">) {
             <For each={__.context?.actions.getRowModel().rows} fallback={(
               <Show when={tableProps.loading} fallback={<tr><td colSpan={99}>Nothing here</td></tr>}>
                 <Show when={tableProps.loadingSize === "lg"} fallback={
-                  <tr><td colSpan={99}><div classList={{ ...loading("lg") }} /></td></tr>
+                  <tr><td colSpan={99}><div class={`${loading("lg")}`} /></td></tr>
                 }>
                   <PlaceholderRow actions={__.context?.actions} />
                   <PlaceholderRow actions={__.context?.actions} />

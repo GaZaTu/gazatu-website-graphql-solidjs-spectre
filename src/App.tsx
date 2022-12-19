@@ -14,7 +14,7 @@ import { useColorSchemeEffect } from "./ui/util/colorScheme"
 AnchorContext.useLocation = useLocation
 AnchorContext.useNavigate = useNavigate
 
-if (import.meta.env.PROD) {
+if (import.meta.env.MODE === "production") {
   setDefaultFetchInfo("https://api.gazatu.xyz")
   setGraphqlEndpoint("/graphql")
 } else {

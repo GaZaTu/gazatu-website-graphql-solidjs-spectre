@@ -148,7 +148,7 @@ const TriviaQuestionListView: Component<{ categoryId?: unknown }> = props => {
         header: "Verified",
         meta: { compact: true },
         cell: info => (
-          <Icon src={info.getValue() ? iconCheck : undefined} style={{ color: "var(--success)" }} classList={{ ...centerSelf(true) }} />
+          <Icon src={info.getValue() ? iconCheck : undefined} style={{ color: "var(--success)" }} class={`${centerSelf(true)}`} />
         ),
         maxSize: 100,
       },

@@ -740,7 +740,7 @@ const ChartView: Component = props => {
                   )}
                 </For>
                 {/* <Table context={table} loading={props.loading} loadingSize="sm" striped hidePagination onclickRow={row => props.onSymbolClick?.(row.original)} toolbar={
-                  <Column.Row classList={{ ...centerChildren(true) }} style={{ height: "100%" }} gaps="sm">
+                  <Column.Row class={`${centerChildren(true)}`} style={{ height: "100%" }} gaps="sm">
                     <For each={props.filters}>
                       {filter => (
                         <Column>

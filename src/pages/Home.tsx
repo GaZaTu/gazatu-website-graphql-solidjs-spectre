@@ -21,11 +21,11 @@ const HomeView: Component = () => {
       <Section size="xl" marginY>
         <Column.Row>
           <Column xxl="auto">
-            <Button.A href="/trivia/questions/new" color="primary" classList={{ ...rounded("sm") }}>Submit Trivia Question</Button.A>
+            <Button.A href="/trivia/questions/new" color="primary" class={`${rounded("sm")}`}>Submit Trivia Question</Button.A>
           </Column>
 
           <Column xxl="auto">
-            <Button.A href="/trivia/categories/new" color="primary" classList={{ ...rounded("sm") }}>Submit Trivia Category</Button.A>
+            <Button.A href="/trivia/categories/new" color="primary" class={`${rounded("sm") }`}>Submit Trivia Category</Button.A>
           </Column>
         </Column.Row>
       </Section>
