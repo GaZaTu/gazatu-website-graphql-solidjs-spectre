@@ -3,6 +3,7 @@ import { ComponentProps, createMemo, createRenderEffect, Show, splitProps, useCo
 import FormContext from "./Form.Context"
 import FormGroupContext from "./Form.Group.Context"
 import Icon from "./Icon"
+import InputGroup from "./Input.Group"
 import "./Input.scss"
 import createHTMLMemoHook from "./util/createHTMLMemoHook"
 import "./util/form-mixins/input-select.scss"
@@ -148,4 +149,5 @@ function Input(props: Props & ComponentProps<"input">) {
 }
 
 export default Object.assign(Input, {
+  Group: InputGroup,
 })

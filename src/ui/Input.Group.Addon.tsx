@@ -1,6 +1,6 @@
 import classnames from "classnames"
-import { ComponentProps } from "solid-js"
-import "./Label.scss"
+import { ComponentProps, splitProps } from "solid-js"
+import "./Input.Group.scss"
 import createHTMLMemoHook from "./util/createHTMLMemoHook"
 import { ThemeSize } from "./util/theming"
 

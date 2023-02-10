@@ -76,8 +76,8 @@ const createProps = (_props: Props) => {
 
     return {
       asURL,
-      asHref: asURL?.toString().replace(DUMMY_ORIGIN, ""),
-      isExternal: (componentProps.external || asURL?.origin !== DUMMY_ORIGIN),
+      asHref: asURL?.toString().replace(RELATIVE_ORIGIN, ""),
+      isExternal: (componentProps.external || asURL?.origin !== RELATIVE_ORIGIN),
     }
   })
 
@@ -93,36 +93,29 @@ const createProps = (_props: Props) => {
   })
 
   const onclick = createMemo<Props["onclick"]>(() => {
-    const { asURL, asHref, isExternal } = url()
-
-    const onclickDefault = componentProps.onclick
-
-    if (isExternal) {
-      return onclickDefault
-    }
-
-    if (componentProps.disabled) {
-      return e => {
-        e.preventDefault()
-      }
-    }
-
-    if (!navigate) {
-      return onclickDefault
-    }
-
-    const delta = componentProps.delta
-    const state = componentProps.state
-    const replace = componentProps.replace
-    const scroll = componentProps.scroll
-
-    if (!asHref && !delta) {
-      return onclickDefault
-    }
-
     return e => {
-      if (typeof onclickDefault === "function") {
-        onclickDefault(e)
+      const { asURL, asHref, isExternal } = url()
+      const {
+        onclick,
+        disabled,
+        delta,
+        state,
+        replace,
+        scroll,
+      } = componentProps
+
+      if (disabled) {
+        e.preventDefault()
+        return
+      }
+
+      if (typeof onclick === "function") {
+        if (isExternal) {
+          onclick(e)
+          return
+        }
+
+        onclick(e)
 
         if (e.defaultPrevented) {
           return
@@ -131,10 +124,12 @@ const createProps = (_props: Props) => {
 
       e.preventDefault()
 
-      if (delta) {
-        navigate(delta)
-      } else if (asHref && !locationMatchesURL(location, asURL, { exact: "withQuery" })) {
-        navigate(asHref, { state, replace, scroll })
+      if (navigate && (asHref || delta)) {
+        if (delta) {
+          navigate(delta)
+        } else if (asHref && !locationMatchesURL(location, asURL, { exact: "withQuery" })) {
+          navigate(asHref, { state, replace, scroll })
+        }
       }
     }
   })
@@ -179,7 +174,7 @@ export default Object.assign(A, {
   Context: AnchorContext,
 })
 
-const DUMMY_ORIGIN = "http://__dummy__"
+const RELATIVE_ORIGIN = "http://__relative__"
 
 const hrefToURL = (href?: string) => {
   if (!href) {
@@ -189,11 +184,11 @@ const hrefToURL = (href?: string) => {
   try {
     return new URL(href)
   } catch {
-    if (href[0] === "/") {
-      return new URL(`${DUMMY_ORIGIN}${href}`)
-    } else {
-      return new URL(`${DUMMY_ORIGIN}${location?.pathname}${href}`)
+    if (href[0] !== "/") {
+      href = `${location?.pathname}${href}`
     }
+
+    return new URL(`${RELATIVE_ORIGIN}${href}`)
   }
 }
 

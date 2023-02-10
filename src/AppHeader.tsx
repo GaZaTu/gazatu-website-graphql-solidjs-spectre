@@ -1,5 +1,5 @@
-import debounce from "debounce"
 import { Component, createEffect, createMemo, createSignal, onCleanup, Show } from "solid-js"
+import createEventSourceEffect from "./lib/createEventSourceEffect"
 import { defaultFetchInfo } from "./lib/fetchFromApi"
 import fetchGraphQL, { gql } from "./lib/fetchGraphQL"
 import { Query, TriviaCounts } from "./lib/schema.gql"
@@ -49,51 +49,37 @@ const AppHeader: Component = () => {
 
   const [triviaCounts, setTriviaCounts] = createSignal<TriviaCounts>()
 
-  createEffect(async () => {
-    const triviaAdmin = isTriviaAdmin()
-    if (!triviaAdmin) {
-      setTriviaCounts(undefined)
-      return
-    }
-
-    const updateTriviaCounts = debounce(async () => {
-      try {
-        const result = await fetchGraphQL<Query>({
-          query: gql`
-            query {
-              triviaCounts {
-                questions
-                questionsNotVerified
-                categories
-                categoriesNotVerified
-                reports
-              }
-            }
-          `,
-        })
-
-        setTriviaCounts(result.triviaCounts)
-      } catch (error) {
-        Toaster.pushError(error)
-      }
-    }, 1000)
-
-    await updateTriviaCounts()
-
+  const updateTriviaCounts = async () => {
     try {
-      const result = await fetchGraphQL<Query>({
+      const { triviaCounts } = await fetchGraphQL<Query>({
         query: gql`
           query {
-            triviaEventsOTP
+            triviaCounts {
+              questions
+              questionsNotVerified
+              categories
+              categoriesNotVerified
+              reports
+            }
           }
         `,
       })
 
-      const events = new EventSource(`${defaultFetchInfo()}/trivia/events?otp=${result.triviaEventsOTP}`)
-      events.onmessage = ev => updateTriviaCounts()
+      setTriviaCounts(triviaCounts)
     } catch (error) {
       Toaster.pushError(error)
     }
+  }
+
+  updateTriviaCounts()
+
+  createEventSourceEffect(updateTriviaCounts, async () => {
+    const { triviaEventsOTP  } = await fetchGraphQL<Query>({
+      query: gql`query { triviaEventsOTP }`,
+    })
+
+    const result = `${defaultFetchInfo()}/trivia/events?otp=${triviaEventsOTP}`
+    return result
   })
 
   const triviaTodos = createMemo(() => {

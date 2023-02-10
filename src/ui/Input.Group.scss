@@ -1,12 +1,14 @@
+@use "spectre.css/variables" as *;
+
 .input-group {
   display: flex;
 
   .input-group-addon {
-    background: $bg-color;
-    border: $border-width-md solid $border-color-dark;
-    border-radius: $border-radius;
+    background: $body-bg;
+    border: $border-width-md solid gray;
+    border-radius: $control-border-radius;
     line-height: $line-height;
-    padding: $control-padding-y $control-padding-x;
+    padding: $control-padding-y-md $control-padding-x-md;
     white-space: nowrap;
 
     &.addon-sm,
