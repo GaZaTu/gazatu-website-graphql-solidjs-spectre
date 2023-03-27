@@ -15,6 +15,10 @@ const pushNotification = (props: Partial<ComponentProps<typeof ToastWithAnimatio
   })
 }
 
+const removeNotification = (id: string) => {
+  notifications.remove(id)
+}
+
 const pushSuccess = (message: any) => {
   pushNotification({
     color: "success",
@@ -31,10 +35,11 @@ const pushError = (error: any, onclose?: (() => void) | unknown) => {
     error = error?.message ?? String(error)
   } else {
     error = error ? `${error.name ?? "Error"}: ${error.message}\n\t${error.stack?.replaceAll("\n", "\n\t")}` : String(error)
-    error = (
-      <Code snippet>{error}</Code>
-    )
   }
+
+  error = (
+    <Code snippet style={{ color: "initial" }}>{error}</Code>
+  )
 
   pushNotification({
     color: "failure",
@@ -57,7 +62,7 @@ function tryFunc<R>(func: () => R): R {
           pushError(error)
           throw error
         }
-      })() as R
+      })() as unknown as R
     }
 
     return maybePromise
@@ -84,6 +89,7 @@ function Toaster(props: {}) {
 export default Object.assign(Toaster, {
   notifications,
   push: pushNotification,
+  remove: removeNotification,
   pushSuccess,
   pushError,
   try: tryFunc,

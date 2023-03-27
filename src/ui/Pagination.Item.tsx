@@ -5,6 +5,7 @@ import "./Pagination.scss"
 import createHTMLMemoHook from "./util/createHTMLMemoHook"
 
 type Props = {
+  page?: number
   isPrev?: boolean
   isNext?: boolean
   active?: boolean
@@ -29,15 +30,19 @@ const createProps = createHTMLMemoHook((props: Props) => {
 })
 
 function PaginationItem(props: Props & Omit<ComponentProps<"li">, "onclick">) {
-  const [fml] = splitProps(props, ["children"])
+  const [fml] = splitProps(props, ["children", "onclick", "queryParams"])
   const [_props] = createProps(props)
 
+  const onclick: ComponentProps<"li">["onclick"] = ev => {
+    // ignore
+  }
+
   return (
-    <li {..._props} onclick={undefined}>
-      {(props.queryParams || props.onclick) && (
-        <A href={props.queryParams ? "" : undefined} params={props.queryParams} keepExistingParams replace onclick={props.onclick} tabIndex={props.disabled ? -1 : undefined}>{fml.children}</A>
+    <li {..._props} onclick={onclick}>
+      {(fml.queryParams || fml.onclick) && (
+        <A href={fml.queryParams ? "" : undefined} params={fml.queryParams} keepExistingParams replace onclick={fml.onclick} tabIndex={props.disabled ? -1 : undefined} data-page={props.page}>{fml.children}</A>
       )}
-      {(!props.queryParams && !props.onclick) && (
+      {(!fml.queryParams && !fml.onclick) && (
         <span>{fml.children}</span>
       )}
     </li>

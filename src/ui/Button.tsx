@@ -69,8 +69,40 @@ function ButtonAnchor(props: Props & ComponentProps<typeof A>) {
   )
 }
 
+function ButtonLabel(props: Props & ComponentProps<"label">) {
+  const [fml] = splitProps(props, ["children"])
+  const [_props] = createProps(props)
+
+  return (
+    <label {..._props}>
+      {fml.children}
+    </label>
+  )
+}
+
+function ButtonFileInput(props: Props & ComponentProps<"label"> & { onFilesChange: (files: FileList | null) => unknown, accept?: string, multiple?: boolean }) {
+  const [fml] = splitProps(props, ["children", "id"])
+  const [_props] = createProps(props)
+
+  const id = fml.id
+  const onchange: ComponentProps<"input">["onchange"] = (event) => {
+    props.onFilesChange(event.currentTarget.files)
+  }
+
+  return (
+    <>
+      <input id={id} type="file" onchange={onchange} accept={props.accept} multiple={props.multiple} style={{ display: "none" }} />
+      <label for={id} {..._props}>
+        {fml.children}
+      </label>
+    </>
+  )
+}
+
 export default Object.assign(Button, {
   createProps,
   Group: ButtonGroup,
   A: ButtonAnchor,
+  Label: ButtonLabel,
+  FileInput: ButtonFileInput,
 })

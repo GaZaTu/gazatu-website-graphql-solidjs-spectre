@@ -115,14 +115,14 @@ function Pagination(props: Props & ComponentProps<"nav">) {
   return (
     <nav {..._props}>
       {/* <Show when={_props.hasPrev} /> */}
-      <PaginationItem data-page={prevPage()} queryParams={pageQueryParams(prevPage())} onclick={onclick} disabled={!canPrev()}>
+      <PaginationItem page={prevPage()} queryParams={pageQueryParams(prevPage())} onclick={onclick} disabled={!canPrev()}>
         <Icon src={iconArrowLeft} />
       </PaginationItem>
 
       <ul>
         <For each={pages()}>
           {page => (
-            <PaginationItem data-page={page} queryParams={pageQueryParams(page)} onclick={(page >= 0) ? onclick : undefined} active={page === (_props.pageIndex ?? 0)}>
+            <PaginationItem page={page} queryParams={pageQueryParams(page)} onclick={(page >= 0) ? onclick : undefined} active={page === (_props.pageIndex ?? 0)}>
               {(page >= 0) ? String(page + (((_props.firstIndex ?? 0) === 0) ? 1 : 0)) : "..."}
             </PaginationItem>
           )}
@@ -130,7 +130,7 @@ function Pagination(props: Props & ComponentProps<"nav">) {
       </ul>
 
       {/* <Show when={_props.hasNext} /> */}
-      <PaginationItem data-page={nextPage()} queryParams={pageQueryParams(nextPage())} onclick={onclick} disabled={!canNext()}>
+      <PaginationItem page={nextPage()} queryParams={pageQueryParams(nextPage())} onclick={onclick} disabled={!canNext()}>
         <Icon src={iconArrowRight} />
       </PaginationItem>
     </nav>

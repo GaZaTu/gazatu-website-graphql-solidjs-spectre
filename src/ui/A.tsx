@@ -4,6 +4,45 @@ import { ComponentProps, createMemo, createRenderEffect, splitProps } from "soli
 import { createStore } from "solid-js/store"
 import AnchorContext, { Location } from "./A.Context"
 
+const scrollHistory = {
+  data: new Map<string | number, number>(),
+  store: (key: string | number | "byIndex" | "byPath" | "byHref" = "byIndex", { top }: { top?: number } = {}) => {
+    switch (key) {
+    case "byIndex":
+      key = window.history.length
+      break
+    case "byPath":
+      key = window.location.pathname
+      break
+    case "byHref":
+      key = window.location.href
+      break
+    }
+
+    if (top === undefined) {
+      top = window.scrollY
+    }
+
+    scrollHistory.data.set(key, top)
+  },
+  restore: (key: string | number | "byIndex" | "byPath" | "byHref" = "byIndex", { behavior }: { behavior?: ScrollBehavior } = {}) => {
+    switch (key) {
+    case "byIndex":
+      key = window.history.length
+      break
+    case "byPath":
+      key = window.location.pathname
+      break
+    case "byHref":
+      key = window.location.href
+      break
+    }
+
+    const top = scrollHistory.data.get(key)
+    window.scrollTo({ top, behavior })
+  },
+}
+
 type Props = ComponentProps<"a"> & {
   delta?: number
   url?: URL
@@ -16,6 +55,7 @@ type Props = ComponentProps<"a"> & {
   external?: boolean
   disabled?: boolean
   keepExistingParams?: boolean
+  storeScroll?: boolean | string | number | "byIndex" | "byPath" | "byHref"
 }
 
 const createProps = (_props: Props) => {
@@ -34,13 +74,22 @@ const createProps = (_props: Props) => {
     "external",
     "disabled",
     "keepExistingParams",
+    "storeScroll",
   ])
 
   const location = AnchorContext.useLocation()
   const navigate = AnchorContext.useNavigate()
 
   const url = createMemo(() => {
-    if (componentProps.href === undefined) {
+    const {
+      href,
+      url,
+      keepExistingParams,
+      params,
+      external,
+    } = componentProps
+
+    if (href === undefined) {
       return {
         asURL: undefined,
         asHref: undefined,
@@ -49,26 +98,26 @@ const createProps = (_props: Props) => {
     }
 
     const asURL = (() => {
-      if (componentProps.url) {
-        return componentProps.url
+      if (url) {
+        return url
       }
 
-      if (!componentProps.href) {
+      if (!href) {
         return hrefToURL(location?.pathname)
       }
 
-      const asURL = hrefToURL(componentProps.href)
+      const asURL = hrefToURL(href)
       return asURL
     })()
 
     if (asURL) {
-      if (componentProps.keepExistingParams) {
+      if (keepExistingParams) {
         for (const [key, value] of Object.entries(location?.query ?? {})) {
           asURL.searchParams.append(key, value)
         }
       }
 
-      for (const [key, value] of Object.entries(componentProps.params ?? {})) {
+      for (const [key, value] of Object.entries(params ?? {})) {
         asURL.searchParams.delete(key)
         asURL.searchParams.append(key, value)
       }
@@ -77,7 +126,7 @@ const createProps = (_props: Props) => {
     return {
       asURL,
       asHref: asURL?.toString().replace(RELATIVE_ORIGIN, ""),
-      isExternal: (componentProps.external || asURL?.origin !== RELATIVE_ORIGIN),
+      isExternal: (external || asURL?.origin !== RELATIVE_ORIGIN),
     }
   })
 
@@ -102,6 +151,7 @@ const createProps = (_props: Props) => {
         state,
         replace,
         scroll,
+        storeScroll,
       } = componentProps
 
       if (disabled) {
@@ -110,14 +160,13 @@ const createProps = (_props: Props) => {
       }
 
       if (typeof onclick === "function") {
-        if (isExternal) {
-          onclick(e)
-          return
-        }
-
         onclick(e)
 
         if (e.defaultPrevented) {
+          return
+        }
+
+        if (isExternal) {
           return
         }
       }
@@ -128,6 +177,16 @@ const createProps = (_props: Props) => {
         if (delta) {
           navigate(delta)
         } else if (asHref && !locationMatchesURL(location, asURL, { exact: "withQuery" })) {
+          if (storeScroll !== undefined) {
+            if (typeof storeScroll === "boolean") {
+              if (storeScroll) {
+                scrollHistory.store()
+              }
+            } else {
+              scrollHistory.store(storeScroll)
+            }
+          }
+
           navigate(asHref, { state, replace, scroll })
         }
       }
@@ -171,6 +230,7 @@ function A(props: Props) {
 
 export default Object.assign(A, {
   createProps,
+  scrollHistory,
   Context: AnchorContext,
 })
 

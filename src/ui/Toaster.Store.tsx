@@ -1,3 +1,4 @@
+// this code was inspired by
 // https://github.com/lxsmnsyc/solid-headless/blob/main/packages/solid-headless/src/components/toast/ToasterStore.ts
 
 import { createEffect, createSignal, onCleanup } from "solid-js"
@@ -51,7 +52,8 @@ export class ToasterStore<T> {
   }
 
   remove(id: string) {
-    this.queue = this.queue.filter((item) => item.id !== id)
+    this.queue = this.queue
+      .filter(item => item.id !== id)
     this.notify()
   }
 
