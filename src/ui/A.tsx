@@ -40,6 +40,7 @@ const scrollHistory = {
 
     if (key === "byIndex") {
       void ({ top } = window.history.state ?? { top: 0 })
+      window.history.replaceState({ top: 0 }, "")
     } else {
       top = scrollHistory.data.get(key) ?? 0
       scrollHistory.data.delete(key)
