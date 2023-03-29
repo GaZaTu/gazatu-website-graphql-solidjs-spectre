@@ -1,5 +1,10 @@
+import debounce from "debounce"
 import { Component, createEffect, createMemo, createSignal, onCleanup, Show } from "solid-js"
-import createEventSourceEffect from "./lib/createEventSourceEffect"
+import iconGithub from "./icons/iconGithub"
+import iconLogIn from "./icons/iconLogIn"
+import iconLogOut from "./icons/iconLogOut"
+import iconMoreVertical from "./icons/iconMoreVertical"
+import iconUser from "./icons/iconUser"
 import { defaultFetchInfo } from "./lib/fetchFromApi"
 import fetchGraphQL, { gql } from "./lib/fetchGraphQL"
 import { Query, TriviaCounts } from "./lib/schema.gql"
@@ -12,7 +17,6 @@ import Divider from "./ui/Divider"
 import Dropdown from "./ui/Dropdown"
 import FormGroup from "./ui/Form.Group"
 import Icon from "./ui/Icon"
-import iconMoreVert from "./ui/icons/iconMoreVert"
 import ImgWithPlaceholder from "./ui/ImgWithPlaceholder"
 import Label from "./ui/Label"
 import Menu from "./ui/Menu"
@@ -49,37 +53,51 @@ const AppHeader: Component = () => {
 
   const [triviaCounts, setTriviaCounts] = createSignal<TriviaCounts>()
 
-  const updateTriviaCounts = async () => {
+  createEffect(async () => {
+    const triviaAdmin = isTriviaAdmin()
+    if (!triviaAdmin) {
+      setTriviaCounts(undefined)
+      return
+    }
+
+    const updateTriviaCounts = debounce(async () => {
+      try {
+        const result = await fetchGraphQL<Query>({
+          query: gql`
+            query {
+              triviaCounts {
+                questions
+                questionsNotVerified
+                categories
+                categoriesNotVerified
+                reports
+              }
+            }
+          `,
+        })
+
+        setTriviaCounts(result.triviaCounts)
+      } catch (error) {
+        Toaster.pushError(error)
+      }
+    }, 1000)
+
+    await updateTriviaCounts()
+
     try {
-      const { triviaCounts } = await fetchGraphQL<Query>({
+      const result = await fetchGraphQL<Query>({
         query: gql`
           query {
-            triviaCounts {
-              questions
-              questionsNotVerified
-              categories
-              categoriesNotVerified
-              reports
-            }
+            triviaEventsOTP
           }
         `,
       })
 
-      setTriviaCounts(triviaCounts)
+      const events = new EventSource(`${defaultFetchInfo()}/trivia/events?otp=${result.triviaEventsOTP}`)
+      events.onmessage = ev => updateTriviaCounts()
     } catch (error) {
       Toaster.pushError(error)
     }
-  }
-
-  updateTriviaCounts()
-
-  createEventSourceEffect(updateTriviaCounts, async () => {
-    const { triviaEventsOTP  } = await fetchGraphQL<Query>({
-      query: gql`query { triviaEventsOTP }`,
-    })
-
-    const result = `${defaultFetchInfo()}/trivia/events?otp=${triviaEventsOTP}`
-    return result
   })
 
   const triviaTodos = createMemo(() => {
@@ -122,42 +140,42 @@ const AppHeader: Component = () => {
           )} matchHref="/trivia">
             <Menu style={{ "min-width": "12rem" }}>
               <Menu.Item>
-                <A href="/trivia/questions/new" match={{ exact: true }}>Submit Question</A>
+                <A href="/trivia/questions/new" match="path">Submit Question</A>
               </Menu.Item>
               <Menu.Item>
-                <A href="/trivia/categories/new" match={{ exact: true }}>Submit Category</A>
+                <A href="/trivia/categories/new" match="path">Submit Category</A>
               </Menu.Item>
               <Divider />
               <Menu.Item badge={createTriviaCountsMenuLabel("questions")}>
-                <A href="/trivia/questions" match={{ exact: "withQuery" }}>Questions</A>
+                <A href="/trivia/questions" match="href">Questions</A>
               </Menu.Item>
               <Show when={isTriviaAdmin()}>
                 <Menu.Item badge={createTriviaCountsMenuLabel("questionsNotVerified")}>
-                  <A href="/trivia/questions" params={{ verified: false }} match={{ exact: "withQuery" }}>Questions (not verified)</A>
+                  <A href="/trivia/questions" params={{ verified: false }} match="href">Questions (not verified)</A>
                 </Menu.Item>
               </Show>
               <Menu.Item badge={createTriviaCountsMenuLabel("categories")}>
-                <A href="/trivia/categories" match={{ exact: "withQuery" }}>Categories</A>
+                <A href="/trivia/categories" match="href">Categories</A>
               </Menu.Item>
               <Show when={isTriviaAdmin()}>
                 <Menu.Item badge={createTriviaCountsMenuLabel("categoriesNotVerified")}>
-                  <A href="/trivia/categories" params={{ verified: false }} match={{ exact: "withQuery" }}>Categories (not verified)</A>
+                  <A href="/trivia/categories" params={{ verified: false }} match="href">Categories (not verified)</A>
                 </Menu.Item>
               </Show>
               <Show when={isTriviaAdmin()}>
                 <Menu.Item badge={createTriviaCountsMenuLabel("reports")}>
-                  <A href="/trivia/reports" match={{ exact: "withQuery" }}>Reports</A>
+                  <A href="/trivia/reports" match="href">Reports</A>
                 </Menu.Item>
               </Show>
             </Menu>
           </Navbar.Dropdown>
 
-          <Button.A href="/blog/gallery" match>Blog</Button.A>
+          <Button.A href="/blog/gallery" match="prefix">Blog</Button.A>
           <Show when={isLoggedIn()}>
-            <Button.A href="/trading/chart" match>TChart</Button.A>
+            <Button.A href="/trading/chart" match="path">TChart</Button.A>
           </Show>
           <Show when={isAdmin()}>
-            <Button.A href="/users" match>Users</Button.A>
+            <Button.A href="/users" match="path">Users</Button.A>
           </Show>
         </Navbar.Section>
 
@@ -165,14 +183,14 @@ const AppHeader: Component = () => {
           <Column.Row gaps="sm">
             <Column class={`${centerChildren(true)}`}>
               <Button.A href="http://github.com/GaZaTu/gazatu-website-graphql-solidjs-spectre" color="link" action>
-                <ImgWithPlaceholder src={(computedColorScheme() === "dark") ? "/static/github-octocat.dark.min.svg" : "/static/github-octocat.min.svg"} alt="github" width={26} height={26} />
+                <Icon src={iconGithub} />
               </Button.A>
             </Column>
 
             <Column class={`${centerChildren(true)}`}>
               <Dropdown right toggle={toggle => (
                 <Button.A action {...toggle}>
-                  <Icon src={iconMoreVert} />
+                  <Icon src={iconMoreVertical} />
                 </Button.A>
               )}>
                 <Menu>
@@ -186,10 +204,16 @@ const AppHeader: Component = () => {
                   <Show when={storedAuth()}>
                     <Divider />
                     <Menu.Item>
-                      <A href="/profile" match>Profile</A>
+                      <A href="/profile" match="path">
+                        <Icon src={iconUser} />
+                        <span>Profile</span>
+                      </A>
                     </Menu.Item>
                     <Menu.Item>
-                      <A href="/logout">Logout</A>
+                      <A href="/logout">
+                        <Icon src={iconLogOut} />
+                        <span>Logout</span>
+                      </A>
                     </Menu.Item>
                   </Show>
                 </Menu>
@@ -198,10 +222,12 @@ const AppHeader: Component = () => {
 
             <Column class={`${centerChildren(true)}`}>
               <Show when={storedAuth()} fallback={
-                <Button.A href="/login" color="primary" round>Login</Button.A>
+                <Button.A href="/login" color="primary" action circle>
+                  <Icon src={iconLogIn} />
+                </Button.A>
               }>
                 <A href="/profile">
-                  <Avatar initials={storedAuth()?.user?.username?.slice(0, 2)} />
+                  <Avatar size="btn" initials={storedAuth()?.user?.username?.slice(0, 2)} />
                 </A>
               </Show>
             </Column>

@@ -5,7 +5,7 @@ import { createStore } from "solid-js/store"
 import AnchorContext, { Location } from "./A.Context"
 
 const scrollHistory = {
-  data: new Map<string | number, number>(),
+  data: new Map<string | number, number>(), // TODO: use sessionStorage instead
   store: (key: string | number | "byIndex" | "byPath" | "byHref" = "byIndex", { top }: { top?: number } = {}) => {
     switch (key) {
     case "byIndex":
@@ -39,6 +39,12 @@ const scrollHistory = {
     }
 
     const top = scrollHistory.data.get(key)
+    if (top === undefined) {
+      return
+    }
+
+    scrollHistory.data.delete(key)
+
     window.scrollTo({ top, behavior })
   },
 }
@@ -51,7 +57,8 @@ type Props = ComponentProps<"a"> & {
   replace?: boolean
   scroll?: boolean
   active?: boolean
-  match?: true | { href?: string, exact?: true | "withQuery" }
+  match?: "prefix" | "path" | "href"
+  matchHref?: string
   external?: boolean
   disabled?: boolean
   keepExistingParams?: boolean
@@ -71,6 +78,7 @@ const createProps = (_props: Props) => {
     "scroll",
     "active",
     "match",
+    "matchHref",
     "external",
     "disabled",
     "keepExistingParams",
@@ -132,13 +140,18 @@ const createProps = (_props: Props) => {
 
   const active = createMemo(() => {
     const { asURL } = url()
+    const {
+      active,
+      match,
+      matchHref,
+    } = componentProps
 
-    if (componentProps.active) {
+    if (active) {
       return true
     }
 
-    const active = locationMatchesURL(location, asURL, componentProps.match)
-    return active
+    const result = locationMatchesURL(location, asURL ?? hrefToURL(matchHref), match)
+    return result
   })
 
   const onclick = createMemo<Props["onclick"]>(() => {
@@ -176,7 +189,7 @@ const createProps = (_props: Props) => {
       if (navigate && (asHref || delta)) {
         if (delta) {
           navigate(delta)
-        } else if (asHref && !locationMatchesURL(location, asURL, { exact: "withQuery" })) {
+        } else if (asHref && !locationMatchesURL(location, asURL, "href")) {
           if (storeScroll !== undefined) {
             if (typeof storeScroll === "boolean") {
               if (storeScroll) {
@@ -253,29 +266,24 @@ const hrefToURL = (href?: string) => {
 }
 
 const locationMatchesURL = (location?: Location, url?: URL, match?: Props["match"]) => {
-  if (!url && typeof match === "object" && match.href) {
-    url = hrefToURL(match.href)
-  }
-
   if (!location || !url || !match) {
     return false
   }
 
-  if (!location.pathname.startsWith(url.pathname)) {
+  switch (match) {
+  case "prefix":
+    return location.pathname.startsWith(url.pathname)
+
+  case "path":
+    return location.pathname === url.pathname
+
+  case "href":
+    return (
+      location.pathname === url.pathname &&
+      location.search === url.search
+    )
+
+  default:
     return false
   }
-
-  if (typeof match === "object" && match.exact) {
-    if (location.pathname !== url.pathname) {
-      return false
-    }
-
-    if (match.exact === "withQuery") {
-      if (location.search !== url.search) {
-        return false
-      }
-    }
-  }
-
-  return true
 }

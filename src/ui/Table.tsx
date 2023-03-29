@@ -3,7 +3,7 @@ import { createSolidTable, flexRender, getCoreRowModel, getFilteredRowModel, get
 import classnames from "classnames"
 import { ComponentProps, createEffect, createSignal, For, JSX, mergeProps, Show, splitProps } from "solid-js"
 import Column from "./Column"
-import iconSearch from "./icons/iconSearch"
+import Icon from "./Icon"
 import Input from "./Input"
 import LoadingPlaceholder from "./LoadingPlaceholder"
 import Pagination from "./Pagination"
@@ -101,7 +101,7 @@ function Table(props: Props & ComponentProps<"div">) {
     <div class="table-container" {...containerProps}>
       <Column.Row class="table-toolbar">
         <Column xxl={4} md={6} sm={12} class={`${marginT(2)}`}>
-          <Input value={__.context?.actions.getState().globalFilter ?? ""} oninput={ev => setGlobalFilter(ev.currentTarget.value)} iconSrcLeft={iconSearch} class={`${rounded("lg")}`} placeholder="Search..." />
+          <Input value={__.context?.actions.getState().globalFilter ?? ""} oninput={ev => setGlobalFilter(ev.currentTarget.value)} iconSrcLeft={Icon.Context.iconSearch} class={`${rounded("lg")}`} placeholder="Search..." />
         </Column>
 
         <Column xxl="auto" offset="ml" class={`${marginT(2)}`}>
@@ -136,7 +136,12 @@ function Table(props: Props & ComponentProps<"div">) {
                       <th colSpan={header.colSpan} onclick={header.column.getToggleSortingHandler()} class={`${header.column.getCanSort() ? "th-clickable" : ""}`}>
                         <Show when={!header.isPlaceholder} fallback={null}>
                           {flexRender(header.column.columnDef.header, header.getContext())}
-                          {{ asc: " 🔼", desc: " 🔽" }[header.column.getIsSorted() as string] ?? undefined}
+                          <Show when={header.column.getIsSorted() === "asc"}>
+                            <Icon src={Icon.Context.iconArrowUp} />
+                          </Show>
+                          <Show when={header.column.getIsSorted() === "desc"}>
+                            <Icon src={Icon.Context.iconArrowDown} />
+                          </Show>
                         </Show>
                       </th>
                     )}

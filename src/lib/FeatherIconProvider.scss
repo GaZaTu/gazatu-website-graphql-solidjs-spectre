@@ -1,0 +1,78 @@
+@use "../ui/spectre.css/variables" as *;
+
+// Icon base style
+.spectre-icon {
+  .accordion &,
+  .btn &,
+  .toast &,
+  .menu & {
+    > svg {
+      vertical-align: -22%;
+    }
+
+    &:first-child:not(:last-child) {
+      margin-right: $unit-2;
+    }
+
+    &:last-child:not(:first-child) {
+      margin-left: $unit-2;
+    }
+  }
+
+  .btn-lg & {
+    > svg {
+      vertical-align: -30%;
+    }
+  }
+
+  > svg {
+    display: inline-block;
+    vertical-align: middle;
+
+    width: var(--feather-size, 22px);
+    height: var(--feather-size, 22px);
+
+    stroke-width: var(--feather-weight, 2px);
+  }
+}
+
+// Form Icons
+.has-icon-left,
+.has-icon-right {
+  display: flex;
+  position: relative;
+
+  &.form-inline {
+    display: inline-block;
+  }
+
+  .spectre-icon {
+    height: $control-icon-size;
+    margin: 0 $control-padding-y-sm;
+    position: absolute;
+    top: 15%;
+    width: $control-icon-size;
+    z-index: $zindex-0 + 1;
+    --feather-size: 18px;
+  }
+}
+
+.has-icon-left {
+  .spectre-icon:not(.is-right) {
+    left: calc($border-width-md * 6);
+  }
+
+  .form-input {
+    padding-left: calc($control-icon-size + $control-padding-y-md * 3);
+  }
+}
+
+.has-icon-right {
+  .spectre-icon:not(.is-left) {
+    right: calc($border-width-md * 6);
+  }
+
+  .form-input {
+    padding-right: calc($control-icon-size + $control-padding-y-md * 3);
+  }
+}

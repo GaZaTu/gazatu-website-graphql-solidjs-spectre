@@ -63,47 +63,6 @@ textarea.form-input {
   }
 }
 
-// Form Icons
-.has-icon-left,
-.has-icon-right {
-  display: flex;
-  position: relative;
-
-  &.form-inline {
-    display: inline-block;
-  }
-
-  .#{$icon-prefix} {
-    height: $control-icon-size;
-    margin: 0 $control-padding-y-md;
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    width: $control-icon-size;
-    z-index: $zindex-0 + 1;
-  }
-}
-
-.has-icon-left {
-  .#{$icon-prefix}:not(.is-right) {
-    left: calc($border-width-md * 6);
-  }
-
-  .form-input {
-    padding-left: calc($control-icon-size + $control-padding-y-md * 3);
-  }
-}
-
-.has-icon-right {
-  .#{$icon-prefix}:not(.is-left) {
-    right: calc($border-width-md * 6);
-  }
-
-  .form-input {
-    padding-right: calc($control-icon-size + $control-padding-y-md * 3);
-  }
-}
-
 // validation based on :placeholder-shown (Edge doesn't support it yet)
 .form-input {
   &:not(:placeholder-shown) {

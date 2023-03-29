@@ -1,6 +1,7 @@
 {
   "files.exclude": {
-    "node_modules": true
+    "node_modules": true,
+    "src/icons": true
   },
   "explorer.fileNesting.enabled": true,
   "explorer.fileNesting.expand": false,

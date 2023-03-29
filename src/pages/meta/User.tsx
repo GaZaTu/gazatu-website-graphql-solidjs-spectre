@@ -4,6 +4,7 @@ import { useLocation } from "@solidjs/router"
 import { Component, createEffect, createMemo, Show } from "solid-js"
 import { isServer } from "solid-js/web"
 import { array, size, string, type } from "superstruct"
+import iconSave from "../../icons/iconSave"
 import fetchGraphQL, { createGraphQLResource, gql } from "../../lib/fetchGraphQL"
 import { Mutation, Query, UserInput } from "../../lib/schema.gql"
 import superstructIsRequired from "../../lib/superstructIsRequired"
@@ -14,7 +15,6 @@ import Button from "../../ui/Button"
 import Column from "../../ui/Column"
 import Form from "../../ui/Form"
 import Icon from "../../ui/Icon"
-import iconSave from "../../ui/icons/iconSave"
 import Input from "../../ui/Input"
 import Navbar from "../../ui/Navbar"
 import { createGlobalProgressStateEffect } from "../../ui/Progress.Global"
@@ -38,7 +38,7 @@ const UserView: Component = () => {
 
   const isAdmin = createAuthCheck("admin")
 
-  const response = createGraphQLResource<Query>({
+  const resource = createGraphQLResource<Query>({
     query: gql`
       query ($id: String!) {
         userById(id: $id) {
@@ -64,7 +64,7 @@ const UserView: Component = () => {
     onError: Toaster.pushError,
   })
 
-  createGlobalProgressStateEffect(() => response.loading)
+  createGlobalProgressStateEffect(() => resource.loading)
 
   const formSchema = UserSchema
   const form = Form.createContext<UserInput>({
@@ -80,7 +80,7 @@ const UserView: Component = () => {
         variables: { input },
       })
 
-      response.refresh()
+      resource.refresh()
       return "Saved User"
     },
     onSuccess: Toaster.pushSuccess,
@@ -88,18 +88,18 @@ const UserView: Component = () => {
   })
 
   createEffect(() => {
-    form.setData(response.data?.userById)
+    form.setData(resource.data?.userById)
   })
 
   const loading = createMemo(() => {
-    return response.loading || form.isSubmitting() || isServer
+    return resource.loading || form.isSubmitting() || isServer
   })
 
   const readOnly = createMemo(() => {
     return loading() || !isAdmin()
   })
 
-  const roles = Autocomplete.createOptions(() => response.data?.userRoleList ?? [], {
+  const roles = Autocomplete.createOptions(() => resource.data?.userRoleList ?? [], {
     filterable: true,
     createable: true,
     key: "name",

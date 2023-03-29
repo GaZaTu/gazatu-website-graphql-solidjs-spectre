@@ -4,6 +4,8 @@ import { useNavigate } from "@solidjs/router"
 import { Component, createEffect, createMemo, lazy, Show } from "solid-js"
 import { isServer } from "solid-js/web"
 import { nullable, optional, size, string, type } from "superstruct"
+import iconSave from "../../icons/iconSave"
+import iconTrash2 from "../../icons/iconTrash2"
 import fetchGraphQL, { createGraphQLResource, gql } from "../../lib/fetchGraphQL"
 import { Mutation, Query, TriviaCategoryInput } from "../../lib/schema.gql"
 import superstructIsRequired from "../../lib/superstructIsRequired"
@@ -13,8 +15,6 @@ import Button from "../../ui/Button"
 import Column from "../../ui/Column"
 import Form from "../../ui/Form"
 import Icon from "../../ui/Icon"
-import iconDelete from "../../ui/icons/iconDelete"
-import iconSave from "../../ui/icons/iconSave"
 import Input from "../../ui/Input"
 import ModalPortal from "../../ui/Modal.Portal"
 import Navbar from "../../ui/Navbar"
@@ -35,7 +35,7 @@ const TriviaCategoryView: Component = () => {
 
   const id = useIdFromParams()
 
-  const response = createGraphQLResource<Query>({
+  const resource = createGraphQLResource<Query>({
     query: gql`
       query ($id: String!, $isNew: Boolean!) {
         triviaCategoryById(id: $id) @skip(if: $isNew) {
@@ -61,7 +61,7 @@ const TriviaCategoryView: Component = () => {
     onError: Toaster.pushError,
   })
 
-  createGlobalProgressStateEffect(() => response.loading)
+  createGlobalProgressStateEffect(() => resource.loading)
 
   const navigate = useNavigate()
 
@@ -82,7 +82,7 @@ const TriviaCategoryView: Component = () => {
       })
 
       if (id()) {
-        response.refresh()
+        resource.refresh()
         return "Saved Trivia Category"
       } else {
         navigate(`/trivia/categories/${res.triviaCategorySave?.id}`)
@@ -94,11 +94,11 @@ const TriviaCategoryView: Component = () => {
   })
 
   createEffect(() => {
-    form.setData(response.data?.triviaCategoryById)
+    form.setData(resource.data?.triviaCategoryById)
   })
 
   const loading = createMemo(() => {
-    return response.loading || form.isSubmitting() || isServer
+    return resource.loading || form.isSubmitting() || isServer
   })
 
   const readOnly = createMemo(() => {
@@ -106,7 +106,7 @@ const TriviaCategoryView: Component = () => {
   })
 
   const verified = createMemo(() => {
-    return response.data?.triviaCategoryById?.verified ?? false
+    return resource.data?.triviaCategoryById?.verified ?? false
   })
 
   const handleVerify = async () => {
@@ -158,7 +158,7 @@ const TriviaCategoryView: Component = () => {
                   <Navbar.Section>
                     <Show when={isTriviaAdmin()}>
                       <Button color="failure" action circle onclick={handleRemove} disabled={readOnly() || !id()}>
-                        <Icon src={iconDelete} />
+                        <Icon src={iconTrash2} />
                       </Button>
                     </Show>
                   </Navbar.Section>

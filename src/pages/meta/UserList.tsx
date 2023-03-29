@@ -1,14 +1,15 @@
 import { Title } from "@solidjs/meta"
 import { useNavigate } from "@solidjs/router"
 import { Component, createEffect, createMemo, For } from "solid-js"
+import iconUserX from "../../icons/iconUserX"
 import { createGraphQLResource, gql } from "../../lib/fetchGraphQL"
 import { Query, User, UserRole } from "../../lib/schema.gql"
 import { createAuthCheck } from "../../store/auth"
+import A from "../../ui/A"
 import Button from "../../ui/Button"
 import Chip from "../../ui/Chip"
 import Column from "../../ui/Column"
 import Icon from "../../ui/Icon"
-import iconDelete from "../../ui/icons/iconDelete"
 import { createGlobalProgressStateEffect } from "../../ui/Progress.Global"
 import Section from "../../ui/Section"
 import Table from "../../ui/Table"
@@ -25,7 +26,7 @@ const UserListView: Component = () => {
     }
   })
 
-  const response = createGraphQLResource<Query>({
+  const resource = createGraphQLResource<Query>({
     query: gql`
       query {
         userList {
@@ -43,7 +44,15 @@ const UserListView: Component = () => {
     onError: Toaster.pushError,
   })
 
-  createGlobalProgressStateEffect(() => response.loading)
+  createGlobalProgressStateEffect(() => resource.loading)
+
+  createEffect(() => {
+    if (!resource.data) {
+      return
+    }
+
+    A.scrollHistory.restore()
+  })
 
   const [tableState, setTableState] = createTableState({
     sorting: [
@@ -53,11 +62,14 @@ const UserListView: Component = () => {
 
   const table = Table.createContext<User>({
     get data() {
-      return response.data?.userList ?? []
+      return resource.data?.userList ?? []
     },
     columns: [
       tableColumnSelect(),
-      tableColumnLink(row => ({ href: `/users/${row.original.id}` })),
+      tableColumnLink(row => ({
+        href: `/users/${row.original.id}`,
+        storeScroll: true,
+      })),
       {
         accessorKey: "username",
         header: "Username",
@@ -103,11 +115,11 @@ const UserListView: Component = () => {
       </Section>
 
       <Section size="xl" marginY flex style={{ "flex-grow": 1 }}>
-        <Table context={table} loading={response.loading} loadingSize="lg" striped pageQueryParam="p" toolbar={
+        <Table context={table} loading={resource.loading} loadingSize="lg" striped pageQueryParam="p" toolbar={
           <Column.Row>
             <Column>
               <Button color="failure" action circle disabled={!selectedIds().length} onclick={handleRemove}>
-                <Icon src={iconDelete} />
+                <Icon src={iconUserX} />
               </Button>
             </Column>
           </Column.Row>

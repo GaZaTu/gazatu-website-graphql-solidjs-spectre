@@ -1,36 +1,35 @@
-import classnames from "classnames"
-import { ComponentProps, splitProps } from "solid-js"
-import "./Icon.scss"
-import createHTMLMemoHook from "./util/createHTMLMemoHook"
+import { Component, ComponentProps, splitProps } from "solid-js"
 
-type Props = {
-  src?: string
-  size?: "1x" | "2x" | "3x" | "4x"
+export const IconContext = {
+  Provider: (() => null) as Component<Props>,
+  iconArrowLeft: "",
+  iconArrowRight: "",
+  iconArrowUp: "",
+  iconArrowDown: "",
+  iconPhoto: "",
+  iconCross: "",
+  iconMenu: "",
+  iconOpen: "",
+  iconSearch: "",
 }
 
-const createProps = createHTMLMemoHook((props: Props) => {
-  return {
-    get class() {
-      return classnames({
-        "spectre-icon": !!props.src,
-        [props.src ?? ""]: true,
-        [`icon-${props.size}`]: !!props.size,
-      })
-    },
-  }
-})
+type Props = ComponentProps<"i"> & {
+  src?: string
+  size?: string | "sm" | "md" | "lg" | "xl"
+  color?: string
+  weight?: string | "light" | "normal" | "bold"
+}
 
-function Icon(props: Props & ComponentProps<"i">) {
+function Icon(props: Props) {
   const [fml] = splitProps(props, ["children"])
-  const [_props] = createProps(props)
 
   return (
-    <i {..._props}>
+    <IconContext.Provider {...props}>
       {fml.children}
-    </i>
+    </IconContext.Provider>
   )
 }
 
 export default Object.assign(Icon, {
-  createProps,
+  Context: IconContext,
 })

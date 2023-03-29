@@ -1,6 +1,9 @@
 import { Title } from "@solidjs/meta"
 import { useLocation } from "@solidjs/router"
-import { Component, createMemo, For, Show } from "solid-js"
+import { Component, createEffect, createMemo, For, Show } from "solid-js"
+import iconCheck from "../../icons/iconCheck"
+import iconFlag from "../../icons/iconFlag"
+import iconTrash2 from "../../icons/iconTrash2"
 import { createGraphQLResource, gql } from "../../lib/fetchGraphQL"
 import { Query, TriviaCategory, TriviaQuestion, TriviaQuestionInput } from "../../lib/schema.gql"
 import { createAuthCheck } from "../../store/auth"
@@ -9,9 +12,6 @@ import Button from "../../ui/Button"
 import Chip from "../../ui/Chip"
 import Column from "../../ui/Column"
 import Icon from "../../ui/Icon"
-import iconCheck from "../../ui/icons/iconCheck"
-import iconDelete from "../../ui/icons/iconDelete"
-import iconFlag from "../../ui/icons/iconFlag"
 import ModalPortal from "../../ui/Modal.Portal"
 import { createGlobalProgressStateEffect } from "../../ui/Progress.Global"
 import Section from "../../ui/Section"
@@ -32,7 +32,7 @@ const TriviaQuestionListView: Component<{ categoryId?: unknown }> = props => {
     ],
   }, { useSearchParams: true })
 
-  const response = createGraphQLResource<Query>({
+  const resource = createGraphQLResource<Query>({
     query: gql`
       query ($args: TriviaQuestionListConnectionArgs) {
         triviaQuestionListConnection(args: $args) {
@@ -92,15 +92,26 @@ const TriviaQuestionListView: Component<{ categoryId?: unknown }> = props => {
     onError: Toaster.pushError,
   })
 
-  createGlobalProgressStateEffect(() => response.loading)
+  createGlobalProgressStateEffect(() => resource.loading)
+
+  createEffect(() => {
+    if (!resource.data) {
+      return
+    }
+
+    A.scrollHistory.restore()
+  })
 
   const table = Table.createContext<TriviaQuestion>({
     get data() {
-      return response.data?.triviaQuestionListConnection?.slice ?? []
+      return resource.data?.triviaQuestionListConnection?.slice ?? []
     },
     columns: [
       tableColumnSelect(),
-      tableColumnLink(row => ({ href: `/trivia/questions/${row.original.id}` })),
+      tableColumnLink(row => ({
+        href: `/trivia/questions/${row.original.id}`,
+        storeScroll: true,
+      })),
       {
         accessorKey: "categories",
         header: "Categories",
@@ -161,7 +172,7 @@ const TriviaQuestionListView: Component<{ categoryId?: unknown }> = props => {
     manualSorting: true,
     manualFiltering: true,
     get pageCount() {
-      return response.data?.triviaQuestionListConnection?.pageCount
+      return resource.data?.triviaQuestionListConnection?.pageCount
     },
   })
 
@@ -187,7 +198,7 @@ const TriviaQuestionListView: Component<{ categoryId?: unknown }> = props => {
     await Toaster.try(async () => {
       await verifyTriviaQuestions(selectedIds())
       table.actions.setRowSelection({})
-      response.refresh()
+      resource.refresh()
     })
   }
 
@@ -199,7 +210,7 @@ const TriviaQuestionListView: Component<{ categoryId?: unknown }> = props => {
     await Toaster.try(async () => {
       await disableTriviaQuestions(selectedIds())
       table.actions.setRowSelection({})
-      response.refresh()
+      resource.refresh()
     })
   }
 
@@ -211,7 +222,7 @@ const TriviaQuestionListView: Component<{ categoryId?: unknown }> = props => {
       </Section>
 
       <Section marginY flex style={{ "flex-grow": 1 }}>
-        <Table context={table} loading={response.loading} loadingSize="lg" striped pageQueryParam="i" toolbar={
+        <Table context={table} loading={resource.loading} loadingSize="lg" striped pageQueryParam="i" toolbar={
           <Column.Row>
             <Column>
               <Button color="warning" action circle disabled={selectedIds().length !== 1} onclick={handleReport}>
@@ -228,7 +239,7 @@ const TriviaQuestionListView: Component<{ categoryId?: unknown }> = props => {
 
               <Column>
                 <Button color="failure" action circle disabled={!selectedIds().length} onclick={handleDisable}>
-                  <Icon src={iconDelete} />
+                  <Icon src={iconTrash2} />
                 </Button>
               </Column>
             </Show>

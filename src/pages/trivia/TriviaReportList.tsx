@@ -2,13 +2,13 @@ import { Title } from "@solidjs/meta"
 import { useNavigate } from "@solidjs/router"
 import { ColumnDef } from "@tanstack/solid-table"
 import { Component, createEffect, createMemo } from "solid-js"
+import iconTrash2 from "../../icons/iconTrash2"
 import { createGraphQLResource, gql } from "../../lib/fetchGraphQL"
 import { Query, TriviaReport } from "../../lib/schema.gql"
 import { createAuthCheck } from "../../store/auth"
 import Button from "../../ui/Button"
 import Column from "../../ui/Column"
 import Icon from "../../ui/Icon"
-import iconDelete from "../../ui/icons/iconDelete"
 import ModalPortal from "../../ui/Modal.Portal"
 import { createGlobalProgressStateEffect } from "../../ui/Progress.Global"
 import Section from "../../ui/Section"
@@ -27,7 +27,7 @@ const TriviaReportListView: Component<{ questionId?: unknown }> = props => {
     }
   })
 
-  const response = createGraphQLResource<Query>({
+  const resource = createGraphQLResource<Query>({
     query: gql`
       query ($questionId: String) {
         triviaReportList(questionId: $questionId) {
@@ -50,7 +50,7 @@ const TriviaReportListView: Component<{ questionId?: unknown }> = props => {
     onError: Toaster.pushError,
   })
 
-  createGlobalProgressStateEffect(() => response.loading)
+  createGlobalProgressStateEffect(() => resource.loading)
 
   const [tableState, setTableState] = createTableState({
     sorting: [
@@ -60,7 +60,7 @@ const TriviaReportListView: Component<{ questionId?: unknown }> = props => {
 
   const table = Table.createContext<TriviaReport>({
     get data() {
-      return response.data?.triviaReportList ?? []
+      return resource.data?.triviaReportList ?? []
     },
     get columns(): ColumnDef<TriviaReport, any>[] {
       return [
@@ -106,7 +106,7 @@ const TriviaReportListView: Component<{ questionId?: unknown }> = props => {
     await Toaster.try(async () => {
       await removeTriviaReports(selectedIds())
       table.actions.setRowSelection({})
-      response.refresh()
+      resource.refresh()
     })
   }
 
@@ -118,11 +118,11 @@ const TriviaReportListView: Component<{ questionId?: unknown }> = props => {
       </Section>
 
       <Section size="xl" marginY flex style={{ "flex-grow": 1 }}>
-        <Table context={table} loading={response.loading} loadingSize="lg" striped pageQueryParam="i" toolbar={
+        <Table context={table} loading={resource.loading} loadingSize="lg" striped pageQueryParam="i" toolbar={
           <Column.Row>
             <Column>
               <Button color="failure" action circle disabled={!selectedIds().length} onclick={handleRemove}>
-                <Icon src={iconDelete} />
+                <Icon src={iconTrash2} />
               </Button>
             </Column>
           </Column.Row>

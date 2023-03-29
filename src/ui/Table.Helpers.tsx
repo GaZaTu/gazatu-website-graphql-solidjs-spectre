@@ -5,7 +5,6 @@ import A from "./A"
 import Button from "./Button"
 import Checkbox from "./Checkbox"
 import Icon from "./Icon"
-import iconOpen from "./icons/iconOpen"
 import { centerChildren, centerSelf } from "./util/position"
 
 const tableDateCell = (...[locales, options]: Parameters<typeof Intl.DateTimeFormat>): ColumnDefTemplate<CellContext<any, any>> => {
@@ -45,7 +44,7 @@ const tableColumnLink = <T, V>(getProps: (row: Row<T>) => ComponentProps<typeof 
   meta: { compact: true },
   cell: info => (
     <Button.A {...getProps(info.row)} class={`${centerSelf(true)}`} action>
-      <Icon src={iconOpen} />
+      <Icon src={Icon.Context.iconOpen} />
     </Button.A>
   ),
 })

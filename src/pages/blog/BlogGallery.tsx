@@ -4,6 +4,9 @@ import { Title } from "@solidjs/meta"
 import { useLocation } from "@solidjs/router"
 import { Component, ComponentProps, createEffect, createMemo, createSignal, For } from "solid-js"
 import { any, array, nullable, optional, size, string, type } from "superstruct"
+import iconArrowLeft from "../../icons/iconArrowLeft"
+import iconArrowRight from "../../icons/iconArrowRight"
+import iconUpload from "../../icons/iconUpload"
 import { defaultFetchInfo, fetchJson } from "../../lib/fetchFromApi"
 import fetchGraphQL, { createGraphQLResource, gql } from "../../lib/fetchGraphQL"
 import { BlogEntry, BlogEntryInput, Mutation, Query } from "../../lib/schema.gql"
@@ -14,9 +17,6 @@ import Column from "../../ui/Column"
 import Figure from "../../ui/Figure"
 import Form from "../../ui/Form"
 import Icon from "../../ui/Icon"
-import iconArrowLeft from "../../ui/icons/iconArrowLeft"
-import iconArrowRight from "../../ui/icons/iconArrowRight"
-import iconUpload from "../../ui/icons/iconUpload"
 import ImgWithPlaceholder from "../../ui/ImgWithPlaceholder"
 import Input from "../../ui/Input"
 import Modal from "../../ui/Modal"
@@ -37,7 +37,7 @@ const BlogGalleryView: Component = () => {
     },
   })
 
-  const response = createGraphQLResource<Query>({
+  const resource = createGraphQLResource<Query>({
     query: gql`
       query ($args: BlogEntryListConnectionArgs) {
         blogEntryListConnection(args: $args) {
@@ -79,10 +79,10 @@ const BlogGalleryView: Component = () => {
     },
   })
 
-  createGlobalProgressStateEffect(() => response.loading)
+  createGlobalProgressStateEffect(() => resource.loading)
 
   const groups = createMemo(() => {
-    return response.data?.blogEntryListConnection?.slice
+    return resource.data?.blogEntryListConnection?.slice
       ?.map((entry, index, entries) => {
         return {
           ...entry,
@@ -104,7 +104,7 @@ const BlogGalleryView: Component = () => {
 
   const [targets, setTargets] = createSignal<HTMLElement[]>([])
   createIntersectionObserver(targets, entries => {
-    if (response.loading || (tableState.pagination?.pageIndex ?? 0) >= (response.data?.blogEntryListConnection?.pageCount ?? 0)) {
+    if (resource.loading || (tableState.pagination?.pageIndex ?? 0) >= (resource.data?.blogEntryListConnection?.pageCount ?? 0)) {
       return
     }
 
@@ -130,8 +130,8 @@ const BlogGalleryView: Component = () => {
     await Toaster.try(async () => {
       await ModalPortal.push(BlogEntryUploadModal)
 
-      response.clear()
-      response.refresh()
+      resource.clear()
+      resource.refresh()
     })
   }
 
@@ -156,7 +156,7 @@ const BlogGalleryView: Component = () => {
         <Timeline>
           <For each={Object.entries(groups() ?? {})}>
             {([date, entries]) => (
-              <BlogEntryGroup ref={el => setTargets(s => [...s, el])} date={date} entries={entries} refresh={response.refresh} />
+              <BlogEntryGroup ref={el => setTargets(s => [...s, el])} date={date} entries={entries} refresh={resource.refresh} />
             )}
           </For>
         </Timeline>

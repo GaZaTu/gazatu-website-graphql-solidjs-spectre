@@ -4,12 +4,25 @@ import { Component, ComponentProps, ErrorBoundary } from "solid-js"
 import AppFooter from "./AppFooter"
 import AppHeader from "./AppHeader"
 import AppMain from "./AppMain"
+import FeatherIconProvider from "./lib/FeatherIconProvider"
 import { setDefaultFetchInfo } from "./lib/fetchFromApi"
 import { setGraphqlEndpoint } from "./lib/fetchGraphQL"
 import AnchorContext from "./ui/A.Context"
+import { IconContext } from "./ui/Icon"
 import ModalPortal from "./ui/Modal.Portal"
 import Toaster from "./ui/Toaster"
 import { useColorSchemeEffect } from "./ui/util/colorScheme"
+
+IconContext.Provider = FeatherIconProvider
+IconContext.iconArrowLeft = FeatherIconProvider.iconArrowLeft
+IconContext.iconArrowRight = FeatherIconProvider.iconArrowRight
+IconContext.iconArrowUp = FeatherIconProvider.iconArrowUp
+IconContext.iconArrowDown = FeatherIconProvider.iconArrowDown
+IconContext.iconPhoto = FeatherIconProvider.iconPhoto
+IconContext.iconCross = FeatherIconProvider.iconCross
+IconContext.iconMenu = FeatherIconProvider.iconMenu
+IconContext.iconOpen = FeatherIconProvider.iconOpen
+IconContext.iconSearch = FeatherIconProvider.iconSearch
 
 AnchorContext.useLocation = useLocation
 AnchorContext.useNavigate = useNavigate
@@ -18,7 +31,7 @@ if (import.meta.env.MODE === "production") {
   setDefaultFetchInfo("https://api.gazatu.xyz")
   setGraphqlEndpoint("/graphql")
 } else {
-  setDefaultFetchInfo("http://127.0.0.1:3434")
+  setDefaultFetchInfo("https://api.gazatu.xyz")
   setGraphqlEndpoint("/graphql")
 }
 

@@ -2,7 +2,6 @@ import { ComponentProps, splitProps } from "solid-js"
 import Button from "./Button"
 import Dropdown from "./Dropdown"
 import Icon from "./Icon"
-import iconArrowDown from "./icons/iconArrowDown"
 import "./Navbar.scss"
 import createHTMLMemoHook from "./util/createHTMLMemoHook"
 
@@ -25,9 +24,9 @@ function NavbarDropdown(props: Props & ComponentProps<typeof Dropdown>) {
 
   return (
     <Dropdown {...dropdownProps} toggle={toggle => (
-      <Button.A color="link" match={toggleProps.matchHref ? { href: toggleProps.matchHref } : undefined} {...toggle}>
+      <Button.A color="link" match="prefix" matchHref={toggleProps.matchHref} {...toggle}>
         <span>{toggleProps.toggle({})}</span>
-        <Icon src={iconArrowDown} />
+        <Icon src={Icon.Context.iconArrowDown} />
       </Button.A>
     )}>
       {fml.children}

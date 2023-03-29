@@ -11,5 +11,10 @@ export default defineConfig({
   ],
   build: {
     target: "esnext",
+    rollupOptions: {
+      output: {
+        experimentalMinChunkSize: 1024,
+      },
+    },
   },
 })

@@ -1,8 +1,6 @@
 import classnames from "classnames"
 import { ComponentProps, createMemo, For } from "solid-js"
 import Icon from "./Icon"
-import iconArrowLeft from "./icons/iconArrowLeft"
-import iconArrowRight from "./icons/iconArrowRight"
 import PaginationItem from "./Pagination.Item"
 import "./Pagination.scss"
 import createHTMLMemoHook from "./util/createHTMLMemoHook"
@@ -116,7 +114,7 @@ function Pagination(props: Props & ComponentProps<"nav">) {
     <nav {..._props}>
       {/* <Show when={_props.hasPrev} /> */}
       <PaginationItem page={prevPage()} queryParams={pageQueryParams(prevPage())} onclick={onclick} disabled={!canPrev()}>
-        <Icon src={iconArrowLeft} />
+        <Icon src={Icon.Context.iconArrowLeft} />
       </PaginationItem>
 
       <ul>
@@ -131,7 +129,7 @@ function Pagination(props: Props & ComponentProps<"nav">) {
 
       {/* <Show when={_props.hasNext} /> */}
       <PaginationItem page={nextPage()} queryParams={pageQueryParams(nextPage())} onclick={onclick} disabled={!canNext()}>
-        <Icon src={iconArrowRight} />
+        <Icon src={Icon.Context.iconArrowRight} />
       </PaginationItem>
     </nav>
   )

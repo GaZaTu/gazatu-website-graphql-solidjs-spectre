@@ -1,7 +1,6 @@
 import { createVisibilityObserver } from "@solid-primitives/intersection-observer"
 import { ComponentProps, createEffect, createSignal, Show, splitProps } from "solid-js"
 import Icon from "./Icon"
-import iconPhoto from "./icons/iconPhoto"
 import Img from "./Img"
 import LoadingPlaceholder from "./LoadingPlaceholder"
 import readFile from "./util/readFile"
@@ -61,7 +60,7 @@ function ImgWithPlaceholder(_props: Props & ComponentProps<typeof Img>) {
 
       <Show when={loading()} fallback={<SetLoaded />}>
         <LoadingPlaceholder ref={setPlaceholder} width={props.width} height={props.height} style2={props.style}>
-          <Icon src={iconPhoto} />
+          <Icon src={Icon.Context.iconPhoto} />
         </LoadingPlaceholder>
       </Show>
     </>

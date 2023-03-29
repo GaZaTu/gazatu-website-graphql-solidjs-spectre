@@ -31,6 +31,9 @@
   &.avatar-xl {
     @include avatar-base($unit-16);
   }
+  &.avatar-btn {
+    @include avatar-base($control-height-md);
+  }
 
   img {
     border-radius: 50%;

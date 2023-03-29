@@ -1,14 +1,15 @@
 import { Title } from "@solidjs/meta"
 import { useLocation } from "@solidjs/router"
-import { Component, createMemo, Show } from "solid-js"
+import { Component, createEffect, createMemo, Show } from "solid-js"
+import iconCheck from "../../icons/iconCheck"
+import iconTrash2 from "../../icons/iconTrash2"
 import { createGraphQLResource, gql } from "../../lib/fetchGraphQL"
 import { Query, TriviaCategory } from "../../lib/schema.gql"
 import { createAuthCheck } from "../../store/auth"
+import A from "../../ui/A"
 import Button from "../../ui/Button"
 import Column from "../../ui/Column"
 import Icon from "../../ui/Icon"
-import iconCheck from "../../ui/icons/iconCheck"
-import iconDelete from "../../ui/icons/iconDelete"
 import ModalPortal from "../../ui/Modal.Portal"
 import { createGlobalProgressStateEffect } from "../../ui/Progress.Global"
 import Section from "../../ui/Section"
@@ -23,7 +24,7 @@ const TriviaCategoryListView: Component = () => {
 
   const location = useLocation()
 
-  const response = createGraphQLResource<Query>({
+  const resource = createGraphQLResource<Query>({
     query: gql`
       query ($isTriviaAdmin: Boolean!, $args: TriviaCategoryListArgs) {
         triviaCategoryList(args: $args) {
@@ -50,7 +51,15 @@ const TriviaCategoryListView: Component = () => {
     onError: Toaster.pushError,
   })
 
-  createGlobalProgressStateEffect(() => response.loading)
+  createGlobalProgressStateEffect(() => resource.loading)
+
+  createEffect(() => {
+    if (!resource.data) {
+      return
+    }
+
+    A.scrollHistory.restore()
+  })
 
   const [tableState, setTableState] = createTableState({
     sorting: [
@@ -60,11 +69,14 @@ const TriviaCategoryListView: Component = () => {
 
   const table = Table.createContext<TriviaCategory>({
     get data() {
-      return response.data?.triviaCategoryList ?? []
+      return resource.data?.triviaCategoryList ?? []
     },
     columns: [
       tableColumnSelect(),
-      tableColumnLink(row => ({ href: `/trivia/categories/${row.original.id}` })),
+      tableColumnLink(row => ({
+        href: `/trivia/categories/${row.original.id}`,
+        storeScroll: true,
+      })),
       {
         accessorKey: "name",
         header: "Name",
@@ -113,7 +125,7 @@ const TriviaCategoryListView: Component = () => {
     await Toaster.try(async () => {
       await verifyTriviaCategories(selectedIds())
       table.actions.setRowSelection({})
-      response.refresh()
+      resource.refresh()
     })
   }
 
@@ -125,7 +137,7 @@ const TriviaCategoryListView: Component = () => {
     await Toaster.try(async () => {
       await removeTriviaCategories(selectedIds())
       table.actions.setRowSelection({})
-      response.refresh()
+      resource.refresh()
     })
   }
 
@@ -137,7 +149,7 @@ const TriviaCategoryListView: Component = () => {
       </Section>
 
       <Section size="xl" marginY flex style={{ "flex-grow": 1 }}>
-        <Table context={table} loading={response.loading} loadingSize="lg" striped pageQueryParam="i" toolbar={
+        <Table context={table} loading={resource.loading} loadingSize="lg" striped pageQueryParam="i" toolbar={
           <Column.Row>
             <Show when={isTriviaAdmin()}>
               <Column>
@@ -148,7 +160,7 @@ const TriviaCategoryListView: Component = () => {
 
               <Column>
                 <Button color="failure" action circle disabled={!selectedIds().length} onclick={handleRemove}>
-                  <Icon src={iconDelete} />
+                  <Icon src={iconTrash2} />
                 </Button>
               </Column>
             </Show>

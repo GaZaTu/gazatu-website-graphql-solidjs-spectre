@@ -5,8 +5,7 @@ import createHTMLMemoHook from "./util/createHTMLMemoHook"
 import { ThemeSize2 } from "./util/theming"
 
 type Props = {
-  size?: ThemeSize2
-
+  size?: ThemeSize2 | "btn"
   imageSrc?: string
   imageAlt?: string
   initials?: string

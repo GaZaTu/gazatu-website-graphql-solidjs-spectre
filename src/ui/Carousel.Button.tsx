@@ -3,8 +3,6 @@ import { ComponentProps, splitProps } from "solid-js"
 import Button from "./Button"
 import "./Carousel.scss"
 import Icon from "./Icon"
-import iconArrowLeft from "./icons/iconArrowLeft"
-import iconArrowRight from "./icons/iconArrowRight"
 import createHTMLMemoHook from "./util/createHTMLMemoHook"
 
 type Props = {
@@ -30,7 +28,7 @@ function CarouselButton(props: Props & ComponentProps<typeof Button>) {
 
   return (
     <Button size="lg" action {..._props}>
-      <Icon src={_props.prev ? iconArrowLeft : iconArrowRight} />
+      <Icon src={_props.prev ? Icon.Context.iconArrowLeft : Icon.Context.iconArrowRight} />
     </Button>
   )
 }
@@ -42,7 +40,7 @@ function CarouselButtonA(props: Props & ComponentProps<typeof Button.A>) {
 
   return (
     <Button.A size="lg" action {..._props}>
-      <Icon src={_props.prev ? iconArrowLeft : iconArrowRight} />
+      <Icon src={_props.prev ? Icon.Context.iconArrowLeft : Icon.Context.iconArrowRight} />
     </Button.A>
   )
 }

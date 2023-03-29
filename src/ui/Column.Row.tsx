@@ -1,6 +1,6 @@
 import classnames from "classnames"
 import { ComponentProps, splitProps } from "solid-js"
-import "./Img.scss"
+import "./Column.scss"
 import createHTMLMemoHook from "./util/createHTMLMemoHook"
 
 type Props = {
