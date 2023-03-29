@@ -8,9 +8,6 @@ const scrollHistory = {
   data: new Map<string | number, number>(), // TODO: use sessionStorage instead
   store: (key: string | number | "byIndex" | "byPath" | "byHref" = "byIndex", { top }: { top?: number } = {}) => {
     switch (key) {
-    case "byIndex":
-      key = window.history.length
-      break
     case "byPath":
       key = window.location.pathname
       break
@@ -23,13 +20,14 @@ const scrollHistory = {
       top = window.scrollY
     }
 
-    scrollHistory.data.set(key, top)
+    if (key === "byIndex") {
+      window.history.replaceState({ top }, "")
+    } else {
+      scrollHistory.data.set(key, top)
+    }
   },
   restore: (key: string | number | "byIndex" | "byPath" | "byHref" = "byIndex", { behavior }: { behavior?: ScrollBehavior } = {}) => {
     switch (key) {
-    case "byIndex":
-      key = window.history.length
-      break
     case "byPath":
       key = window.location.pathname
       break
@@ -38,12 +36,14 @@ const scrollHistory = {
       break
     }
 
-    const top = scrollHistory.data.get(key)
-    if (top === undefined) {
-      return
-    }
+    let top = 0
 
-    scrollHistory.data.delete(key)
+    if (key === "byIndex") {
+      void ({ top } = window.history.state ?? { top: 0 })
+    } else {
+      top = scrollHistory.data.get(key) ?? 0
+      scrollHistory.data.delete(key)
+    }
 
     window.scrollTo({ top, behavior })
   },
