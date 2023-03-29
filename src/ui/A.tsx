@@ -36,13 +36,13 @@ const scrollHistory = {
       break
     }
 
-    let top = 0
+    let top = undefined as number | undefined
 
     if (key === "byIndex") {
-      void ({ top } = window.history.state ?? { top: 0 })
-      window.history.replaceState({ top: 0 }, "")
+      void ({ top } = window.history.state ?? {})
+      window.history.replaceState({ top: undefined }, "")
     } else {
-      top = scrollHistory.data.get(key) ?? 0
+      top = scrollHistory.data.get(key)
       scrollHistory.data.delete(key)
     }
 
