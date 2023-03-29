@@ -46,6 +46,10 @@ const scrollHistory = {
       scrollHistory.data.delete(key)
     }
 
+    if (top === undefined) {
+      return
+    }
+
     window.scrollTo({ top, behavior })
   },
 }
