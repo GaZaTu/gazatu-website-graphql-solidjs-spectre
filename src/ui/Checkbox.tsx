@@ -49,17 +49,17 @@ function Checkbox(props: Props & ComponentProps<"input">) {
     formGroup.setLabelHidden(true)
   })
 
-  const value = createMemo(() => {
-    if (inputProps.value !== undefined) {
-      return inputProps.value
+  const checked = createMemo(() => {
+    if (inputProps.checked !== undefined) {
+      return inputProps.checked
     }
 
     if (!inputProps.name) {
       return undefined
     }
 
-    const value = form.getValue(inputProps.name) ?? false
-    return value
+    const checked = form.getValue(inputProps.name) ?? false
+    return checked
   })
 
   const handleInput: ComponentProps<"input">["oninput"] = ev => {
@@ -92,10 +92,10 @@ function Checkbox(props: Props & ComponentProps<"input">) {
 
   return (
     <label {..._containerProps}>
-      <input checked={value()} oninput={handleInput} onblur={handleBlur} {...inputProps} type="checkbox" />
+      <input checked={checked()} oninput={handleInput} onblur={handleBlur} {...inputProps} type="checkbox" />
       <i class="form-icon" />
       <Show when={formGroup.label() || formGroup.labelAsString()} fallback={containerProps.children}>
-        {formGroup.label() ?? formGroup.labelAsString()}
+        <span>{formGroup.label() ?? formGroup.labelAsString()}</span>
       </Show>
     </label>
   )

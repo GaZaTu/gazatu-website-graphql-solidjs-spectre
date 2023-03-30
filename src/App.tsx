@@ -4,11 +4,15 @@ import { Component, ComponentProps, ErrorBoundary } from "solid-js"
 import AppFooter from "./AppFooter"
 import AppHeader from "./AppHeader"
 import AppMain from "./AppMain"
+import iconCheckSquare from "./icons/iconCheckSquare"
+import iconMinusSquare from "./icons/iconMinusSquare"
+import iconSquare from "./icons/iconSquare"
 import FeatherIconProvider from "./lib/FeatherIconProvider"
 import { setDefaultFetchInfo } from "./lib/fetchFromApi"
 import { setGraphqlEndpoint } from "./lib/fetchGraphQL"
 import AnchorContext from "./ui/A.Context"
-import { IconContext } from "./ui/Icon"
+import CheckboxButton from "./ui/CheckboxButton"
+import Icon, { IconContext } from "./ui/Icon"
 import ModalPortal from "./ui/Modal.Portal"
 import Toaster from "./ui/Toaster"
 import { useColorSchemeEffect } from "./ui/util/colorScheme"
@@ -23,6 +27,10 @@ IconContext.iconCross = FeatherIconProvider.iconCross
 IconContext.iconMenu = FeatherIconProvider.iconMenu
 IconContext.iconOpen = FeatherIconProvider.iconOpen
 IconContext.iconSearch = FeatherIconProvider.iconSearch
+
+CheckboxButton.Defaults.IfTrue = () => <Icon src={iconCheckSquare} color="var(--success)" />
+CheckboxButton.Defaults.IfFalse = () => <Icon src={iconSquare} color="var(--body-fg-monochrome)" />
+CheckboxButton.Defaults.IfIndeterminate = () => <Icon src={iconMinusSquare} color="var(--success)" />
 
 AnchorContext.useLocation = useLocation
 AnchorContext.useNavigate = useNavigate

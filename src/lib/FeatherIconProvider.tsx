@@ -1,11 +1,15 @@
 import classnames from "classnames"
 import { ComponentProps, splitProps } from "solid-js"
+import iconAlertCircle from "../icons/iconAlertCircle"
+import iconAlertTriangle from "../icons/iconAlertTriangle"
+import iconCheckCircle from "../icons/iconCheckCircle"
 import iconChevronDown from "../icons/iconChevronDown"
 import iconChevronLeft from "../icons/iconChevronLeft"
 import iconChevronRight from "../icons/iconChevronRight"
 import iconChevronUp from "../icons/iconChevronUp"
 import iconExternalLink from "../icons/iconExternalLink"
 import iconImage from "../icons/iconImage"
+import iconInfo from "../icons/iconInfo"
 import iconMenu from "../icons/iconMenu"
 import iconSearch from "../icons/iconSearch"
 import iconX from "../icons/iconX"
@@ -17,6 +21,7 @@ type Props =  ComponentProps<"i"> & {
   size?: string | "sm" | "md" | "lg" | "xl"
   color?: string
   weight?: string | "light" | "normal" | "bold"
+  fill?: string
 }
 
 const convertSize = (size: Props["size"]) => {
@@ -60,6 +65,7 @@ const createProps = createHTMLMemoHook((props: Props) => {
         ...(props.color ? { "color": props.color } : {}),
         ...(props.size ? { "--feather-size": convertSize(props.size) } : {}),
         ...(props.weight ? { "--feather-weight": convertWeight(props.weight) } : {}),
+        ...(props.fill ? { "--feather-fill": props.fill } : {}),
       }
     },
   }
@@ -86,4 +92,8 @@ export default Object.assign(Icon, {
   iconMenu: iconMenu,
   iconOpen: iconExternalLink,
   iconSearch: iconSearch,
+  iconInfo: iconInfo,
+  iconCheckCircle: iconCheckCircle,
+  iconAlertTriangle: iconAlertTriangle,
+  iconAlertCircle: iconAlertCircle,
 })

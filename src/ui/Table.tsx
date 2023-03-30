@@ -10,7 +10,7 @@ import Pagination from "./Pagination"
 import TableRow from "./Table.Row"
 import "./Table.scss"
 import { loading } from "./util/loading"
-import { marginT } from "./util/position"
+import { marginY } from "./util/position"
 import { rounded } from "./util/shapes"
 
 declare module "@tanstack/solid-table" {
@@ -50,6 +50,7 @@ type Props = {
   striped?: boolean
   scrollable?: boolean
   filterable?: boolean
+  sticky?: boolean
   loading?: boolean
   loadingSize?: "sm" | "lg"
   toolbar?: JSX.Element
@@ -73,6 +74,7 @@ function Table(props: Props & ComponentProps<"div">) {
     "striped",
     "scrollable",
     "filterable",
+    "sticky",
     "loading",
     "loadingSize",
     "toolbar",
@@ -98,13 +100,13 @@ function Table(props: Props & ComponentProps<"div">) {
   })
 
   return (
-    <div class="table-container" {...containerProps}>
+    <div class={`table-container ${tableProps.sticky ? "sticky" : ""}`} {...containerProps}>
       <Column.Row class="table-toolbar">
-        <Column xxl={4} md={6} sm={12} class={`${marginT(2)}`}>
+        <Column xxl={4} md={6} sm={12} class={`${marginY(2)}`}>
           <Input value={__.context?.actions.getState().globalFilter ?? ""} oninput={ev => setGlobalFilter(ev.currentTarget.value)} iconSrcLeft={Icon.Context.iconSearch} class={`${rounded("lg")}`} placeholder="Search..." />
         </Column>
 
-        <Column xxl="auto" offset="ml" class={`${marginT(2)}`}>
+        <Column xxl="auto" offset="ml" class={`${marginY(2)}`}>
           {tableProps.toolbar}
         </Column>
       </Column.Row>

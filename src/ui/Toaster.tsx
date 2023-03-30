@@ -1,9 +1,11 @@
 import { ComponentProps, createEffect, For, JSX, Show, splitProps } from "solid-js"
 import Button from "./Button"
 import Code from "./Code"
+import Icon from "./Icon"
 import Toast from "./Toast"
 import "./Toaster.scss"
 import { ToasterStore, useToaster } from "./Toaster.Store"
+import { marginR } from "./util/position"
 
 const notifications = new ToasterStore<Partial<ComponentProps<typeof ToastWithAnimation>>>()
 
@@ -19,10 +21,43 @@ const removeNotification = (id: string) => {
   notifications.remove(id)
 }
 
+const pushInfo = (message: any) => {
+  pushNotification({
+    color: undefined,
+    children: (
+      <>
+        <Icon src={Icon.Context.iconInfo} class={`${marginR(2)}`} />
+        <span>{String(message)}</span>
+      </>
+    ),
+  })
+
+  return undefined
+}
+
 const pushSuccess = (message: any) => {
   pushNotification({
     color: "success",
-    children: String(message),
+    children: (
+      <>
+        <Icon src={Icon.Context.iconCheckCircle} class={`${marginR(2)}`} />
+        <span>{String(message)}</span>
+      </>
+    ),
+  })
+
+  return undefined
+}
+
+const pushWarning = (message: any) => {
+  pushNotification({
+    color: "warning",
+    children: (
+      <>
+        <Icon src={Icon.Context.iconAlertTriangle} class={`${marginR(2)}`} />
+        <span>{String(message)}</span>
+      </>
+    ),
   })
 
   return undefined
@@ -38,7 +73,10 @@ const pushError = (error: any, onclose?: (() => void) | unknown) => {
   }
 
   error = (
-    <Code snippet style={{ color: "initial" }}>{error}</Code>
+    <>
+      <Icon src={Icon.Context.iconAlertCircle} class={`${marginR(2)}`} />
+      <Code snippet style={{ color: "initial" }}>{error}</Code>
+    </>
   )
 
   pushNotification({
@@ -90,7 +128,9 @@ export default Object.assign(Toaster, {
   notifications,
   push: pushNotification,
   remove: removeNotification,
+  pushInfo,
   pushSuccess,
+  pushWarning,
   pushError,
   try: tryFunc,
 })

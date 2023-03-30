@@ -1,0 +1,11 @@
+@use "spectre.css/variables" as *;
+
+// Form validation states
+.form-checkbox-button {
+  .has-error &,
+  &.is-error {
+    > i {
+      color: $failure !important;
+    }
+  }
+}

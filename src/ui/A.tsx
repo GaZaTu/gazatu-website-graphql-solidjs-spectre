@@ -183,10 +183,10 @@ const createProps = (_props: Props) => {
         if (e.defaultPrevented) {
           return
         }
+      }
 
-        if (isExternal) {
-          return
-        }
+      if (isExternal) {
+        return
       }
 
       e.preventDefault()
@@ -195,11 +195,9 @@ const createProps = (_props: Props) => {
         if (delta) {
           navigate(delta)
         } else if (asHref && !locationMatchesURL(location, asURL, "href")) {
-          if (storeScroll !== undefined) {
-            if (typeof storeScroll === "boolean") {
-              if (storeScroll) {
-                scrollHistory.store()
-              }
+          if (storeScroll !== false) {
+            if (typeof storeScroll === "boolean" || typeof storeScroll === "undefined") {
+              scrollHistory.store()
             } else {
               scrollHistory.store(storeScroll)
             }

@@ -4,6 +4,8 @@ import { useLocation } from "@solidjs/router"
 import { Component, createEffect, createMemo, Show } from "solid-js"
 import { isServer } from "solid-js/web"
 import { array, size, string, type } from "superstruct"
+import iconCopy from "../../icons/iconCopy"
+import iconLogOut from "../../icons/iconLogOut"
 import iconSave from "../../icons/iconSave"
 import fetchGraphQL, { createGraphQLResource, gql } from "../../lib/fetchGraphQL"
 import { Mutation, Query, UserInput } from "../../lib/schema.gql"
@@ -121,7 +123,17 @@ const UserView: Component = () => {
 
           <Show when={isSelf()}>
             <Column xxl="auto" offset="ml">
-              <Button onclick={handleCopyAuthToken} color="gray">Copy Auth-Token</Button>
+              <Button onclick={handleCopyAuthToken} color="gray">
+                <Icon src={iconCopy} />
+                <span>Auth-Token</span>
+              </Button>
+            </Column>
+
+            <Column xxl="auto" offset="ml">
+              <Button.A href="/logout" color="warning">
+                <Icon src={iconLogOut} />
+                <span>Logout</span>
+              </Button.A>
             </Column>
           </Show>
         </Column.Row>

@@ -5,24 +5,19 @@ import "./Accordion.scss"
 import Icon from "./Icon"
 import createHTMLMemoHook from "./util/createHTMLMemoHook"
 import { float, marginR } from "./util/position"
-import { text } from "./util/text"
 
 type Props = {
-  vertical?: boolean
-
   header?: JSX.Element
   headerIcon?: boolean
   headerIconFloatRight?: boolean
-  isDefault?: boolean
+  // isDefault?: boolean
 }
 
 const createProps = createHTMLMemoHook((props: Props) => {
   return {
     get class() {
       return classnames({
-        "accordion": !props.vertical,
-        "divider-vert": props.vertical,
-        ...text("center"),
+        "accordion": true,
       })
     },
   }
@@ -32,14 +27,14 @@ function Accordion(props: Props & ComponentProps<"details">) {
   const [fml] = splitProps(props, ["children"])
   const [_props] = createProps(props)
 
-  // TODO: const radioGroup = useContext(AccordionRadioGroup)
+  // const radioGroup = useContext(AccordionRadioGroup)
   // TODO: isDefault
 
   return (
     <details {..._props}>
       <summary class="accordion-header" style={{ "cursor": "pointer" }}>
         {props.headerIcon && (
-          <Icon src={props.open ? Icon.Context.iconArrowDown : Icon.Context.iconArrowRight} classList={{ ...marginR(1), ...float(props.headerIconFloatRight ? "right" : undefined) }} />
+          <Icon src={props.open ? Icon.Context.iconArrowDown : Icon.Context.iconArrowUp} classList={{ ...marginR(1), ...float(props.headerIconFloatRight ? "right" : undefined) }} />
         )}
         {props.header}
       </summary>

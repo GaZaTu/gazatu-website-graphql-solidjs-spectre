@@ -76,8 +76,16 @@ export const setupPrerender: EntryFileExports["setupPrerender"] = async () => {
         {
           matches: "^(.*)/__id$",
           template: `
-            location ~ ^{{$1}}/[^/]+ {
+            location ~^{{$1}}/[^/]+$ {
               limit_req zone=default burst=40 nodelay;
+
+              # include /etc/nginx/include.d/csp;
+              include /etc/nginx/include.d/gzip;
+              include /etc/nginx/include.d/hsts;
+              include /var/www/gazatu-website-graphql-solidjs-spectre/dist/csp.conf;
+
+		          add_header Cache-Control "max-age=0, no-cache, no-store, must-revalidate";
+
               try_files $uri {{$0}}/index.html =404;
             }
           `,

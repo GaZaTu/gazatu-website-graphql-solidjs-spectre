@@ -3,7 +3,7 @@ import { ComponentProps, createEffect } from "solid-js"
 import { createStore, SetStoreFunction } from "solid-js/store"
 import A from "./A"
 import Button from "./Button"
-import Checkbox from "./Checkbox"
+import CheckboxButton from "./CheckboxButton"
 import Icon from "./Icon"
 import { centerChildren, centerSelf } from "./util/position"
 
@@ -28,14 +28,25 @@ const tableDateCell = (...[locales, options]: Parameters<typeof Intl.DateTimeFor
   }
 }
 
+// const tableColumnSelect = <T, V>(): ColumnDef<T, V> => ({
+//   id: "__select",
+//   meta: { compact: true },
+//   header: info => (
+//     <Checkbox checked={info.table.getIsAllPageRowsSelected()} indeterminate={info.table.getIsSomePageRowsSelected()} onclick={() => info.table.toggleAllPageRowsSelected()} class={`${centerChildren(true)}`} />
+//   ),
+//   cell: info => (
+//     <Checkbox checked={info.row.getIsSelected()} onclick={() => info.row.toggleSelected()} disabled={!info.row.getCanSelect()} class={`${centerChildren(true)}`} />
+//   ),
+// })
+
 const tableColumnSelect = <T, V>(): ColumnDef<T, V> => ({
   id: "__select",
   meta: { compact: true },
   header: info => (
-    <Checkbox checked={info.table.getIsAllPageRowsSelected()} indeterminate={info.table.getIsSomePageRowsSelected()} onclick={info.table.getToggleAllPageRowsSelectedHandler()} class={`${centerChildren(true)}`} />
+    <CheckboxButton checked={info.table.getIsAllPageRowsSelected()} indeterminate={info.table.getIsSomePageRowsSelected()} onclick={() => info.table.toggleAllPageRowsSelected()} class={`${centerChildren(true)}`} />
   ),
   cell: info => (
-    <Checkbox checked={info.row.getIsSelected()} onclick={info.row.getToggleSelectedHandler()} disabled={!info.row.getCanSelect()} class={`${centerChildren(true)}`} />
+    <CheckboxButton checked={info.row.getIsSelected()} onclick={() => info.row.toggleSelected()} disabled={!info.row.getCanSelect()} class={`${centerChildren(true)}`} />
   ),
 })
 

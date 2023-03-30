@@ -66,10 +66,7 @@ const UserListView: Component = () => {
     },
     columns: [
       tableColumnSelect(),
-      tableColumnLink(row => ({
-        href: `/users/${row.original.id}`,
-        storeScroll: true,
-      })),
+      tableColumnLink(row => ({ href: `/users/${row.original.id}` })),
       {
         accessorKey: "username",
         header: "Username",

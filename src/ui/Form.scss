@@ -60,7 +60,8 @@ legend {
 
 .form-group-required {
   .form-label::after,
-  .form-checkbox::after {
+  .form-checkbox::after,
+  .form-checkbox-button::after {
     content: "*";
     color: $failure;
     margin-left: 0.2rem;

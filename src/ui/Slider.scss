@@ -1,3 +1,5 @@
+@use "spectre.css/variables" as *;
+
 // Sliders
 // Credit: https://css-tricks.com/styling-cross-browser-compatible-range-inputs-css/
 .slider {
@@ -21,16 +23,16 @@
   // Slider Thumb
   &::-webkit-slider-thumb {
     -webkit-appearance: none;
-    background: $primary-color;
+    background: $primary;
     border: 0;
     border-radius: 50%;
     height: $unit-3;
-    margin-top: -($unit-3 - $unit-h) / 2;
+    margin-top: calc((($unit-3 - $unit-h) * -1) / 2);
     transition: transform .2s;
     width: $unit-3;
   }
   &::-moz-range-thumb {
-    background: $primary-color;
+    background: $primary;
     border: 0;
     border-radius: 50%;
     height: $unit-3;
@@ -38,7 +40,7 @@
     width: $unit-3;
   }
   &::-ms-thumb {
-    background: $primary-color;
+    background: $primary;
     border: 0;
     border-radius: 50%;
     height: $unit-3;
@@ -61,39 +63,39 @@
   &:disabled,
   &.disabled {
     &::-webkit-slider-thumb {
-      background: $gray-color-light;
+      background: $gray;
       transform: scale(1);
     }
     &::-moz-range-thumb {
-      background: $gray-color-light;
+      background: $gray;
       transform: scale(1);
     }
     &::-ms-thumb {
-      background: $gray-color-light;
+      background: $gray;
       transform: scale(1);
     }
   }
 
   // Slider Track
   &::-webkit-slider-runnable-track {
-    background: $bg-color-dark;
-    border-radius: $border-radius;
+    background: $body-bg;
+    border-radius: $border-radius-md;
     height: $unit-h;
     width: 100%;
   }
   &::-moz-range-track {
-    background: $bg-color-dark;
-    border-radius: $border-radius;
+    background: $body-bg;
+    border-radius: $border-radius-md;
     height: $unit-h;
     width: 100%;
   }
   &::-ms-track {
-    background: $bg-color-dark;
-    border-radius: $border-radius;
+    background: $body-bg;
+    border-radius: $border-radius-md;
     height: $unit-h;
     width: 100%;
   }
   &::-ms-fill-lower {
-    background: $primary-color;
+    background: $primary;
   }
 }

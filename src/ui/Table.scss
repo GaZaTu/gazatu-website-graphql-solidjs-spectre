@@ -63,15 +63,26 @@
   flex-grow: 1;
   display: flex;
   flex-direction: column;
+
+  &.sticky {
+    .table-toolbar,
+    .table-pagination {
+      background: rgba($body-bg--rgb-triplet, 0.925);
+      position: sticky;
+      z-index: 1;
+    }
+
+    .table-toolbar {
+      top: 0;
+    }
+
+    .table-pagination {
+      bottom: 0;
+    }
+  }
 }
 
 .table-scroll-container {
   flex-grow: 1;
   overflow-x: auto;
-}
-
-.columns.table-pagination {
-  background: rgba($body-bg--rgb-triplet, 0.925);
-  position: sticky;
-  bottom: 0;
 }

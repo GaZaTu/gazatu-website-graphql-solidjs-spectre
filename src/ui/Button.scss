@@ -155,12 +155,24 @@
     }
   }
 
+  &.btn-transparent {
+    background: transparent;
+    border-color: transparent;
+    color: $body-fg;
+    // &:focus,
+    &:hover,
+    &:active,
+    &.btn-active {
+      background-color: $body-bg-monochrome;
+    }
+  }
+
   // Button Link
   &.btn-link {
     background: transparent;
     border-color: transparent;
     color: $link;
-    &:focus,
+    // &:focus,
     &:hover,
     &:active,
     &.btn-active {

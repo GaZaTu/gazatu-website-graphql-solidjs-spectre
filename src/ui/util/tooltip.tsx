@@ -9,5 +9,6 @@ export const tooltip = (text?: string, direction: "top" | "bottom" | "left" | "r
     "data-has-tooltip": true,
     [`data-has-tooltip-${direction}`]: !!direction,
     "data-tooltip": text,
+    "aria-label": text,
   }
 }

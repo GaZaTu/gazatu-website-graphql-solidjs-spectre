@@ -10,7 +10,7 @@ type Props = {
 }
 
 function ImgWithPlaceholder(_props: Props & ComponentProps<typeof Img>) {
-  const [fml, props] = splitProps(_props, ["src"])
+  const [fml, props] = splitProps(_props, ["src", "useFetch"])
 
   const [placeholder, setPlaceholder] = createSignal<HTMLElement>()
   const useVisibilityObserver = createVisibilityObserver()
@@ -27,16 +27,21 @@ function ImgWithPlaceholder(_props: Props & ComponentProps<typeof Img>) {
   }
 
   createEffect(async () => {
-    if (!fml.src || !visible() || loaded()) {
+    const {
+      src,
+      useFetch,
+    } = fml
+
+    if (!src || !visible() || loaded()) {
       return
     }
 
-    if (!props.useFetch) {
-      setSrc(fml.src)
+    if (!useFetch) {
+      setSrc(src)
       return
     }
 
-    const response = await fetch(fml.src)
+    const response = await fetch(src)
     const blob = await response.blob()
     const url = await readFile(blob, { how: "readAsDataURL" })
 
@@ -45,7 +50,7 @@ function ImgWithPlaceholder(_props: Props & ComponentProps<typeof Img>) {
   })
 
   const onload = () => {
-    if (props.useFetch) {
+    if (fml.useFetch) {
       return
     }
 

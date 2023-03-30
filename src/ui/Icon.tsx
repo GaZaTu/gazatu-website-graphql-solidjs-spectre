@@ -11,6 +11,10 @@ export const IconContext = {
   iconMenu: "",
   iconOpen: "",
   iconSearch: "",
+  iconInfo: "",
+  iconCheckCircle: "",
+  iconAlertTriangle: "",
+  iconAlertCircle: "",
 }
 
 type Props = ComponentProps<"i"> & {
@@ -18,6 +22,7 @@ type Props = ComponentProps<"i"> & {
   size?: string | "sm" | "md" | "lg" | "xl"
   color?: string
   weight?: string | "light" | "normal" | "bold"
+  fill?: string
 }
 
 function Icon(props: Props) {

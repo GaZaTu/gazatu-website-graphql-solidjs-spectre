@@ -2,9 +2,8 @@ import debounce from "debounce"
 import { Component, createEffect, createMemo, createSignal, onCleanup, Show } from "solid-js"
 import iconGithub from "./icons/iconGithub"
 import iconLogIn from "./icons/iconLogIn"
-import iconLogOut from "./icons/iconLogOut"
-import iconMoreVertical from "./icons/iconMoreVertical"
-import iconUser from "./icons/iconUser"
+import iconMoon from "./icons/iconMoon"
+import iconSun from "./icons/iconSun"
 import { defaultFetchInfo } from "./lib/fetchFromApi"
 import fetchGraphQL, { gql } from "./lib/fetchGraphQL"
 import { Query, TriviaCounts } from "./lib/schema.gql"
@@ -12,10 +11,9 @@ import { createAuthCheck, storedAuth } from "./store/auth"
 import A from "./ui/A"
 import Avatar from "./ui/Avatar"
 import Button from "./ui/Button"
+import CheckboxButton from "./ui/CheckboxButton"
 import Column from "./ui/Column"
 import Divider from "./ui/Divider"
-import Dropdown from "./ui/Dropdown"
-import FormGroup from "./ui/Form.Group"
 import Icon from "./ui/Icon"
 import ImgWithPlaceholder from "./ui/ImgWithPlaceholder"
 import Label from "./ui/Label"
@@ -23,11 +21,11 @@ import Menu from "./ui/Menu"
 import Navbar from "./ui/Navbar"
 import GlobalProgress from "./ui/Progress.Global"
 import Section from "./ui/Section"
-import Switch from "./ui/Switch"
 import Toaster from "./ui/Toaster"
 import { badge } from "./ui/util/badge"
 import { computedColorScheme, setColorScheme } from "./ui/util/colorScheme"
 import { centerChildren } from "./ui/util/position"
+import { tooltip } from "./ui/util/tooltip"
 
 const [showAppHeader, setShowAppHeader] = createSignal(true)
 const useShowAppHeaderEffect = (show: boolean) => {
@@ -132,7 +130,7 @@ const AppHeader: Component = () => {
               <ImgWithPlaceholder src="/static/gazatu-xyz.nofont.min.svg" alt="gazatu.xyz logo" width={173} height={36} />
             </A>
 
-            <Navbar.Burger expanded={expanded()} onclick={() => setExpanded(v => !v)} aria-label="navigation" />
+            <Navbar.Burger expanded={expanded()} onclick={() => setExpanded(v => !v)} {...tooltip("toggle navigation", "bottom")} />
           </Navbar.Brand>
 
           <Navbar.Dropdown toggle={toggle => (
@@ -182,52 +180,26 @@ const AppHeader: Component = () => {
         <Navbar.Section>
           <Column.Row gaps="sm">
             <Column class={`${centerChildren(true)}`}>
-              <Button.A href="http://github.com/GaZaTu/gazatu-website-graphql-solidjs-spectre" color="link" action>
+              <Button.A href="http://github.com/GaZaTu/gazatu-website-graphql-solidjs-spectre" color="transparent" action circle {...tooltip("open github", "bottom")}>
                 <Icon src={iconGithub} />
               </Button.A>
             </Column>
 
             <Column class={`${centerChildren(true)}`}>
-              <Dropdown right toggle={toggle => (
-                <Button.A action {...toggle}>
-                  <Icon src={iconMoreVertical} />
-                </Button.A>
-              )}>
-                <Menu>
-                  <Menu.Item>
-                    <FormGroup>
-                      <Switch checked={computedColorScheme() === "dark"} onclick={() => setColorScheme((computedColorScheme() === "dark") ? "light" : "dark")}>
-                        <span>Dark Theme</span>
-                      </Switch>
-                    </FormGroup>
-                  </Menu.Item>
-                  <Show when={storedAuth()}>
-                    <Divider />
-                    <Menu.Item>
-                      <A href="/profile" match="path">
-                        <Icon src={iconUser} />
-                        <span>Profile</span>
-                      </A>
-                    </Menu.Item>
-                    <Menu.Item>
-                      <A href="/logout">
-                        <Icon src={iconLogOut} />
-                        <span>Logout</span>
-                      </A>
-                    </Menu.Item>
-                  </Show>
-                </Menu>
-              </Dropdown>
+              <CheckboxButton checked={computedColorScheme() === "dark"} onclick={() => setColorScheme((computedColorScheme() === "dark") ? "light" : "dark")} {...tooltip("toggle color scheme", "bottom")}
+                ifTrue={<Icon src={iconMoon} />}
+                ifFalse={<Icon src={iconSun} />}
+              />
             </Column>
 
             <Column class={`${centerChildren(true)}`}>
               <Show when={storedAuth()} fallback={
-                <Button.A href="/login" color="primary" action circle>
+                <Button.A href="/login" color="primary" action circle {...tooltip("login", "bottom")}>
                   <Icon src={iconLogIn} />
                 </Button.A>
               }>
                 <A href="/profile">
-                  <Avatar size="btn" initials={storedAuth()?.user?.username?.slice(0, 2)} />
+                  <Avatar size="btn" initials={storedAuth()?.user?.username?.slice(0, 2)} {...tooltip("user profile", "bottom")} />
                 </A>
               </Show>
             </Column>

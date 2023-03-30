@@ -108,10 +108,7 @@ const TriviaQuestionListView: Component<{ categoryId?: unknown }> = props => {
     },
     columns: [
       tableColumnSelect(),
-      tableColumnLink(row => ({
-        href: `/trivia/questions/${row.original.id}`,
-        storeScroll: true,
-      })),
+      tableColumnLink(row => ({ href: `/trivia/questions/${row.original.id}` })),
       {
         accessorKey: "categories",
         header: "Categories",

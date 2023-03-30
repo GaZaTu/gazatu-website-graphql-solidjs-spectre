@@ -9,7 +9,7 @@ import { ThemeColor, ThemeSize } from "./util/theming"
 
 type Props = {
   size?: ThemeSize
-  color?: ThemeColor
+  color?: ThemeColor | "transparent"
   round?: boolean
   circle?: boolean
   action?: boolean
