@@ -787,7 +787,7 @@ const ChartView: Component = props => {
                   </Control>
                 </Span> */}
 
-                <Button onClick={toggleInstrumentInWatchList} disabled={!instrument()} action circle color={instrumentWatchListEntry() ? "failure" : undefined}>
+                <Button onClick={toggleInstrumentInWatchList} disabled={!instrument()} action color={instrumentWatchListEntry() ? "failure" : undefined}>
                   <Icon src={iconBookmark} />
                 </Button>
               </Column>

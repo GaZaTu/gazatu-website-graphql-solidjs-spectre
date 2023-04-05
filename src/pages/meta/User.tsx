@@ -152,7 +152,7 @@ const UserView: Component = () => {
           <Form.Group>
             <Navbar size="lg">
               <Navbar.Section>
-                <Button type="submit" color="primary" action circle onclick={form.createSubmitHandler()} disabled={readOnly()} loading={loading()}>
+                <Button type="submit" color="primary" action onclick={form.createSubmitHandler()} disabled={readOnly()} loading={loading()}>
                   <Icon src={iconSave} />
                 </Button>
               </Navbar.Section>

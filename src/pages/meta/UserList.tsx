@@ -112,10 +112,10 @@ const UserListView: Component = () => {
       </Section>
 
       <Section size="xl" marginY flex style={{ "flex-grow": 1 }}>
-        <Table context={table} loading={resource.loading} loadingSize="lg" striped pageQueryParam="p" toolbar={
+        <Table context={table} loading={resource.loading} loadingSize="lg" striped pageQueryParam="p" sticky toolbar={
           <Column.Row>
             <Column>
-              <Button color="failure" action circle disabled={!selectedIds().length} onclick={handleRemove}>
+              <Button color="failure" action disabled={!selectedIds().length} onclick={handleRemove}>
                 <Icon src={iconUserX} />
               </Button>
             </Column>

@@ -71,6 +71,7 @@ html {
   --mono-font-family: "SF Mono", "Segoe UI Mono", "Roboto Mono", Menlo, Courier, monospace;
   --fallback-font-family: "Helvetica Neue", sans-serif;
   --body-font-family: var(--base-font-family), var(--fallback-font-family);
+  --body-letter-spacing: 0;
 
   // Unit sizes
   --unit-o: .05rem;
@@ -195,5 +196,80 @@ body {
     color: var(--warning-text);
     font-weight: bold;
     text-align: center;
+  }
+}
+
+// -----------------------------------------------------
+// spectre customizations simple
+// html {
+//   .table-toolbar {
+//     .form-input {
+//       border-radius: var(--border-radius-lg);
+//     }
+//   }
+// }
+
+// -----------------------------------------------------
+// spectre customizations brutalist
+html {
+  // --body-fg--rgb-triplet: 255, 255, 255;
+
+  // --body-font-family: var(--mono-font-family), var(--base-font-family), var(--fallback-font-family);
+  // --body-letter-spacing: -1px;
+
+  // --font-size-sm: .75rem;
+  // --font-size-md: .85rem;
+  // --font-size-lg: .95rem;
+
+  --border-radius-xs: 0;
+  --border-radius-sm: 0;
+  --border-radius-md: 0;
+  --border-radius-lg: 0;
+  --border-radius-xl: 50%;
+
+  // &.light {
+  //   --body-fg--rgb-triplet: 0, 0, 0;
+  // }
+
+  // a {
+  //   text-decoration: underline;
+  // }
+
+  .btn.btn-circle {
+    border-radius: unset;
+  }
+
+  .menu {
+    border: 1px solid gray;
+  }
+
+  .form-input,
+  .form-input:focus,
+  .btn:not(.btn-transparent):not(.btn-link),
+  .chip,
+  .menu,
+  .avatar {
+    border-radius: unset;
+    box-shadow: 2px 2px 0px 0px gray;
+  }
+
+  .form-autocomplete {
+    .form-input:not(.form-autocomplete-input),
+    .form-input:not(.form-autocomplete-input):focus {
+      box-shadow: unset;
+    }
+  }
+
+  .form-switch {
+    > .form-icon,
+    > .form-icon:before {
+      border-radius: unset;
+    }
+  }
+
+  @media (max-width: 840px) {
+    #AppHeader .menu {
+      box-shadow: unset;
+    }
   }
 }

@@ -145,7 +145,7 @@ const BlogGalleryView: Component = () => {
           </Column>
 
           <Column xxl="auto" offset="ml">
-            <Button color="primary" action circle onclick={handleUpload}>
+            <Button color="primary" action onclick={handleUpload}>
               <Icon src={iconUpload} />
             </Button>
           </Column>

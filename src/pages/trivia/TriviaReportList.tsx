@@ -118,10 +118,10 @@ const TriviaReportListView: Component<{ questionId?: unknown }> = props => {
       </Section>
 
       <Section size="xl" marginY flex style={{ "flex-grow": 1 }}>
-        <Table context={table} loading={resource.loading} loadingSize="lg" striped pageQueryParam="i" toolbar={
+        <Table context={table} loading={resource.loading} loadingSize="lg" striped pageQueryParam="i" sticky={!props.questionId} toolbar={
           <Column.Row>
             <Column>
-              <Button color="failure" action circle disabled={!selectedIds().length} onclick={handleRemove}>
+              <Button color="failure" action disabled={!selectedIds().length} onclick={handleRemove}>
                 <Icon src={iconTrash2} />
               </Button>
             </Column>

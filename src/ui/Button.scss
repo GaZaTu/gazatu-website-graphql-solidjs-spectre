@@ -92,7 +92,7 @@
   }
   &:focus,
   &:hover {
-    background: rgba($primary--rgb-triplet, 0.05);
+    background: rgba($primary--rgb-triplet, 0.15);
     border-color: $primary-monochrome;
     color: $body-fg;
     text-decoration: none;

@@ -248,7 +248,7 @@ const TriviaQuestionView: Component = () => {
                   <Navbar.Section>
                     <Column.Row>
                       <Column>
-                        <Button type="submit" color="primary" action circle onclick={form.createSubmitHandler()} disabled={readOnly()} loading={loading()}>
+                        <Button type="submit" color="primary" action onclick={form.createSubmitHandler()} disabled={readOnly()} loading={loading()}>
                           <Icon src={iconSave} />
                         </Button>
                       </Column>
@@ -265,7 +265,7 @@ const TriviaQuestionView: Component = () => {
 
                   <Navbar.Section>
                     <Show when={isTriviaAdmin()}>
-                      <Button color="failure" action circle onclick={handleDisable} disabled={readOnly() || !id()}>
+                      <Button color="failure" action onclick={handleDisable} disabled={readOnly() || !id()}>
                         <Icon src={iconTrash2} />
                       </Button>
                     </Show>

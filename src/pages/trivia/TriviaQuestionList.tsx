@@ -219,23 +219,23 @@ const TriviaQuestionListView: Component<{ categoryId?: unknown }> = props => {
       </Section>
 
       <Section marginY flex style={{ "flex-grow": 1 }}>
-        <Table context={table} loading={resource.loading} loadingSize="lg" striped pageQueryParam="i" toolbar={
+        <Table context={table} loading={resource.loading} loadingSize="lg" striped pageQueryParam="i" sticky={!props.categoryId} toolbar={
           <Column.Row>
             <Column>
-              <Button color="warning" action circle disabled={selectedIds().length !== 1} onclick={handleReport}>
+              <Button color="warning" action disabled={selectedIds().length !== 1} onclick={handleReport}>
                 <Icon src={iconFlag} />
               </Button>
             </Column>
 
             <Show when={isTriviaAdmin()}>
               <Column>
-                <Button color="success" action circle disabled={!selectedIds().length} onclick={handleVerify}>
+                <Button color="success" action disabled={!selectedIds().length} onclick={handleVerify}>
                   <Icon src={iconCheck} />
                 </Button>
               </Column>
 
               <Column>
-                <Button color="failure" action circle disabled={!selectedIds().length} onclick={handleDisable}>
+                <Button color="failure" action disabled={!selectedIds().length} onclick={handleDisable}>
                   <Icon src={iconTrash2} />
                 </Button>
               </Column>

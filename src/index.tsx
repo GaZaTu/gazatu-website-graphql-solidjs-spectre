@@ -20,9 +20,11 @@ if (typeof window !== "undefined") {
     render(main, root)
   }
 
-  const registrations = await navigator.serviceWorker.getRegistrations()
-  for (const registration of registrations) {
-    registration.unregister()
+  if (typeof navigator.serviceWorker !== "undefined") {
+    const registrations = await navigator.serviceWorker.getRegistrations()
+    for (const registration of registrations) {
+      registration.unregister()
+    }
   }
 }
 

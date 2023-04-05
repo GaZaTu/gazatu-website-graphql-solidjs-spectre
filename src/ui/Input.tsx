@@ -43,8 +43,8 @@ const createProps = createHTMLMemoHook((props: Props) => {
 })
 
 function Input(props: Props & ComponentProps<"input">) {
-  const [fml] = splitProps(props, ["children"])
-  const [_props] = createProps(props)
+  const [fml, __props] = splitProps(props, ["children", "iconSrcLeft", "iconSrcRight"])
+  const [_props] = createProps(__props)
 
   const form = useContext(FormContext)
 

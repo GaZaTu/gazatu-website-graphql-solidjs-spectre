@@ -11,7 +11,6 @@ import TableRow from "./Table.Row"
 import "./Table.scss"
 import { loading } from "./util/loading"
 import { marginY } from "./util/position"
-import { rounded } from "./util/shapes"
 
 declare module "@tanstack/solid-table" {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -103,7 +102,7 @@ function Table(props: Props & ComponentProps<"div">) {
     <div class={`table-container ${tableProps.sticky ? "sticky" : ""}`} {...containerProps}>
       <Column.Row class="table-toolbar">
         <Column xxl={4} md={6} sm={12} class={`${marginY(2)}`}>
-          <Input value={__.context?.actions.getState().globalFilter ?? ""} oninput={ev => setGlobalFilter(ev.currentTarget.value)} iconSrcLeft={Icon.Context.iconSearch} class={`${rounded("lg")}`} placeholder="Search..." />
+          <Input value={__.context?.actions.getState().globalFilter ?? ""} oninput={ev => setGlobalFilter(ev.currentTarget.value)} iconSrcLeft={Icon.Context.iconSearch} placeholder="Search..." />
         </Column>
 
         <Column xxl="auto" offset="ml" class={`${marginY(2)}`}>

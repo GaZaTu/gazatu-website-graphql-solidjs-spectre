@@ -66,6 +66,7 @@ $base-font-family: var(--base-font-family);
 $mono-font-family: var(--mono-font-family);
 $fallback-font-family: var(--fallback-font-family);
 $body-font-family: var(--body-font-family);
+$body-letter-spacing: var(--body-letter-spacing, 0);
 
 // Unit sizes
 $unit-o: var(--unit-o);

@@ -130,7 +130,7 @@ const AppHeader: Component = () => {
               <ImgWithPlaceholder src="/static/gazatu-xyz.nofont.min.svg" alt="gazatu.xyz logo" width={173} height={36} />
             </A>
 
-            <Navbar.Burger expanded={expanded()} onclick={() => setExpanded(v => !v)} {...tooltip("toggle navigation", "bottom")} />
+            <Navbar.Burger expanded={expanded()} onclick={() => setExpanded(v => !v)} aria-label="toggle navigation" />
           </Navbar.Brand>
 
           <Navbar.Dropdown toggle={toggle => (
@@ -180,21 +180,21 @@ const AppHeader: Component = () => {
         <Navbar.Section>
           <Column.Row gaps="sm">
             <Column class={`${centerChildren(true)}`}>
-              <Button.A href="http://github.com/GaZaTu/gazatu-website-graphql-solidjs-spectre" color="transparent" action circle {...tooltip("open github", "bottom")}>
+              <Button.A href="http://github.com/GaZaTu/gazatu-website-graphql-solidjs-spectre" color="gray" action {...tooltip("open github", "bottom")}>
                 <Icon src={iconGithub} />
               </Button.A>
             </Column>
 
             <Column class={`${centerChildren(true)}`}>
-              <CheckboxButton checked={computedColorScheme() === "dark"} onclick={() => setColorScheme((computedColorScheme() === "dark") ? "light" : "dark")} {...tooltip("toggle color scheme", "bottom")}
-                ifTrue={<Icon src={iconMoon} />}
-                ifFalse={<Icon src={iconSun} />}
+              <CheckboxButton checked={computedColorScheme() === "dark"} onclick={() => setColorScheme((computedColorScheme() === "dark") ? "light" : "dark")} {...tooltip("toggle color scheme", "bottom")} color="gray" action circle={false}
+                ifTrue={<Icon src={iconSun} />}
+                ifFalse={<Icon src={iconMoon} />}
               />
             </Column>
 
             <Column class={`${centerChildren(true)}`}>
               <Show when={storedAuth()} fallback={
-                <Button.A href="/login" color="primary" action circle {...tooltip("login", "bottom")}>
+                <Button.A href="/login" color="primary" action {...tooltip("login", "bottom")}>
                   <Icon src={iconLogIn} />
                 </Button.A>
               }>
