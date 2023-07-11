@@ -1,9 +1,9 @@
 // css
 import "./index.scss"
 // js
+import { __ssrLoadedModules } from "@gazatu/vite-ssg"
+import type { EntryFileExports } from "@gazatu/vite-ssg/node"
 import { ComponentProps } from "solid-js"
-import { __ssrLoadedModules } from "vite-ssg-but-for-everyone"
-import type { EntryFileExports } from "vite-ssg-but-for-everyone/node"
 import App from "./App"
 
 const ROOT_ELEMENT_ID = "root"
