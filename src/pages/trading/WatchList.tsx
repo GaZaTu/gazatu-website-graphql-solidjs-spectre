@@ -1,6 +1,8 @@
-import { Component, ComponentProps, createMemo, Show } from "solid-js"
-import A from "../../ui/A"
+// css
 import "./WatchList.css"
+// js
+import { A } from "@gazatu/solid-spectre/ui/A"
+import { Component, ComponentProps, createMemo, Show } from "solid-js"
 
 type TickerProps = {
   isin?: string

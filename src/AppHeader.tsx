@@ -1,31 +1,31 @@
+import { iconGithub } from "@gazatu/solid-spectre/icons/iconGithub"
+import { iconLogIn } from "@gazatu/solid-spectre/icons/iconLogIn"
+import { iconMoon } from "@gazatu/solid-spectre/icons/iconMoon"
+import { iconSun } from "@gazatu/solid-spectre/icons/iconSun"
+import { A } from "@gazatu/solid-spectre/ui/A"
+import { Avatar } from "@gazatu/solid-spectre/ui/Avatar"
+import { Button } from "@gazatu/solid-spectre/ui/Button"
+import { CheckboxButton } from "@gazatu/solid-spectre/ui/CheckboxButton"
+import { Column } from "@gazatu/solid-spectre/ui/Column"
+import { Divider } from "@gazatu/solid-spectre/ui/Divider"
+import { Icon } from "@gazatu/solid-spectre/ui/Icon"
+import { ImgWithPlaceholder } from "@gazatu/solid-spectre/ui/ImgWithPlaceholder"
+import { Label } from "@gazatu/solid-spectre/ui/Label"
+import { Menu } from "@gazatu/solid-spectre/ui/Menu"
+import { Navbar } from "@gazatu/solid-spectre/ui/Navbar"
+import { GlobalProgress } from "@gazatu/solid-spectre/ui/Progress.Global"
+import { Section } from "@gazatu/solid-spectre/ui/Section"
+import { Toaster } from "@gazatu/solid-spectre/ui/Toaster"
+import { badge } from "@gazatu/solid-spectre/util/badge"
+import { computedColorScheme, setColorScheme } from "@gazatu/solid-spectre/util/colorScheme"
+import { centerChildren } from "@gazatu/solid-spectre/util/position"
+import { tooltip } from "@gazatu/solid-spectre/util/tooltip"
 import debounce from "debounce"
-import { Component, createEffect, createMemo, createSignal, onCleanup, Show } from "solid-js"
-import iconGithub from "./icons/iconGithub"
-import iconLogIn from "./icons/iconLogIn"
-import iconMoon from "./icons/iconMoon"
-import iconSun from "./icons/iconSun"
+import { Component, Show, createEffect, createMemo, createSignal, onCleanup } from "solid-js"
 import { defaultFetchInfo } from "./lib/fetchFromApi"
 import fetchGraphQL, { gql } from "./lib/fetchGraphQL"
 import { Query, TriviaCounts } from "./lib/schema.gql"
 import { createAuthCheck, storedAuth } from "./store/auth"
-import A from "./ui/A"
-import Avatar from "./ui/Avatar"
-import Button from "./ui/Button"
-import CheckboxButton from "./ui/CheckboxButton"
-import Column from "./ui/Column"
-import Divider from "./ui/Divider"
-import Icon from "./ui/Icon"
-import ImgWithPlaceholder from "./ui/ImgWithPlaceholder"
-import Label from "./ui/Label"
-import Menu from "./ui/Menu"
-import Navbar from "./ui/Navbar"
-import GlobalProgress from "./ui/Progress.Global"
-import Section from "./ui/Section"
-import Toaster from "./ui/Toaster"
-import { badge } from "./ui/util/badge"
-import { computedColorScheme, setColorScheme } from "./ui/util/colorScheme"
-import { centerChildren } from "./ui/util/position"
-import { tooltip } from "./ui/util/tooltip"
 
 const [showAppHeader, setShowAppHeader] = createSignal(true)
 const useShowAppHeaderEffect = (show: boolean) => {
@@ -39,8 +39,8 @@ const useShowAppHeaderEffect = (show: boolean) => {
 }
 
 export {
-  showAppHeader,
   setShowAppHeader,
+  showAppHeader,
   useShowAppHeaderEffect,
 }
 

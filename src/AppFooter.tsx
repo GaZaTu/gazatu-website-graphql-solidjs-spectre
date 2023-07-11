@@ -1,6 +1,6 @@
+import { Navbar } from "@gazatu/solid-spectre/ui/Navbar"
+import { Section } from "@gazatu/solid-spectre/ui/Section"
 import { Component } from "solid-js"
-import Navbar from "./ui/Navbar"
-import Section from "./ui/Section"
 
 // type AppFooterConfig = {
 //   position?: JSX.CSSProperties["position"]

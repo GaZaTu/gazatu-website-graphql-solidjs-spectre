@@ -1,5 +1,5 @@
+import { Empty } from "@gazatu/solid-spectre/ui/Empty"
 import { Component } from "solid-js"
-import Empty from "../ui/Empty"
 
 const Http404View: Component = () => {
   return (

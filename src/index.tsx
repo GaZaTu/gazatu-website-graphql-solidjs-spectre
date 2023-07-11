@@ -1,9 +1,10 @@
-import "modern-normalize/modern-normalize.css"
+// css
+import "./index.scss"
+// js
 import { ComponentProps } from "solid-js"
 import { __ssrLoadedModules } from "vite-ssg-but-for-everyone"
 import type { EntryFileExports } from "vite-ssg-but-for-everyone/node"
 import App from "./App"
-import "./index.scss"
 
 const ROOT_ELEMENT_ID = "root"
 

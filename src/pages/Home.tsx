@@ -1,13 +1,13 @@
+import { A } from "@gazatu/solid-spectre/ui/A"
+import { Button } from "@gazatu/solid-spectre/ui/Button"
+import { Column } from "@gazatu/solid-spectre/ui/Column"
+import { ImgWithPlaceholder } from "@gazatu/solid-spectre/ui/ImgWithPlaceholder"
+import { Section } from "@gazatu/solid-spectre/ui/Section"
+import { rounded } from "@gazatu/solid-spectre/util/shapes"
 import { Component } from "solid-js"
-import { defaultFetchInfo } from "../lib/fetchFromApi"
-import { vscodeDarkPlus } from "../lib/URLSearchParamsSubtitle"
-import A from "../ui/A"
-import Button from "../ui/Button"
-import ImgWithPlaceholder from "../ui/ImgWithPlaceholder"
-import Section from "../ui/Section"
 import gazatuApus from "../assets/gazatu-apus.webp"
-import Column from "../ui/Column"
-import { rounded } from "../ui/util/shapes"
+import { vscodeDarkPlus } from "../lib/URLSearchParamsSubtitle"
+import { defaultFetchInfo } from "../lib/fetchFromApi"
 
 const HomeView: Component = () => {
   return (

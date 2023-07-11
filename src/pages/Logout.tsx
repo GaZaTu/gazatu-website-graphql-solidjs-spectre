@@ -1,7 +1,7 @@
+import { Empty } from "@gazatu/solid-spectre/ui/Empty"
 import { useNavigate } from "@solidjs/router"
 import { Component, createEffect } from "solid-js"
 import { setStoredAuth } from "../store/auth"
-import Empty from "../ui/Empty"
 
 const LogoutView: Component = () => {
   const navigate = useNavigate()

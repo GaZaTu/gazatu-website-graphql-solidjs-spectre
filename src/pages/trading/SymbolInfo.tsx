@@ -1,6 +1,8 @@
-import { Component, ComponentProps, createMemo, For, Show } from "solid-js"
-import A from "../../ui/A"
+// css
 import "./SymbolInfo.css"
+// js
+import { A } from "@gazatu/solid-spectre/ui/A"
+import { Component, ComponentProps, createMemo, For, Show } from "solid-js"
 
 type Props = ComponentProps<"div"> & {
   logo?: string

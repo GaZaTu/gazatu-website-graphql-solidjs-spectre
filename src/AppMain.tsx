@@ -1,7 +1,7 @@
+import { createGlobalProgressStateEffect } from "@gazatu/solid-spectre/ui/Progress.Global"
 import { useIsRouting, useRoutes } from "@solidjs/router"
 import { Component, Suspense } from "solid-js"
 import routes from "./routes"
-import { createGlobalProgressStateEffect } from "./ui/Progress.Global"
 
 const AppMain: Component = () => {
   const Route = useRoutes(routes)

@@ -1,11 +1,13 @@
-import { Component, ComponentProps, createEffect, For } from "solid-js"
-import A from "../../ui/A"
-import Column from "../../ui/Column"
-import Label from "../../ui/Label"
-import Table from "../../ui/Table"
-import { createTableState, tableOnGlobalFilterChange } from "../../ui/Table.Helpers"
-import { centerChildren } from "../../ui/util/position"
+// css
 import "./DerivativesSearch.css"
+// js
+import { A } from "@gazatu/solid-spectre/ui/A"
+import { Column } from "@gazatu/solid-spectre/ui/Column"
+import { Label } from "@gazatu/solid-spectre/ui/Label"
+import { Table } from "@gazatu/solid-spectre/ui/Table"
+import { createTableState, tableOnGlobalFilterChange } from "@gazatu/solid-spectre/ui/Table.Helpers"
+import { centerChildren } from "@gazatu/solid-spectre/util/position"
+import { Component, ComponentProps, createEffect, For } from "solid-js"
 
 type TradingFilter = {
   id: string

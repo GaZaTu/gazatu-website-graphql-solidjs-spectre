@@ -1,15 +1,15 @@
 import { validator } from "@felte/validator-superstruct"
+import { Button } from "@gazatu/solid-spectre/ui/Button"
+import { Form } from "@gazatu/solid-spectre/ui/Form"
+import { Input } from "@gazatu/solid-spectre/ui/Input"
+import { Modal } from "@gazatu/solid-spectre/ui/Modal"
+import { ModalProps } from "@gazatu/solid-spectre/ui/Modal.Portal"
+import { Toaster } from "@gazatu/solid-spectre/ui/Toaster"
 import { Component } from "solid-js"
 import { size, string, type } from "superstruct"
 import fetchGraphQL, { gql } from "../../lib/fetchGraphQL"
 import { Mutation, TriviaQuestionInput, TriviaReportInput } from "../../lib/schema.gql"
 import superstructIsRequired from "../../lib/superstructIsRequired"
-import Button from "../../ui/Button"
-import Form from "../../ui/Form"
-import Input from "../../ui/Input"
-import Modal from "../../ui/Modal"
-import { ModalProps } from "../../ui/Modal.Portal"
-import Toaster from "../../ui/Toaster"
 
 const TriviaReportSchema = type({
   message: size(string(), 1, 256),

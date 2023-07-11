@@ -1,47 +1,25 @@
+import { AnchorContext } from "@gazatu/solid-spectre/ui/A.Context"
+import { Icon } from "@gazatu/solid-spectre/ui/Icon"
+import { ModalPortal } from "@gazatu/solid-spectre/ui/Modal.Portal"
+import { Toaster } from "@gazatu/solid-spectre/ui/Toaster"
+import { FeatherIconProvider } from "@gazatu/solid-spectre/util/FeatherIconProvider"
+import { useColorSchemeEffect } from "@gazatu/solid-spectre/util/colorScheme"
 import { MetaProvider, Title } from "@solidjs/meta"
 import { Router, useLocation, useNavigate } from "@solidjs/router"
 import { Component, ComponentProps, ErrorBoundary } from "solid-js"
 import AppFooter from "./AppFooter"
 import AppHeader from "./AppHeader"
 import AppMain from "./AppMain"
-import iconCheckSquare from "./icons/iconCheckSquare"
-import iconMinusSquare from "./icons/iconMinusSquare"
-import iconSquare from "./icons/iconSquare"
-import FeatherIconProvider from "./lib/FeatherIconProvider"
 import { setDefaultFetchInfo } from "./lib/fetchFromApi"
 import { setGraphqlEndpoint } from "./lib/fetchGraphQL"
-import AnchorContext from "./ui/A.Context"
-import CheckboxButton from "./ui/CheckboxButton"
-import Icon, { IconContext } from "./ui/Icon"
-import ModalPortal from "./ui/Modal.Portal"
-import Toaster from "./ui/Toaster"
-import { useColorSchemeEffect } from "./ui/util/colorScheme"
 
-IconContext.Provider = FeatherIconProvider
-IconContext.iconArrowLeft = FeatherIconProvider.iconArrowLeft
-IconContext.iconArrowRight = FeatherIconProvider.iconArrowRight
-IconContext.iconArrowUp = FeatherIconProvider.iconArrowUp
-IconContext.iconArrowDown = FeatherIconProvider.iconArrowDown
-IconContext.iconPhoto = FeatherIconProvider.iconPhoto
-IconContext.iconCross = FeatherIconProvider.iconCross
-IconContext.iconMenu = FeatherIconProvider.iconMenu
-IconContext.iconOpen = FeatherIconProvider.iconOpen
-IconContext.iconSearch = FeatherIconProvider.iconSearch
-
-CheckboxButton.Defaults.IfTrue = () => <Icon src={iconCheckSquare} color="var(--success)" />
-CheckboxButton.Defaults.IfFalse = () => <Icon src={iconSquare} color="var(--body-fg-monochrome)" />
-CheckboxButton.Defaults.IfIndeterminate = () => <Icon src={iconMinusSquare} color="var(--success)" />
+Icon.registerProvider(FeatherIconProvider)
 
 AnchorContext.useLocation = useLocation
 AnchorContext.useNavigate = useNavigate
 
-if (import.meta.env.MODE === "production") {
-  setDefaultFetchInfo("https://api.gazatu.xyz")
-  setGraphqlEndpoint("/graphql")
-} else {
-  setDefaultFetchInfo("https://api.gazatu.xyz")
-  setGraphqlEndpoint("/graphql")
-}
+setDefaultFetchInfo("https://api.gazatu.xyz")
+setGraphqlEndpoint("/graphql")
 
 type Props = {
   url?: string

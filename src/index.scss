@@ -1,168 +1,65 @@
-@use "ui/spectre.css/base" as *;
-@use "ui/spectre.css/typography" as *;
-@use "ui/spectre.css/variables" as *;
+@import "../node_modules/@gazatu/solid-spectre/dist/util/normalize.css";
+@import "../node_modules/@gazatu/solid-spectre/dist/util/base.css";
+@import "../node_modules/@gazatu/solid-spectre/dist/util/typography.css";
+@import "../node_modules/@gazatu/solid-spectre/dist/util/brutalist.css";
 
 html {
   // Core colors
   --primary--rgb-triplet: 138, 43, 226;
-  --primary: rgb(var(--primary--rgb-triplet));
   --primary-monochrome--rgb-triplet: 112, 26, 192;
-  --primary-monochrome: rgb(var(--primary-monochrome--rgb-triplet));
   --primary-text--rgb-triplet: 237, 237, 237;
-  --primary-text: rgb(var(--primary-text--rgb-triplet));
 
   --secondary--rgb-triplet: 226, 183, 43;
-  --secondary: rgb(var(--secondary--rgb-triplet));
   --secondary-monochrome--rgb-triplet: 192, 153, 26;
-  --secondary-monochrome: rgb(var(--secondary-monochrome--rgb-triplet));
   --secondary-text--rgb-triplet: 237, 237, 237;
-  --secondary-text: rgb(var(--secondary-text--rgb-triplet));
 
   --body-bg--rgb-triplet: 51, 51, 51;
-  --body-bg: rgb(var(--body-bg--rgb-triplet));
   --body-bg-monochrome--rgb-triplet: 77, 77, 77;
-  --body-bg-monochrome: rgb(var(--body-bg-monochrome--rgb-triplet));
   --body-fg--rgb-triplet: 250, 250, 250;
-  --body-fg: rgb(var(--body-fg--rgb-triplet));
   --body-fg-monochrome--rgb-triplet: 225, 225, 225;
-  --body-fg-monochrome: rgb(var(--body-fg-monochrome--rgb-triplet));
 
   // Control colors
   --success--rgb-triplet: 50, 182, 67;
-  --success: rgb(var(--success--rgb-triplet));
   --success-monochrome--rgb-triplet: 77, 206, 94;
-  --success-monochrome: rgb(var(--success-monochrome--rgb-triplet));
   --success-text--rgb-triplet: 6, 6, 6;
-  --success-text: rgb(var(--success-text--rgb-triplet));
   --warning--rgb-triplet: 255, 183, 0;
-  --warning: rgb(var(--warning--rgb-triplet));
   --warning-monochrome--rgb-triplet: 255, 197, 51;
-  --warning-monochrome: rgb(var(--warning-monochrome--rgb-triplet));
   --warning-text--rgb-triplet: 6, 6, 6;
-  --warning-text: rgb(var(--warning-text--rgb-triplet));
   --failure--rgb-triplet: 232, 86, 0;
-  --failure: rgb(var(--failure--rgb-triplet));
   --failure-monochrome--rgb-triplet: 255, 112, 28;
-  --failure-monochrome: rgb(var(--failure-monochrome--rgb-triplet));
   --failure-text--rgb-triplet: 6, 6, 6;
-  --failure-text: rgb(var(--failure-text--rgb-triplet));
 
   // Other colors
   --link--rgb-triplet: 74, 159, 255;
-  --link: rgb(var(--link--rgb-triplet));
   --link-monochrome--rgb-triplet: 18, 129, 255;
-  --link-monochrome: rgb(var(--link-monochrome--rgb-triplet));
   --link-text--rgb-triplet: 237, 237, 237;
-  --link-text: rgb(var(--link-text--rgb-triplet));
 
   --highlight--rgb-triplet: 255, 233, 179;
-  --highlight: rgb(var(--highlight--rgb-triplet));
   --highlight-text--rgb-triplet: 6, 6, 6;
-  --highlight-text: rgb(var(--highlight-text--rgb-triplet));
 
   --gray--rgb-triplet: 48, 55, 66;
-  --gray: rgb(var(--gray--rgb-triplet));
   --gray-text--rgb-triplet: 250, 250, 250;
-  --gray-text: rgb(var(--gray-text--rgb-triplet));
 
-  // Fonts
-  // Credit: https://www.smashingmagazine.com/2015/11/using-system-ui-fonts-practical-guide/
-  --base-font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto;
-  --mono-font-family: "SF Mono", "Segoe UI Mono", "Roboto Mono", Menlo, Courier, monospace;
-  --fallback-font-family: "Helvetica Neue", sans-serif;
-  --body-font-family: var(--base-font-family), var(--fallback-font-family);
-  --body-letter-spacing: 0;
-
-  // Unit sizes
-  --unit-o: .05rem;
-  --unit-h: .1rem;
-  --unit-1: .2rem;
-  --unit-2: .4rem;
-  --unit-3: .6rem;
-  --unit-4: .8rem;
-  --unit-5: 1rem;
-  --unit-6: 1.2rem;
-  --unit-7: 1.4rem;
-  --unit-8: 1.6rem;
-  --unit-9: 1.8rem;
-  --unit-10: 2rem;
-  --unit-12: 2.4rem;
-  --unit-16: 3.2rem;
-
-  // Font sizes
-  --html-font-size: 20px;
-  --html-line-height: 1.5;
-  --font-size-sm: .7rem;
-  --font-size-md: .8rem;
-  --font-size-lg: .9rem;
-  --line-height: 1.2rem;
-
-  // Sizes
-  --layout-spacing-sm: var(--unit-1);
-  --layout-spacing-md: var(--unit-2);
-  --layout-spacing-lg: var(--unit-4);
-  --border-width-sm: var(--unit-o);
-  --border-width-md: var(--unit-o);
-  --border-width-lg: var(--unit-h);
-  --border-radius-xs: var(--unit-h);
-  --border-radius-sm: var(--unit-2);
-  --border-radius-md: var(--unit-5);
-  --border-radius-lg: var(--unit-10);
-  --border-radius-xl: 50%;
-  --control-height-sm: var(--unit-7);
-  --control-height-md: var(--unit-9);
-  --control-height-lg: var(--unit-10);
-  --control-padding-x-sm: calc(var(--unit-2) *  .75);
-  --control-padding-x-md: calc(var(--unit-2) * 1);
-  --control-padding-x-lg: calc(var(--unit-2) * 1.5);
-  --control-padding-y-sm: calc((var(--control-height-sm) - var(--line-height)) / 2 - var(--border-width-md));
-  --control-padding-y-md: calc((var(--control-height-md) - var(--line-height)) / 2 - var(--border-width-md));
-  --control-padding-y-lg: calc((var(--control-height-lg) - var(--line-height)) / 2 - var(--border-width-md));
-  --control-icon-size: .8rem;
-  --control-border-radius: var(--border-radius-xs);
-
-  --control-width-xs: 180px;
-  --control-width-sm: 320px;
-  --control-width-md: 640px;
-  --control-width-lg: 960px;
-  --control-width-xl: 1280px;
-
-  // Responsive breakpoints
-  --size-xs: 480px;
-  --size-sm: 600px;
-  --size-md: 840px;
-  --size-lg: 960px;
-  --size-xl: 1280px;
-  --size-xxl: 1440px;
-
-  --responsive-breakpoint: $size-xs;
-
-  // Z-index
-  --zindex-0: 10;
-  --zindex-1: 100;
-  --zindex-2: 200;
-  --zindex-3: 300;
-  --zindex-4: 400;
-  --zindex-5: 400;
-
+  // Custom
   --appheader-bg: #3a3a3a;
 
   &.light {
+    // Core colors
     --body-bg--rgb-triplet: 255, 255, 255;
     --body-bg-monochrome--rgb-triplet: 230, 230, 230;
     --body-fg--rgb-triplet: 6, 6, 6;
     --body-fg-monochrome--rgb-triplet: 32, 32, 32;
 
+    // Other colors
     --link--rgb-triplet: 87, 85, 217;
     --link-monochrome--rgb-triplet: 48, 46, 205;
 
     --gray--rgb-triplet: 48, 55, 66;
     --gray-text--rgb-triplet: 250, 250, 250;
 
+    // Custom
     --appheader-bg: #f5f5f5;
   }
-
-  // &.dark {}
 }
 
 html,
@@ -188,88 +85,4 @@ body {
 
 #AppMain {
   flex-grow: 1;
-
-  > noscript,
-  .noscript {
-    padding: var(--unit-4);
-    background: var(--warning);
-    color: var(--warning-text);
-    font-weight: bold;
-    text-align: center;
-  }
-}
-
-// -----------------------------------------------------
-// spectre customizations simple
-// html {
-//   .table-toolbar {
-//     .form-input {
-//       border-radius: var(--border-radius-lg);
-//     }
-//   }
-// }
-
-// -----------------------------------------------------
-// spectre customizations brutalist
-html {
-  // --body-fg--rgb-triplet: 255, 255, 255;
-
-  // --body-font-family: var(--mono-font-family), var(--base-font-family), var(--fallback-font-family);
-  // --body-letter-spacing: -1px;
-
-  // --font-size-sm: .75rem;
-  // --font-size-md: .85rem;
-  // --font-size-lg: .95rem;
-
-  --border-radius-xs: 0;
-  --border-radius-sm: 0;
-  --border-radius-md: 0;
-  --border-radius-lg: 0;
-  --border-radius-xl: 50%;
-
-  // &.light {
-  //   --body-fg--rgb-triplet: 0, 0, 0;
-  // }
-
-  // a {
-  //   text-decoration: underline;
-  // }
-
-  .btn.btn-circle {
-    border-radius: unset;
-  }
-
-  .menu {
-    border: 1px solid gray;
-  }
-
-  .form-input,
-  .form-input:focus,
-  .btn:not(.btn-transparent):not(.btn-link),
-  .chip,
-  .menu,
-  .avatar {
-    border-radius: unset;
-    box-shadow: 2px 2px 0px 0px gray;
-  }
-
-  .form-autocomplete {
-    .form-input:not(.form-autocomplete-input),
-    .form-input:not(.form-autocomplete-input):focus {
-      box-shadow: unset;
-    }
-  }
-
-  .form-switch {
-    > .form-icon,
-    > .form-icon:before {
-      border-radius: unset;
-    }
-  }
-
-  @media (max-width: 840px) {
-    #AppHeader .menu {
-      box-shadow: unset;
-    }
-  }
 }
