@@ -5,7 +5,7 @@
   "scripts": {
     "start": "vite",
     "build": "vite build",
-    "build:ssg": "node --experimental-loader ./node_modules/@gazatu/vite-ssg/dist/loader.mjs ./node_modules/@gazatu/vite-ssg/dist/node/cli.mjs build",
+    "build:ssg": "node --experimental-loader ./node_modules/@gazatu/vite-ssg/dist/esm-loader.mjs ./node_modules/.bin/vite-ssg build",
     "serve": "vite preview",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix"
@@ -29,8 +29,8 @@
     "@debut/indicators": "^1.3.15",
     "@felte/solid": "^1.2.10",
     "@felte/validator-superstruct": "^1.0.14",
-    "@gazatu/solid-spectre": "^1.0.0",
-    "@gazatu/vite-ssg": "^0.2.0",
+    "@gazatu/solid-spectre": "^1.1.0",
+    "@gazatu/vite-ssg": "^0.2.1",
     "@solid-primitives/intersection-observer": "^2.1.2",
     "@solid-primitives/media": "^2.2.3",
     "@solid-primitives/memo": "^1.3.1",
