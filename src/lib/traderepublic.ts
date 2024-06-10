@@ -27,7 +27,12 @@ export type TraderepublicInstrumentData = {
     firstTradingDay: number | null
     lastTradingDay: number | null
     tradingTimes: unknown | null
-    fractionalTrading: unknown | null
+    fractionalTrading: {
+      minOrderSize: string
+      maxOrderSize: string | null
+      stepSize: string
+      minOrderAmount: string
+    } | null
     settlementRoute: string
     weight: unknown | null
   }[]
@@ -39,10 +44,17 @@ export type TraderepublicInstrumentData = {
       savable: boolean
       fractionalTradingAllowed: boolean
       proprietaryTradable: boolean
+      usesWeightsForExchanges: boolean
+      weights: unknown | null
     }
   }
   dividends: unknown[]
-  splits: unknown[]
+  splits: {
+    id: string
+    date: number
+    initial: number
+    final: number
+  }[]
   cfi: string
   name: string
   typeId: "stock" | "fund" | "derivative" | "crypto"
@@ -51,6 +63,8 @@ export type TraderepublicInstrumentData = {
   isin: string
   priceFactor: number
   shortName: string
+  nextGenName: string
+  alarmsName: string
   homeSymbol: string
   intlSymbol: string | null
   homeNsin: string
@@ -144,9 +158,11 @@ export type TraderepublicInstrumentData = {
   proprietaryTradable: boolean
   issuer: string | null
   issuerDisplayName: string | null
+  issuerImageId: string | null
   notionalCurrency: string | null
   additionalBuyWarning: string | null
   warningMessage: string | null
+  description: string | null
   noTradeVolume: boolean
   additionalBuyWarnings: {
     [lang: string]: string
@@ -154,7 +170,15 @@ export type TraderepublicInstrumentData = {
   warningMessages: {
     [lang: string]: string
   } | null
+  descriptions: {
+    [lang: string]: string
+  } | null
   usesWeightsForExchanges: boolean
+  imageId: string | null
+  exchangeStatuses: {
+    [exchange: string]: string
+  }
+  cfdInfo: unknown | null
 }
 
 export type TraderepublicStockDetailsSub = {
@@ -181,6 +205,7 @@ export type TraderepublicStockDetailsData = {
     cfoName: string | null
     cooName: string | null
     employeeCount: number
+    eps: number
   }
   similarStocks: {
     isin: string
@@ -193,7 +218,15 @@ export type TraderepublicStockDetailsData = {
     }[]
   }[]
   expectedDividend: unknown | null
-  dividends: unknown[]
+  dividends: {
+    id: string
+    paymentDate: string
+    recordDate: string
+    exDate: string
+    amount: number
+    yield: unknown
+    type: string
+  }[]
   totalDivendendCount: number
   events: {
     id: string
@@ -201,6 +234,23 @@ export type TraderepublicStockDetailsData = {
     timestamp: number
     description: string
     webcastUrl: string | null
+    dividend: unknown
+  }[]
+  pastEvents: {
+    id: string
+    title: string
+    timestamp: number
+    description: string
+    webcastUrl: unknown
+    dividend: {
+      id: string
+      paymentDate: string
+      recordDate: string
+      exDate: string
+      amount: number
+      yield: unknown
+      type: string
+    }
   }[]
   analystRating: {
     targetPrice: {
@@ -217,6 +267,16 @@ export type TraderepublicStockDetailsData = {
     }
   }
   hasKpis: boolean
+  aggregatedDividends: {
+    periodStartDate: string
+    projected: unknown
+    yieldValue: unknown
+    amount: unknown
+    count: unknown
+    projectedCount: unknown
+    price: unknown
+  }[]
+  dividendFrequency: unknown
 }
 
 export type TraderepublicHomeInstrumentExchangeSub = {
@@ -235,13 +295,13 @@ export type TraderepublicHomeInstrumentExchangeData = {
     id: string
     name: string
   }
+  open: boolean
   orderModes: string[]
   orderExpiries: string[]
-  open: boolean
   priceSteps: unknown[]
   openTimeOffsetMillis: number
   closeTimeOffsetMillis: number
-  maintenanceWindow: unknown
+  maintenanceWindow: unknown | null
 }
 
 export type TraderepublicTickerSub = {
@@ -253,7 +313,7 @@ export type TraderepublicTickerSub = {
 
 export type TraderepublicTickerPrice = {
   time: number
-  price: number
+  price: string
   size: number
 }
 
@@ -280,10 +340,10 @@ export type TraderepublicAggregateHistoryLightData = {
   expectedClosingTime: number
   aggregates: {
     time: number
-    open: number
-    high: number
-    low: number
-    close: number
+    open: string
+    high: string
+    low: string
+    close: string
     volume: 0
     adjValue: number
   }[]
@@ -299,7 +359,7 @@ export type TraderepublicNeonSearchSub = {
     pageSize: number
     filter: ({
       key: "type"
-      value: "stock" | "fund" | "derivative" | "crypto"
+      value: "stock" | "fund" | "derivative" | "crypto" | "bond"
     } | {
       key: "jurisdiction"
       value: string
@@ -321,8 +381,11 @@ export type TraderepublicNeonSearchData = {
     derivativeProductCategories: string[]
     mappedEtfIndexName?: string
     etfDescription?: string
+    bondIssuerName?: string
+    imageId?: string
   }[]
   resultCount: number
+  correlationId: string
 }
 
 export type TraderepublicNeonNewsSub = {
@@ -421,14 +484,14 @@ export class TraderepublicWebsocket {
   static URI = "wss://api.traderepublic.com/" as const
   static CLIENT_INFO = {
     locale: "en",
-    platformId: "undefined",
-    platformVersion: "undefined",
+    platformId: "webtrading",
+    platformVersion: "firefox - 126.0.0",
     clientId: "app.traderepublic.com",
-    clientVersion: "5582",
+    clientVersion: "3.14.1",
   } as const
 
   private _subscriptions = new Map<number, { sub: any, onValue: (payload: any) => void, onError?: (error: unknown) => unknown }>()
-  private _counter = 24
+  private _counter = 33
   private _socket = undefined as undefined | WebSocket
   private _echo = 0 as any
   private _inactivityTimeout = 0 as any
@@ -596,7 +659,7 @@ export class TraderepublicWebsocket {
     }).toPromise()
   }
 
-  search(q: string, type: "stock" | "fund" | "derivative" | "crypto" = "stock", pageSize = 1, page = 1) {
+  search(q: string, type: "stock" | "fund" | "derivative" | "crypto" | "bond" = "stock", pageSize = 1, page = 1) {
     const sub: TraderepublicNeonSearchSub = {
       type: "neonSearch",
       data: {
@@ -744,7 +807,7 @@ export class TraderepublicWebsocket {
           }
         }
 
-        this._send("connect", 22, TraderepublicWebsocket.CLIENT_INFO)
+        this._send("connect", 31, TraderepublicWebsocket.CLIENT_INFO)
       })
     } finally {
       this._connecting = false
@@ -758,7 +821,7 @@ export class TraderepublicWebsocket {
       clearInterval(this._inactivityTimeout)
 
       if (!this.hasSubscriptions) {
-        this._counter = 24
+        this._counter = 33
       }
 
       if (!ev.wasClean) {

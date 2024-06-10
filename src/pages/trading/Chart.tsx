@@ -134,9 +134,19 @@ const SymbolSearchModal: Component<SymbolSearchModalProps> = props => {
   )
 }
 
+type Aggregate = {
+  time: number
+  open: number
+  high: number
+  low: number
+  close: number
+  volume: 0
+  adjValue: number
+}
+
 const intradayHistory = {
-  30: {} as { [isin: string]: TraderepublicAggregateHistoryLightData["aggregates"] | undefined },
-  60: {} as { [isin: string]: TraderepublicAggregateHistoryLightData["aggregates"] | undefined },
+  30: {} as { [isin: string]: Aggregate[] | undefined },
+  60: {} as { [isin: string]: Aggregate[] | undefined },
 }
 
 const ChartView: Component = props => {
@@ -264,25 +274,25 @@ const ChartView: Component = props => {
                   if (currentBar) {
                     currentHistory[currentHistory.length - 1] = {
                       ...currentBar,
-                      close: data.last.price,
+                      close: Number(data.last.price),
                     }
                   }
 
                   currentHistory.push({
                     time: data.bid.time,
-                    open: data.bid.price,
-                    high: data.bid.price,
-                    low: data.bid.price,
-                    close: data.bid.price,
+                    open: Number(data.bid.price),
+                    high: Number(data.bid.price),
+                    low: Number(data.bid.price),
+                    close: Number(data.bid.price),
                     volume: 0,
                     adjValue: 0,
                   })
                 } else {
                   currentHistory[currentHistory.length - 1] = {
                     ...currentBar,
-                    close: data.bid.price,
-                    low: Math.min(currentBar.low, data.bid.price),
-                    high: Math.max(currentBar.high, data.bid.price),
+                    close: Number(data.bid.price),
+                    low: Math.min(currentBar.low, Number(data.bid.price)),
+                    high: Math.max(currentBar.high, Number(data.bid.price)),
                   }
                 }
               }
@@ -290,8 +300,8 @@ const ChartView: Component = props => {
               return {
                 ...i,
                 value: {
-                  current: data.bid.price,
-                  previous: data.pre.price,
+                  current: Number(data.bid.price),
+                  previous: Number(data.pre.price),
                 },
               }
             }))
@@ -461,10 +471,10 @@ const ChartView: Component = props => {
 
           currentBar = {
             time: utcTimestamp,
-            open: aggregate.open,
-            close: aggregate.close,
-            low: aggregate.low,
-            high: aggregate.high,
+            open: Number(aggregate.open),
+            close: Number(aggregate.close),
+            low: Number(aggregate.low),
+            high: Number(aggregate.high),
           }
 
           series.update(currentBar)
@@ -478,7 +488,7 @@ const ChartView: Component = props => {
         }
 
         if (barTimeToLive > (10 * 60)) {
-          priceBeforeChart = history.aggregates[0]?.close ?? 0
+          priceBeforeChart = Number(history.aggregates[0]?.close ?? 0)
         }
 
         const begin = history.aggregates[0].time
@@ -489,7 +499,7 @@ const ChartView: Component = props => {
 
         for (const aggregate of history.aggregates) {
           const time = mapUnixToUTC(aggregate.time)
-          const value = movingAverageData.nextValue(aggregate.close)
+          const value = movingAverageData.nextValue(Number(aggregate.close))
 
           movingAverageSeries.update({
             time,
@@ -511,11 +521,13 @@ const ChartView: Component = props => {
 
           currentBar = {
             time: utcTimestamp,
-            open: aggregate.open,
-            close: aggregate.close,
-            low: aggregate.low,
-            high: aggregate.high,
+            open: Number(aggregate.open),
+            close: Number(aggregate.close),
+            low: Number(aggregate.low),
+            high: Number(aggregate.high),
           }
+
+          console.log("currentBar", currentBar)
 
           series.update(currentBar)
         }
@@ -532,7 +544,7 @@ const ChartView: Component = props => {
           const utcTimestamp = mapUnixToUTC(data.bid.time)
 
           if (!previousClose) {
-            priceBeforeChart = priceBeforeChart || data.pre.price
+            priceBeforeChart = priceBeforeChart || Number(data.pre.price)
 
             previousClose = series.createPriceLine({
               price: priceBeforeChart,
@@ -553,7 +565,7 @@ const ChartView: Component = props => {
           if ((utcTimestamp - (currentBar.time as any)) >= barTimeToLive) {
             currentBar = {
               ...currentBar,
-              close: data.last.price,
+              close: Number(data.last.price),
             }
 
             // TODO
@@ -564,17 +576,17 @@ const ChartView: Component = props => {
 
             currentBar = {
               time: utcTimestamp,
-              open: data.bid.price,
-              close: data.bid.price,
-              low: data.bid.price,
-              high: data.bid.price,
+              open: Number(data.bid.price),
+              close: Number(data.bid.price),
+              low: Number(data.bid.price),
+              high: Number(data.bid.price),
             }
           } else {
             currentBar = {
               ...currentBar,
-              close: data.bid.price,
-              low: Math.min(currentBar.low, data.bid.price),
-              high: Math.max(currentBar.high, data.bid.price),
+              close: Number(data.bid.price),
+              low: Math.min(currentBar.low, Number(data.bid.price)),
+              high: Math.max(currentBar.high, Number(data.bid.price)),
             }
           }
 
@@ -801,6 +813,7 @@ const ChartView: Component = props => {
             name={details()?.company.name ?? instrument()?.shortName}
             isin={instrument()?.isin}
             symbol={instrument()?.intlSymbol || instrument()?.homeSymbol}
+            logo={instrument()?.imageId ? `https://assets.traderepublic.com/img/${instrument()?.imageId}/dark.min.svg` : undefined}
             countryFlag={instrument()?.tags.find(tag => tag.type === "country")?.icon}
             exchange={exchange()?.exchangeId}
             value={value().current}
@@ -897,6 +910,7 @@ const ChartView: Component = props => {
                   href={`?isin=${i.isin}`}
                   symbol={i.data?.intlSymbol || i.data?.homeSymbol || i.isin}
                   name={i.details?.company.name ?? i.data?.shortName}
+                  logo={i.data?.imageId ? `https://assets.traderepublic.com/img/${i.data?.imageId}/dark.min.svg` : undefined}
                   open={i.exchange?.open}
                   value={i.value.current}
                   valueAtPreviousClose={i.value.previous}
