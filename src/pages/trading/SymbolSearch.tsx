@@ -3,9 +3,12 @@ import "./SymbolSearch.css"
 // js
 import { A } from "@gazatu/solid-spectre/ui/A"
 import { Column } from "@gazatu/solid-spectre/ui/Column"
+import { Figure } from "@gazatu/solid-spectre/ui/Figure"
+import { Img } from "@gazatu/solid-spectre/ui/Img"
 import { Label } from "@gazatu/solid-spectre/ui/Label"
 import { Table } from "@gazatu/solid-spectre/ui/Table"
 import { createTableState, tableOnGlobalFilterChange } from "@gazatu/solid-spectre/ui/Table.Helpers"
+import { Tile } from "@gazatu/solid-spectre/ui/Tile"
 import { centerChildren } from "@gazatu/solid-spectre/util/position"
 import { Component, ComponentProps, createEffect, For } from "solid-js"
 
@@ -18,9 +21,8 @@ type TradingFilter = {
 type TradingSymbol = {
   isin?: string
   symbol?: string
-  description?: string
-  type?: string
-  href?: string
+  name?: string
+  logo?: string
 }
 
 type Props = ComponentProps<"div"> & {
@@ -42,24 +44,42 @@ const SymbolSearch: Component<Props> = props => {
     },
     columns: [
       {
-        accessorKey: "symbol",
-        header: "SYMBOL",
-        meta: { compact: true },
-        maxSize: 100,
+        accessorKey: "__security",
+        header: "Security",
+        cell: (props) => (
+          <Tile compact>
+            <Tile.Icon>
+              <Figure>
+                <Img src={props.row.original.logo} />
+              </Figure>
+            </Tile.Icon>
+            <Tile.Body>
+              <Tile.Title>{props.row.original.name ?? props.row.original.symbol}</Tile.Title>
+              <Tile.Subtitle>{props.row.original.isin}</Tile.Subtitle>
+            </Tile.Body>
+          </Tile>
+        ),
         enableSorting: false,
       },
-      {
-        accessorKey: "description",
-        header: "DESCRIPTION",
-        enableSorting: false,
-      },
-      {
-        accessorKey: "type",
-        header: "TYPE",
-        meta: { compact: true },
-        maxSize: 100,
-        enableSorting: false,
-      },
+      // {
+      //   accessorKey: "symbol",
+      //   header: "SYMBOL",
+      //   meta: { compact: true },
+      //   maxSize: 100,
+      //   enableSorting: false,
+      // },
+      // {
+      //   accessorKey: "description",
+      //   header: "DESCRIPTION",
+      //   enableSorting: false,
+      // },
+      // {
+      //   accessorKey: "type",
+      //   header: "TYPE",
+      //   meta: { compact: true },
+      //   maxSize: 100,
+      //   enableSorting: false,
+      // },
     ],
     state: tableState,
     onGlobalFilterChange: tableOnGlobalFilterChange(setTableState),

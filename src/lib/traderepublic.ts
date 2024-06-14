@@ -363,6 +363,9 @@ export type TraderepublicNeonSearchSub = {
     } | {
       key: "jurisdiction"
       value: string
+    } | {
+      key: "relativePerformance"
+      value: "dailyBest" | "dailyWorst"
     })[]
   }
 }
@@ -445,11 +448,13 @@ export type TraderepublicDerivativesSub = {
   jurisdiction: string
   lang: string
   underlying: string
-  productCategory: "vanillaWarrant"
-  strike: 0
-  sortBy: "strike"
+  productCategory: "vanillaWarrant" | "factorCertificate" | "knockOutProduct"
+  strike?: number
+  factor?: number
+  leverage?: number
+  sortBy: "strike" | "factor" | "leverage" | "knockout" | "expiry" | "delta"
   sortDirection: "asc" | "desc"
-  optionType: "call" | "put"
+  optionType: "call" | "put" | "long" | "short"
   pageSize: number
   after: string
 }
@@ -457,7 +462,7 @@ export type TraderepublicDerivativesSub = {
 export type TraderepublicDerivativesData = {
   results: {
     isin: string
-    optionType: "call" | "put"
+    optionType: "call" | "put" | "long" | "short"
     productCategoryName: string
     barrier: number | null
     leverage: number
@@ -684,14 +689,47 @@ export class TraderepublicWebsocket {
       sub.data.q = q.slice(2).trim()
 
       switch (prefix) {
-        case "f?":
-          sub.data.filter[0].value = "fund"
-          break
-
-        case "c?":
-          sub.data.filter[0].value = "crypto"
-          break
+      case "f?":
+        sub.data.filter[0].value = "fund"
+        break
+      case "d?":
+        sub.data.filter[0].value = "derivative"
+        break
+      case "c?":
+        sub.data.filter[0].value = "crypto"
+        break
+      case "b?":
+        sub.data.filter[0].value = "bond"
+        break
       }
+    }
+
+    return this._sub(sub).toPromise()
+      .then(data => data.results)
+  }
+
+  topMovers(q: "dailyBest" | "dailyWorst", type: "stock" | "fund" | "derivative" | "crypto" | "bond" = "stock") {
+    const sub: TraderepublicNeonSearchSub = {
+      type: "neonSearch",
+      data: {
+        q: "",
+        page: 1,
+        pageSize: 10,
+        filter: [
+          {
+            key: "type",
+            value: type,
+          },
+          {
+            key: "jurisdiction",
+            value: this._jurisdiction,
+          },
+          {
+            key: "relativePerformance",
+            value: q,
+          },
+        ],
+      },
     }
 
     return this._sub(sub).toPromise()
@@ -729,7 +767,7 @@ export class TraderepublicWebsocket {
     })
   }
 
-  derivatives(isin: string | TraderepublicInstrumentData, category: TraderepublicDerivativesSub["productCategory"] = "vanillaWarrant", type: TraderepublicDerivativesSub["optionType"] = "call", after = "0") {
+  derivatives(isin: string | TraderepublicInstrumentData, category: TraderepublicDerivativesSub["productCategory"], type: TraderepublicDerivativesSub["optionType"], sortBy: TraderepublicDerivativesSub["sortBy"], sortDirection: TraderepublicDerivativesSub["sortDirection"]) {
     if (typeof isin === "object") {
       isin = isin.isin
     }
@@ -740,12 +778,14 @@ export class TraderepublicWebsocket {
       lang: "en",
       underlying: isin,
       productCategory: category,
-      strike: 0,
-      sortBy: "strike",
-      sortDirection: "asc",
+      strike: category === "vanillaWarrant" ? 0 : undefined,
+      factor: category === "factorCertificate" ? 0 : undefined,
+      leverage: category === "knockOutProduct" ? 0 : undefined,
+      sortBy,
+      sortDirection,
       optionType: type,
-      pageSize: 50,
-      after: after,
+      pageSize: 100,
+      after: "0",
     }).toPromise()
   }
 

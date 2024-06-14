@@ -3,6 +3,7 @@ import "./Chart.css"
 // js
 import { SMA } from "@debut/indicators"
 import { iconBookmark } from "@gazatu/solid-spectre/icons/iconBookmark"
+import { iconInfo } from "@gazatu/solid-spectre/icons/iconInfo"
 import { iconSearch } from "@gazatu/solid-spectre/icons/iconSearch"
 import { A } from "@gazatu/solid-spectre/ui/A"
 import { Button } from "@gazatu/solid-spectre/ui/Button"
@@ -13,12 +14,15 @@ import { Modal } from "@gazatu/solid-spectre/ui/Modal"
 import { ModalPortal } from "@gazatu/solid-spectre/ui/Modal.Portal"
 import { Table } from "@gazatu/solid-spectre/ui/Table"
 import { createTableState } from "@gazatu/solid-spectre/ui/Table.Helpers"
+import { Tile } from "@gazatu/solid-spectre/ui/Tile"
 import { Toaster } from "@gazatu/solid-spectre/ui/Toaster"
+import { centerChildren } from "@gazatu/solid-spectre/util/position"
+import { createAsyncMemo } from "@solid-primitives/memo"
 import { createStorageSignal } from "@solid-primitives/storage"
 import { useNavigate, useSearchParams } from "@solidjs/router"
 import type { BarData, IChartApi, IPriceLine } from "lightweight-charts"
 import { Component, ComponentProps, For, createEffect, createMemo, createRenderEffect, createSignal, onCleanup } from "solid-js"
-import { Subscription, TraderepublicAggregateHistoryLightData, TraderepublicAggregateHistoryLightSub, TraderepublicHomeInstrumentExchangeData, TraderepublicInstrumentData, TraderepublicStockDetailsData, TraderepublicWebsocket } from "../../lib/traderepublic"
+import { Subscription, TraderepublicAggregateHistoryLightSub, TraderepublicHomeInstrumentExchangeData, TraderepublicInstrumentData, TraderepublicStockDetailsData, TraderepublicWebsocket } from "../../lib/traderepublic"
 import SymbolInfo from "./SymbolInfo"
 import SymbolSearch from "./SymbolSearch"
 import WatchList from "./WatchList"
@@ -43,7 +47,7 @@ const numberCompactFormat = new Intl.NumberFormat(undefined, {
 type SymbolSearchModalProps = {
   socket: TraderepublicWebsocket
   initialSearch?: string
-  initialFilter?: "stock" | "fund" | "derivative" | "crypto"
+  initialFilter?: "stock" | "fund" | "derivative" | "crypto" | "bond"
   resolve: (isin: string) => void
   reject: () => void
 }
@@ -66,7 +70,7 @@ const SymbolSearchModal: Component<SymbolSearchModalProps> = props => {
     void (async () => {
       const results = await props.socket.search(search(), filter(), 10)
       const symbols = await Promise.all(
-        results.map(async ({ isin, type }) => {
+        results.map(async ({ isin }) => {
           const instrument = await props.socket.instrument(isin).toPromise()
           // const exchange = await socket.exchange(instrument).toPromise()
           const details = await props.socket.details(instrument)
@@ -74,8 +78,8 @@ const SymbolSearchModal: Component<SymbolSearchModalProps> = props => {
           return {
             isin,
             symbol: instrument?.intlSymbol || instrument?.homeSymbol,
-            description: details?.company.name ?? instrument?.shortName,
-            type,
+            name: details?.company.name ?? instrument?.shortName,
+            logo: instrument.imageId ? `https://assets.traderepublic.com/img/${instrument.imageId}/dark.min.svg` : undefined,
           }
         })
       )
@@ -122,6 +126,11 @@ const SymbolSearchModal: Component<SymbolSearchModalProps> = props => {
               id: "crypto",
               name: "Crypto",
               active: filter() === "crypto",
+            },
+            {
+              id: "bond",
+              name: "Bonds",
+              active: filter() === "bond",
             },
           ]}
           onFilterChange={filter => setFilter(filter.id as any)}
@@ -417,7 +426,7 @@ const ChartView: Component = props => {
     let previousClose: IPriceLine | undefined
 
     void (async () => {
-      if (isin.length !== 12) {
+      if (isin?.length !== 12) {
         return
       }
 
@@ -637,6 +646,56 @@ const ChartView: Component = props => {
     setSearch({ isin })
   }
 
+  const handleShowNews = async () => {
+    const timeFormatter = new Intl.RelativeTimeFormat()
+
+    await ModalPortal.push(modal => {
+      const news = createAsyncMemo(async () => {
+        const news = await socket.news(instrument()!)
+        news.sort((a, b) => b.createdAt - a.createdAt)
+        return news
+      })
+
+      return (
+        <Modal onclose={modal.reject} active style={{ padding: 0, "min-height": "50vh" }}>
+          <Modal.Body>
+            <For each={news()}>
+              {news => (
+                <A href={news.url}>
+                  <Tile compact>
+                    <Tile.Body>
+                      <Tile.Title>{news.headline}</Tile.Title>
+                      <Tile.Subtitle>{timeFormatter.format(Math.round((new Date(news.createdAt).getTime() - new Date().getTime()) / 1000 / 60 / 60), "hours")} {news.summary}</Tile.Subtitle>
+                    </Tile.Body>
+                  </Tile>
+                </A>
+              )}
+            </For>
+          </Modal.Body>
+        </Modal>
+      )
+    })
+
+    // await ModalPortal.push(modal => {
+    //   return (
+    //     <Modal onclose={modal.reject} active style={{ padding: 0, "min-height": "50vh" }}>
+    //       <Modal.Body>
+    //         <For each={details()?.events}>
+    //           {event => (
+    //             <Tile compact>
+    //               <Tile.Body>
+    //                 <Tile.Title>{event.title}</Tile.Title>
+    //                 <Tile.Subtitle>{event.description}</Tile.Subtitle>
+    //               </Tile.Body>
+    //             </Tile>
+    //           )}
+    //         </For>
+    //       </Modal.Body>
+    //     </Modal>
+    //   )
+    // })
+  }
+
   const toggleInstrumentInWatchList = () =>
     setWatchList(l => {
       if (!instrument()) {
@@ -706,72 +765,103 @@ const ChartView: Component = props => {
     }
 
     void (async () => {
-      const isin = search.isin
-      const derivatives = await socket.derivatives(isin)
-
       try {
-        await ModalPortal.push(modal => {
-          const [tableState, setTableState] = createTableState({})
+        const derivative = await ModalPortal.push<string>(modal => {
+          const [getOptions, setOptions] = createSignal({
+            category: "vanillaWarrant" as any,
+            type: "call" as any,
+            sortBy: "delta" as any,
+            sortDirection: "asc" as any,
+            strike: 0,
+          })
+
+          const derivatives = createAsyncMemo(async () => {
+            const {
+              category,
+              type,
+              sortBy,
+              sortDirection,
+            } = getOptions()
+
+            const derivatives = await socket.derivatives(instrument()!, category, type, sortBy, sortDirection)
+            return derivatives.results
+          })
+
+          const [tableState] = createTableState({
+            pagination: {
+              pageIndex: 0,
+              pageSize: 100,
+            },
+          })
+
+          const dateFormatter = new Intl.DateTimeFormat(undefined, {
+          })
+
+          const dollarFormatter = new Intl.NumberFormat("en", {
+            style: "currency",
+            currency: "USD",
+          })
 
           const table = Table.createContext({
             get data() {
-              return derivatives.results
+              return derivatives() ?? []
             },
             columns: [
               {
-                accessorKey: "symbol",
-                header: "SYMBOL",
-                meta: { compact: true },
-                maxSize: 100,
+                accessorKey: "__delta",
+                header: "Delta",
+                cell: (props) => (
+                  <Tile compact>
+                    <Tile.Body>
+                      <Tile.Title>{props.row.original.delta.toFixed(2)}</Tile.Title>
+                      <Tile.Subtitle>{dateFormatter.format(new Date(props.row.original.expiry ?? 0))} - {props.row.original.issuerDisplayName}</Tile.Subtitle>
+                    </Tile.Body>
+                  </Tile>
+                ),
                 enableSorting: false,
               },
               {
-                accessorKey: "description",
-                header: "DESCRIPTION",
-                enableSorting: false,
-              },
-              {
-                accessorKey: "type",
-                header: "TYPE",
-                meta: { compact: true },
-                maxSize: 100,
+                accessorKey: "__strike",
+                header: "Strike",
+                cell: (props) => (
+                  <span>{dollarFormatter.format(props.row.original.strike ?? 0)}</span>
+                ),
                 enableSorting: false,
               },
             ],
             state: tableState,
             // onGlobalFilterChange: tableOnGlobalFilterChange(setTableState),
             manualFiltering: true,
+            manualSorting: true,
+            onSortingChange: state => {
+              state
+            },
           })
 
           return (
             <Modal size="md" onclose={modal.reject} active>
               <Modal.Body>
-                <For each={derivatives.results}>
-                  {derivative => (
-                    <p>
-                      <A href={`/trading/chart?isin=${derivative.isin}`} onclick={modal.resolve}>{derivative.isin}</A>
-                    </p>
-                  )}
-                </For>
-                {/* <Table context={table} loading={props.loading} loadingSize="sm" striped hidePagination onclickRow={row => props.onSymbolClick?.(row.original)} toolbar={
+                <Table context={table} loadingSize="sm" striped hidePagination onclickRow={row => modal.resolve(row.original.isin)} toolbar={
                   <Column.Row class={`${centerChildren(true)}`} style={{ height: "100%" }} gaps="sm">
-                    <For each={props.filters}>
+                    <For each={[{ id: "call", name: "Call" }, { id: "put", name: "Put" }]}>
                       {filter => (
                         <Column>
-                          <A onclick={() => props.onFilterChange?.(filter)}>
-                            <Label round color={filter.active ? "primary" : undefined}>{filter.name}</Label>
+                          <A onclick={() => setOptions(o => ({ ...o, type: filter.id }))}>
+                            <Label round color={getOptions().type === filter.id ? "primary" : undefined}>{filter.name}</Label>
                           </A>
                         </Column>
                       )}
                     </For>
                   </Column.Row>
-                } /> */}
+                } />
               </Modal.Body>
             </Modal>
           )
         })
+
+        navigate(`/trading/chart?isin=${derivative}`)
       } catch {
-        navigate(`/trading/chart?isin=${isin}`)
+        navigate(`/trading/chart?isin=${instrument()?.isin}`)
       }
     })()
   })
@@ -786,6 +876,11 @@ const ChartView: Component = props => {
                 <Button onClick={handleSearch} round>
                   <Icon src={iconSearch} />
                   <span>Search Symbol...</span>
+                </Button>
+
+                <Button onClick={handleShowNews} round disabled={!instrument()?.isin}>
+                  <Icon src={iconInfo} />
+                  <span>News</span>
                 </Button>
               </Column>
 
