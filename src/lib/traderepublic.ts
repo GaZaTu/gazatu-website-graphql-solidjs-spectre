@@ -345,7 +345,7 @@ export type TraderepublicAggregateHistoryLightData = {
     low: string
     close: string
     volume: 0
-    adjValue: number
+    adjValue: string
   }[]
   resolution: number
   lastAggregateEndTime: number
@@ -767,7 +767,7 @@ export class TraderepublicWebsocket {
     })
   }
 
-  derivatives(isin: string | TraderepublicInstrumentData, category: TraderepublicDerivativesSub["productCategory"], type: TraderepublicDerivativesSub["optionType"], sortBy: TraderepublicDerivativesSub["sortBy"], sortDirection: TraderepublicDerivativesSub["sortDirection"]) {
+  derivatives(isin: string | TraderepublicInstrumentData, params: Partial<TraderepublicDerivativesSub>) {
     if (typeof isin === "object") {
       isin = isin.isin
     }
@@ -777,15 +777,16 @@ export class TraderepublicWebsocket {
       jurisdiction: this._jurisdiction,
       lang: "en",
       underlying: isin,
-      productCategory: category,
-      strike: category === "vanillaWarrant" ? 0 : undefined,
-      factor: category === "factorCertificate" ? 0 : undefined,
-      leverage: category === "knockOutProduct" ? 0 : undefined,
-      sortBy,
-      sortDirection,
-      optionType: type,
+      productCategory: "vanillaWarrant",
+      strike: params.productCategory === "vanillaWarrant" ? 0 : undefined,
+      factor: params.productCategory === "factorCertificate" ? 0 : undefined,
+      leverage: params.productCategory === "knockOutProduct" ? 0 : undefined,
+      sortBy: "strike",
+      sortDirection: "asc",
+      optionType: "call",
       pageSize: 100,
       after: "0",
+      ...params,
     }).toPromise()
   }
 
@@ -840,7 +841,16 @@ export class TraderepublicWebsocket {
                 if (messageType === "A") {
                   subscription.onValue(parsedPayload)
                 } else {
-                  subscription.onError?.(parsedPayload)
+                  const { errors: [error] } = parsedPayload as {
+                    errors: {
+                      errorCode: string
+                      errorField: string | null
+                      errorMessage: string
+                      meta: Record<string, unknown>
+                    }[]
+                  }
+
+                  subscription.onError?.(new Error(`${error.errorCode} - ${error.errorMessage}`))
                 }
               }
             }

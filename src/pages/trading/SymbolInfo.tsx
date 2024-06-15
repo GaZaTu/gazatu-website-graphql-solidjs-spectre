@@ -30,13 +30,13 @@ type Props = ComponentProps<"div"> & {
   }[]
 }
 
-const numberUnsignedFormat = new Intl.NumberFormat(undefined, {
+const numberUnsignedFormat = new Intl.NumberFormat("en", {
   minimumFractionDigits: 2,
   maximumFractionDigits: 2,
   signDisplay: "never",
 })
 
-const numberSignedFormat = new Intl.NumberFormat(undefined, {
+const numberSignedFormat = new Intl.NumberFormat("en", {
   minimumFractionDigits: 2,
   maximumFractionDigits: 2,
   signDisplay: "always",

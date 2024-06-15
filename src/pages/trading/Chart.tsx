@@ -1,9 +1,8 @@
 // css
 import "./Chart.css"
 // js
-import { SMA } from "@debut/indicators"
+import { ADX, SMA } from "@debut/indicators"
 import { iconBookmark } from "@gazatu/solid-spectre/icons/iconBookmark"
-import { iconInfo } from "@gazatu/solid-spectre/icons/iconInfo"
 import { iconSearch } from "@gazatu/solid-spectre/icons/iconSearch"
 import { A } from "@gazatu/solid-spectre/ui/A"
 import { Button } from "@gazatu/solid-spectre/ui/Button"
@@ -22,25 +21,25 @@ import { createStorageSignal } from "@solid-primitives/storage"
 import { useNavigate, useSearchParams } from "@solidjs/router"
 import type { BarData, IChartApi, IPriceLine } from "lightweight-charts"
 import { Component, ComponentProps, For, createEffect, createMemo, createRenderEffect, createSignal, onCleanup } from "solid-js"
-import { Subscription, TraderepublicAggregateHistoryLightSub, TraderepublicHomeInstrumentExchangeData, TraderepublicInstrumentData, TraderepublicStockDetailsData, TraderepublicWebsocket } from "../../lib/traderepublic"
+import { Subscription, TraderepublicAggregateHistoryLightSub, TraderepublicDerivativesSub, TraderepublicHomeInstrumentExchangeData, TraderepublicInstrumentData, TraderepublicStockDetailsData, TraderepublicWebsocket } from "../../lib/traderepublic"
 import SymbolInfo from "./SymbolInfo"
 import SymbolSearch from "./SymbolSearch"
 import WatchList from "./WatchList"
 
-const dateFormat = new Intl.DateTimeFormat(undefined, {
+const dateFormat = new Intl.DateTimeFormat("en", {
   year: "2-digit",
   month: "2-digit",
   day: "2-digit",
 })
 
-const currencyFormat = new Intl.NumberFormat(undefined, {
+const currencyFormat = new Intl.NumberFormat("en", {
   style: "currency",
   currency: "EUR",
 })
 
-const numberCompactFormat = new Intl.NumberFormat(undefined, {
-  minimumFractionDigits: 2,
-  maximumFractionDigits: 2,
+const numberCompactFormat = new Intl.NumberFormat("en", {
+  minimumFractionDigits: 3,
+  maximumFractionDigits: 3,
   notation: "compact",
 })
 
@@ -154,8 +153,8 @@ type Aggregate = {
 }
 
 const intradayHistory = {
-  30: {} as { [isin: string]: Aggregate[] | undefined },
   60: {} as { [isin: string]: Aggregate[] | undefined },
+  300: {} as { [isin: string]: Aggregate[] | undefined },
 }
 
 const ChartView: Component = props => {
@@ -163,7 +162,7 @@ const ChartView: Component = props => {
 
   const navigate = useNavigate()
 
-  const [timeRange, setTimeRange] = createStorageSignal("CHART_TIME_RANGE2", "1d" as "30s" | "60s" | TraderepublicAggregateHistoryLightSub["range"], {
+  const [timeRange, setTimeRange] = createStorageSignal<"60s" | "5m" | TraderepublicAggregateHistoryLightSub["range"]>("CHART_TIME_RANGE2", "1d", {
     serializer: (v: any) => JSON.stringify(v),
     deserializer: s => JSON.parse(s),
   })
@@ -196,8 +195,7 @@ const ChartView: Component = props => {
     deserializer: s => JSON.parse(s),
   })
 
-  type WatchedInstrument = {
-    isin: string
+  type WatchedInstrument = WatchListEntry & {
     data: ReturnType<typeof instrument>
     exchange: ReturnType<typeof exchange>
     details: ReturnType<typeof details>
@@ -219,11 +217,11 @@ const ChartView: Component = props => {
     void (async () => {
       setWatchedInstruments(r => {
         return watchList()
-          ?.map(({ isin }) => {
-            const current = r.find(i => i.isin === isin)
+          ?.map(watched => {
+            const current = r.find(i => i.isin === watched.isin)
 
             return {
-              isin,
+              ...watched,
               data: undefined,
               exchange: undefined,
               details: undefined,
@@ -410,6 +408,7 @@ const ChartView: Component = props => {
       })
     }
 
+    let movingAverageData = new SMA(0)
     const movingAverageSeries = chart.addLineSeries({
       baseLineVisible: false,
       crosshairMarkerVisible: false,
@@ -417,9 +416,25 @@ const ChartView: Component = props => {
       lastValueVisible: false,
     })
 
-    let movingAverageData = new SMA(0)
+    let averageDirectionalIndexData = new ADX(0)
+    const averageDirectionalIndexSeries = chart.addHistogramSeries({
+      baseLineVisible: false,
+      priceLineVisible: false,
+      lastValueVisible: false,
+      priceScaleId: "",
+      priceFormat: {
+        type: "volume",
+      },
+    })
+    averageDirectionalIndexSeries.priceScale().applyOptions({
+      scaleMargins: {
+        top: 0.8,
+        bottom: 0,
+      },
+    })
 
     const series = chart.addCandlestickSeries({
+      // fdm
     })
 
     let currentBar = { time: 0 } as BarData
@@ -468,11 +483,32 @@ const ChartView: Component = props => {
       let barTimeToLive = 10 * 60
       let priceBeforeChart = 0
 
-      if (range !== "30s" && range !== "60s") {
-        const history = await socket.aggregateHistory(instrument, range as any)
+      if (range !== "60s" && range !== "5m") {
+        const history = await socket.aggregateHistory(instrument, range!)
 
         if (effect.cancelled) {
           return
+        }
+
+        if (history.aggregates.length >= 2) {
+          const [{ time: time0 }, { time: time1 }] = history.aggregates
+          const difference = (time1 - time0) / 1000
+
+          barTimeToLive = difference
+        }
+
+        const prevAggregate = history.aggregates[history.aggregates.length - 2]
+        const lastAggregate = history.aggregates[history.aggregates.length - 1]
+        if (((lastAggregate.time - prevAggregate.time) / 1000) > barTimeToLive) {
+          history.aggregates.splice(history.aggregates.length - 1, 0, {
+            time: prevAggregate.time + (barTimeToLive * 1000),
+            open: String(prevAggregate.close),
+            high: String(Math.max(Number(prevAggregate.close), Number(lastAggregate.open))),
+            low: String(Math.min(Number(prevAggregate.close), Number(lastAggregate.open))),
+            close: String(lastAggregate.open),
+            volume: 0,
+            adjValue: "",
+          })
         }
 
         for (const aggregate of history.aggregates) {
@@ -489,40 +525,63 @@ const ChartView: Component = props => {
           series.update(currentBar)
         }
 
-        if (history.aggregates.length >= 2) {
-          const [{ time: time0 }, { time: time1 }] = history.aggregates
-          const difference = (time1 - time0) / 1000
+        priceBeforeChart = Number(history.aggregates[0]?.close ?? 0)
 
-          barTimeToLive = difference
-        }
+        if (range === "5d" || range === "1m") {
+          const begin = history.aggregates[0].time
+          const end = history.lastAggregateEndTime
+          const timePeriodInDays = Math.ceil((end - begin) / (24 * 60 * 60 * 1000))
 
-        if (barTimeToLive > (10 * 60)) {
-          priceBeforeChart = Number(history.aggregates[0]?.close ?? 0)
-        }
+          movingAverageData = new SMA(timePeriodInDays)
+          averageDirectionalIndexData = new ADX(timePeriodInDays)
 
-        const begin = history.aggregates[0].time
-        const end = history.lastAggregateEndTime
-        const timePeriodInDays = Math.ceil((end - begin) / (24 * 60 * 60 * 1000))
+          for (const aggregate of history.aggregates) {
+            const time = mapUnixToUTC(aggregate.time)
 
-        movingAverageData = new SMA(Math.min(timePeriodInDays, 25))
+            const smaValue = movingAverageData.nextValue(Number(aggregate.close))
+            movingAverageSeries.update({
+              time,
+              value: smaValue ?? undefined,
+            })
 
-        for (const aggregate of history.aggregates) {
-          const time = mapUnixToUTC(aggregate.time)
-          const value = movingAverageData.nextValue(Number(aggregate.close))
+            const adxValue = averageDirectionalIndexData.nextValue(Number(aggregate.high), Number(aggregate.low), Number(aggregate.close))
+            averageDirectionalIndexSeries.update({
+              time,
+              value: adxValue?.adx ?? undefined,
+              color: (() => {
+                const adx = adxValue?.adx ?? 0
 
-          movingAverageSeries.update({
-            time,
-            value,
-          })
+                if (adx < 5) {
+                  return "#ff000044" // red
+                }
+                if (adx < 15) {
+                  return "#ffa50044" // orange
+                }
+                if (adx < 25) {
+                  return "#ffff0044" // yellow
+                }
+                if (adx < 35) {
+                  return "#adff2f44" // yellowgreen
+                }
+                if (adx < 50) {
+                  return "#00800044" // green
+                }
+                return "#00ffff44" // cyan
+              })(),
+            })
+          }
         }
       } else {
-        if (range === "30s") {
-          barTimeToLive = 30 as const
-        } else if (range === "60s") {
-          barTimeToLive = 60 as const
+        switch (range) {
+        case "60s":
+          barTimeToLive = 60
+          break
+        case "5m":
+          barTimeToLive = 300
+          break
         }
 
-        const history = intradayHistory[barTimeToLive as 30 | 60]
+        const history = intradayHistory[barTimeToLive as 60 | 300]
         const currentHistory = history[instrument.isin] ?? []
 
         for (const aggregate of currentHistory) {
@@ -535,8 +594,6 @@ const ChartView: Component = props => {
             low: Number(aggregate.low),
             high: Number(aggregate.high),
           }
-
-          console.log("currentBar", currentBar)
 
           series.update(currentBar)
         }
@@ -554,6 +611,9 @@ const ChartView: Component = props => {
 
           if (!previousClose) {
             priceBeforeChart = priceBeforeChart || Number(data.pre.price)
+            if (range === "1d") {
+              priceBeforeChart = Number(data.pre.price)
+            }
 
             previousClose = series.createPriceLine({
               price: priceBeforeChart,
@@ -620,6 +680,7 @@ const ChartView: Component = props => {
     return () => {
       chart?.removeSeries(series)
       chart?.removeSeries(movingAverageSeries)
+      chart?.removeSeries(averageDirectionalIndexSeries)
 
       setInstrument(undefined)
       setExchange(undefined)
@@ -646,55 +707,36 @@ const ChartView: Component = props => {
     setSearch({ isin })
   }
 
-  const handleShowNews = async () => {
-    const timeFormatter = new Intl.RelativeTimeFormat()
+  // const handleShowNews = async () => {
+  //   const timeFormatter = new Intl.RelativeTimeFormat()
 
-    await ModalPortal.push(modal => {
-      const news = createAsyncMemo(async () => {
-        const news = await socket.news(instrument()!)
-        news.sort((a, b) => b.createdAt - a.createdAt)
-        return news
-      })
+  //   await ModalPortal.push(modal => {
+  //     const news = createAsyncMemo(async () => {
+  //       const news = await socket.news(instrument()!)
+  //       news.sort((a, b) => b.createdAt - a.createdAt)
+  //       return news
+  //     })
 
-      return (
-        <Modal onclose={modal.reject} active style={{ padding: 0, "min-height": "50vh" }}>
-          <Modal.Body>
-            <For each={news()}>
-              {news => (
-                <A href={news.url}>
-                  <Tile compact>
-                    <Tile.Body>
-                      <Tile.Title>{news.headline}</Tile.Title>
-                      <Tile.Subtitle>{timeFormatter.format(Math.round((new Date(news.createdAt).getTime() - new Date().getTime()) / 1000 / 60 / 60), "hours")} {news.summary}</Tile.Subtitle>
-                    </Tile.Body>
-                  </Tile>
-                </A>
-              )}
-            </For>
-          </Modal.Body>
-        </Modal>
-      )
-    })
-
-    // await ModalPortal.push(modal => {
-    //   return (
-    //     <Modal onclose={modal.reject} active style={{ padding: 0, "min-height": "50vh" }}>
-    //       <Modal.Body>
-    //         <For each={details()?.events}>
-    //           {event => (
-    //             <Tile compact>
-    //               <Tile.Body>
-    //                 <Tile.Title>{event.title}</Tile.Title>
-    //                 <Tile.Subtitle>{event.description}</Tile.Subtitle>
-    //               </Tile.Body>
-    //             </Tile>
-    //           )}
-    //         </For>
-    //       </Modal.Body>
-    //     </Modal>
-    //   )
-    // })
-  }
+  //     return (
+  //       <Modal onclose={modal.reject} active style={{ padding: 0, "min-height": "50vh" }}>
+  //         <Modal.Body>
+  //           <For each={news()}>
+  //             {news => (
+  //               <A href={news.url}>
+  //                 <Tile compact>
+  //                   <Tile.Body>
+  //                     <Tile.Title>{news.headline}</Tile.Title>
+  //                     <Tile.Subtitle>{timeFormatter.format(Math.round((new Date(news.createdAt).getTime() - new Date().getTime()) / 1000 / 60 / 60), "hours")} {news.summary}</Tile.Subtitle>
+  //                   </Tile.Body>
+  //                 </Tile>
+  //               </A>
+  //             )}
+  //           </For>
+  //         </Modal.Body>
+  //       </Modal>
+  //     )
+  //   })
+  // }
 
   const toggleInstrumentInWatchList = () =>
     setWatchList(l => {
@@ -724,9 +766,9 @@ const ChartView: Component = props => {
   })
 
   const instrumentBuyIn = createMemo(() => {
-    return instrumentWatchListEntry()?.buyIn ?? 0
+    return instrumentWatchListEntry()?.buyIn
   })
-  // const setInstrumentBuyIn = (value: number) => {
+  // const setInstrumentBuyIn = (value: number | undefined) => {
   //   setWatchList(l => {
   //     return l!.map(entry => {
   //       if (entry.isin !== instrument()?.isin) {
@@ -742,9 +784,9 @@ const ChartView: Component = props => {
   // }
 
   const instrumentShares = createMemo(() => {
-    return instrumentWatchListEntry()?.shares ?? 0
+    return instrumentWatchListEntry()?.shares
   })
-  // const setInstrumentShares = (value: number) => {
+  // const setInstrumentShares = (value: number | undefined) => {
   //   setWatchList(l => {
   //     return l!.map(entry => {
   //       if (entry.isin !== instrument()?.isin) {
@@ -767,24 +809,47 @@ const ChartView: Component = props => {
     void (async () => {
       try {
         const derivative = await ModalPortal.push<string>(modal => {
-          const [getOptions, setOptions] = createSignal({
-            category: "vanillaWarrant" as any,
-            type: "call" as any,
-            sortBy: "delta" as any,
-            sortDirection: "asc" as any,
-            strike: 0,
+          const [getOptions, setOptions] = createSignal<Partial<TraderepublicDerivativesSub>>({
+            productCategory: "vanillaWarrant",
+            optionType: "call",
+            sortBy: "strike",
+            sortDirection: "asc",
+            strike: value().current * 0.80,
           })
 
           const derivatives = createAsyncMemo(async () => {
             const {
-              category,
-              type,
+              productCategory,
+              optionType,
               sortBy,
               sortDirection,
+              strike,
             } = getOptions()
 
-            const derivatives = await socket.derivatives(instrument()!, category, type, sortBy, sortDirection)
-            return derivatives.results
+            try {
+              const derivatives = await socket.derivatives(instrument()!, {
+                productCategory,
+                optionType,
+                sortBy,
+                sortDirection,
+                strike,
+              })
+
+              const now = new Date()
+              derivatives.results = derivatives.results.filter(d => {
+                try {
+                  return new Date(d.expiry).getFullYear() <= now.getFullYear()
+                } catch {
+                  return true
+                }
+              })
+
+              return derivatives.results
+            } catch (error) {
+              Toaster.pushError(error)
+
+              return []
+            }
           })
 
           const [tableState] = createTableState({
@@ -794,7 +859,7 @@ const ChartView: Component = props => {
             },
           })
 
-          const dateFormatter = new Intl.DateTimeFormat(undefined, {
+          const dateFormatter = new Intl.DateTimeFormat("en", {
           })
 
           const dollarFormatter = new Intl.NumberFormat("en", {
@@ -834,7 +899,7 @@ const ChartView: Component = props => {
             manualFiltering: true,
             manualSorting: true,
             onSortingChange: state => {
-              state
+              // ignore
             },
           })
 
@@ -846,8 +911,8 @@ const ChartView: Component = props => {
                     <For each={[{ id: "call", name: "Call" }, { id: "put", name: "Put" }]}>
                       {filter => (
                         <Column>
-                          <A onclick={() => setOptions(o => ({ ...o, type: filter.id }))}>
-                            <Label round color={getOptions().type === filter.id ? "primary" : undefined}>{filter.name}</Label>
+                          <A onclick={() => setOptions(o => ({ ...o, optionType: filter.id as any }))}>
+                            <Label round color={getOptions().optionType === filter.id ? "primary" : undefined}>{filter.name}</Label>
                           </A>
                         </Column>
                       )}
@@ -878,24 +943,28 @@ const ChartView: Component = props => {
                   <span>Search Symbol...</span>
                 </Button>
 
-                <Button onClick={handleShowNews} round disabled={!instrument()?.isin}>
+                {/* <Button onClick={handleShowNews} round disabled={!instrument()?.isin}>
                   <Icon src={iconInfo} />
                   <span>News</span>
-                </Button>
+                </Button> */}
               </Column>
 
-              <Column xxl="auto" offset="ml">
-                {/* <Span style={{ display: "inline-flex", marginRight: "0.5rem" }}>
-                  <Control style={{ width: "80px" }}>
-                    <Input placeholder="Buy-In" size="small" disabled={!instrumentWatchListEntry} value={instrumentBuyIn} onValueChange={setInstrumentBuyIn} filter="[^\d\.]+" />
-                    <Icon icon={faEuroSign} size="small" />
-                  </Control>
-                  <Control style={{ width: "80px" }}>
-                    <Icon icon={faTimes} size="small" />
-                    <Input placeholder="Shares" size="small" disabled={!instrumentWatchListEntry} value={instrumentShares} onValueChange={setInstrumentShares} filter="[^\d\.]+" />
-                  </Control>
-                </Span> */}
+              <Column xxl="auto" offset="ml" />
 
+              {/* <Column xxl="auto">
+                <Input.Group style={{ width: "300px" }}>
+                  <Input.Group.Addon style={{ "box-shadow": "2px 2px 0px 0px gray", "max-height": "36px" }}>
+                    <Icon src={iconDollarSign} />
+                  </Input.Group.Addon>
+                  <Input type="number" placeholder="Buy-In" disabled={!instrumentWatchListEntry} value={instrumentBuyIn()} onchange={e => setInstrumentBuyIn(e.currentTarget.valueAsNumber)} pattern="[^\d\.]+" />
+                  <Input.Group.Addon style={{ "box-shadow": "2px 2px 0px 0px gray", "max-height": "36px" }}>
+                    <Icon src={iconX} />
+                  </Input.Group.Addon>
+                  <Input type="number" placeholder="Shares" disabled={!instrumentWatchListEntry} value={instrumentShares()} onchange={e => setInstrumentShares(e.currentTarget.valueAsNumber)} pattern="[^\d\.]+" />
+                </Input.Group>
+              </Column> */}
+
+              <Column xxl="auto">
                 <Button onClick={toggleInstrumentInWatchList} disabled={!instrument()} action color={instrumentWatchListEntry() ? "failure" : undefined}>
                   <Icon src={iconBookmark} />
                 </Button>
@@ -978,8 +1047,8 @@ const ChartView: Component = props => {
               return (
                 <Column.Row>
                   <Column xxl={2} md={3}>
-                    <TimeRangeLabel t="30s" />
                     <TimeRangeLabel t="60s" />
+                    <TimeRangeLabel t="5m" />
                   </Column>
 
                   <Column xxl={10} md={9}>
@@ -1003,11 +1072,13 @@ const ChartView: Component = props => {
                 <WatchList.Ticker
                   isin={i.isin}
                   href={`?isin=${i.isin}`}
+                  // symbol={`${i.data?.intlSymbol || i.data?.homeSymbol || i.isin}${(i.buyIn && i.shares) ? ` [x${i.shares} @ ${i.buyIn}]` : ""}`}
                   symbol={i.data?.intlSymbol || i.data?.homeSymbol || i.isin}
                   name={i.details?.company.name ?? i.data?.shortName}
                   logo={i.data?.imageId ? `https://assets.traderepublic.com/img/${i.data?.imageId}/dark.min.svg` : undefined}
                   open={i.exchange?.open}
                   value={i.value.current}
+                  // valueAtPreviousClose={(i.buyIn && i.shares) ? i.buyIn : i.value.previous}
                   valueAtPreviousClose={i.value.previous}
                   highlighted={i.isin === instrument()?.isin}
                 />
