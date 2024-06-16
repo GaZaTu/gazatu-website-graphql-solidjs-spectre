@@ -142,27 +142,12 @@ const SymbolSearchModal: Component<SymbolSearchModalProps> = props => {
   )
 }
 
-type Aggregate = {
-  time: number
-  open: number
-  high: number
-  low: number
-  close: number
-  volume: 0
-  adjValue: number
-}
-
-const intradayHistory = {
-  60: {} as { [isin: string]: Aggregate[] | undefined },
-  300: {} as { [isin: string]: Aggregate[] | undefined },
-}
-
 const ChartView: Component = props => {
   const [search, setSearch] = useSearchParams()
 
   const navigate = useNavigate()
 
-  const [timeRange, setTimeRange] = createStorageSignal<"60s" | "5m" | TraderepublicAggregateHistoryLightSub["range"]>("CHART_TIME_RANGE2", "1d", {
+  const [timeRange, setTimeRange] = createStorageSignal<"5min" | TraderepublicAggregateHistoryLightSub["range"]>("CHART_TIME_RANGE2", "1d", {
     serializer: (v: any) => JSON.stringify(v),
     deserializer: s => JSON.parse(s),
   })
@@ -207,11 +192,6 @@ const ChartView: Component = props => {
     const effect = {
       cancelled: false,
       subscriptions: [] as Subscription[],
-    }
-
-    for (const [key, history] of Object.entries(intradayHistory)) {
-      (intradayHistory as any)[key] = watchList()
-        ?.reduce((o, { isin }) => { o[isin] = history[isin] ?? []; return o }, {} as { [key: string]: any })
     }
 
     void (async () => {
@@ -266,42 +246,6 @@ const ChartView: Component = props => {
             setWatchedInstruments(r => r.map(i => {
               if (i.isin !== isin) {
                 return i
-              }
-
-              for (const [key, history] of Object.entries(intradayHistory)) {
-                const barTimeToLive = Number(key)
-                const currentHistory = history[i.isin]
-                if (!currentHistory) {
-                  continue
-                }
-
-                const currentBar = currentHistory[currentHistory.length - 1]
-
-                if ((data.bid.time - (currentBar?.time ?? 0)) >= (barTimeToLive * 1000)) {
-                  if (currentBar) {
-                    currentHistory[currentHistory.length - 1] = {
-                      ...currentBar,
-                      close: Number(data.last.price),
-                    }
-                  }
-
-                  currentHistory.push({
-                    time: data.bid.time,
-                    open: Number(data.bid.price),
-                    high: Number(data.bid.price),
-                    low: Number(data.bid.price),
-                    close: Number(data.bid.price),
-                    volume: 0,
-                    adjValue: 0,
-                  })
-                } else {
-                  currentHistory[currentHistory.length - 1] = {
-                    ...currentBar,
-                    close: Number(data.bid.price),
-                    low: Math.min(currentBar.low, Number(data.bid.price)),
-                    high: Math.max(currentBar.high, Number(data.bid.price)),
-                  }
-                }
               }
 
               return {
@@ -480,122 +424,88 @@ const ChartView: Component = props => {
       const mapUnixToUTC = (time: number) =>
         Math.floor(time / 1000) + (60 * 60 * timezoneOffset) as any
 
-      let barTimeToLive = 10 * 60
+      let barTimeToLive = 0
       let priceBeforeChart = 0
 
-      if (range !== "60s" && range !== "5m") {
-        const history = await socket.aggregateHistory(instrument, range!)
+      const history = await socket.aggregateHistory(instrument, range === "5min" ? "1d" : range!)
 
-        if (effect.cancelled) {
-          return
+      if (effect.cancelled) {
+        return
+      }
+
+      priceBeforeChart = Number(history.aggregates[0]?.close ?? 0)
+      barTimeToLive = history.resolution / 1000
+      if (range === "5min") {
+        barTimeToLive /= 2
+      }
+
+      for (const aggregate of history.aggregates) {
+        const utcTimestamp = mapUnixToUTC(aggregate.time)
+
+        currentBar = {
+          time: utcTimestamp,
+          open: Number(aggregate.open),
+          close: Number(aggregate.close),
+          low: Number(aggregate.low),
+          high: Number(aggregate.high),
         }
 
-        if (history.aggregates.length >= 2) {
-          const [{ time: time0 }, { time: time1 }] = history.aggregates
-          const difference = (time1 - time0) / 1000
-
-          barTimeToLive = difference
-        }
-
-        const prevAggregate = history.aggregates[history.aggregates.length - 2]
-        const lastAggregate = history.aggregates[history.aggregates.length - 1]
-        if (((lastAggregate.time - prevAggregate.time) / 1000) > barTimeToLive) {
-          history.aggregates.splice(history.aggregates.length - 1, 0, {
-            time: prevAggregate.time + (barTimeToLive * 1000),
-            open: String(prevAggregate.close),
-            high: String(Math.max(Number(prevAggregate.close), Number(lastAggregate.open))),
-            low: String(Math.min(Number(prevAggregate.close), Number(lastAggregate.open))),
-            close: String(lastAggregate.open),
-            volume: 0,
-            adjValue: "",
+        if (range === "5min") {
+          series.update({
+            time: (Number(currentBar.time) - barTimeToLive) as any,
+            open: currentBar.open,
+            high: currentBar.open,
+            low: currentBar.open,
+            close: currentBar.open,
           })
         }
 
+        series.update(currentBar)
+      }
+
+      if (range === "5d" || range === "1m") {
+        const begin = history.aggregates[0].time
+        const end = history.lastAggregateEndTime
+        const timePeriodInDays = Math.ceil((end - begin) / (24 * 60 * 60 * 1000))
+        const timePeriod = Math.max(Math.min(timePeriodInDays, 14), 7)
+
+        movingAverageData = new SMA(timePeriod)
+        averageDirectionalIndexData = new ADX(timePeriod)
+
         for (const aggregate of history.aggregates) {
-          const utcTimestamp = mapUnixToUTC(aggregate.time)
+          const time = mapUnixToUTC(aggregate.time)
 
-          currentBar = {
-            time: utcTimestamp,
-            open: Number(aggregate.open),
-            close: Number(aggregate.close),
-            low: Number(aggregate.low),
-            high: Number(aggregate.high),
-          }
+          const smaValue = movingAverageData.nextValue(Number(aggregate.close))
+          movingAverageSeries.update({
+            time,
+            value: smaValue ?? undefined,
+          })
 
-          series.update(currentBar)
-        }
+          const adxValue = averageDirectionalIndexData.nextValue(Number(aggregate.high), Number(aggregate.low), Number(aggregate.close))
+          averageDirectionalIndexSeries.update({
+            time,
+            value: adxValue?.adx ?? undefined,
+            color: (() => {
+              const adx = adxValue?.adx ?? 0
 
-        priceBeforeChart = Number(history.aggregates[0]?.close ?? 0)
-
-        if (range === "5d" || range === "1m") {
-          const begin = history.aggregates[0].time
-          const end = history.lastAggregateEndTime
-          const timePeriodInDays = Math.ceil((end - begin) / (24 * 60 * 60 * 1000))
-
-          movingAverageData = new SMA(timePeriodInDays)
-          averageDirectionalIndexData = new ADX(timePeriodInDays)
-
-          for (const aggregate of history.aggregates) {
-            const time = mapUnixToUTC(aggregate.time)
-
-            const smaValue = movingAverageData.nextValue(Number(aggregate.close))
-            movingAverageSeries.update({
-              time,
-              value: smaValue ?? undefined,
-            })
-
-            const adxValue = averageDirectionalIndexData.nextValue(Number(aggregate.high), Number(aggregate.low), Number(aggregate.close))
-            averageDirectionalIndexSeries.update({
-              time,
-              value: adxValue?.adx ?? undefined,
-              color: (() => {
-                const adx = adxValue?.adx ?? 0
-
-                if (adx < 5) {
-                  return "#ff000044" // red
-                }
-                if (adx < 15) {
-                  return "#ffa50044" // orange
-                }
-                if (adx < 25) {
-                  return "#ffff0044" // yellow
-                }
-                if (adx < 35) {
-                  return "#adff2f44" // yellowgreen
-                }
-                if (adx < 50) {
-                  return "#00800044" // green
-                }
-                return "#00ffff44" // cyan
-              })(),
-            })
-          }
-        }
-      } else {
-        switch (range) {
-        case "60s":
-          barTimeToLive = 60
-          break
-        case "5m":
-          barTimeToLive = 300
-          break
-        }
-
-        const history = intradayHistory[barTimeToLive as 60 | 300]
-        const currentHistory = history[instrument.isin] ?? []
-
-        for (const aggregate of currentHistory) {
-          const utcTimestamp = mapUnixToUTC(aggregate.time)
-
-          currentBar = {
-            time: utcTimestamp,
-            open: Number(aggregate.open),
-            close: Number(aggregate.close),
-            low: Number(aggregate.low),
-            high: Number(aggregate.high),
-          }
-
-          series.update(currentBar)
+              if (adx < 5) {
+                return "#ff000044" // red
+              }
+              if (adx < 15) {
+                return "#ffa50044" // orange
+              }
+              if (adx < 25) {
+                return "#ffff0044" // yellow
+              }
+              if (adx < 35) {
+                return "#adff2f44" // yellowgreen
+              }
+              if (adx < 50) {
+                return "#00800044" // green
+              }
+              return "#00ffff44" // cyan
+            })(),
+          })
         }
       }
 
@@ -1047,8 +957,7 @@ const ChartView: Component = props => {
               return (
                 <Column.Row>
                   <Column xxl={2} md={3}>
-                    <TimeRangeLabel t="60s" />
-                    <TimeRangeLabel t="5m" />
+                    <TimeRangeLabel t="5min" />
                   </Column>
 
                   <Column xxl={10} md={9}>

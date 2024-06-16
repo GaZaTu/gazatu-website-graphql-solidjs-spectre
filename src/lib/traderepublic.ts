@@ -646,7 +646,7 @@ export class TraderepublicWebsocket {
     })
   }
 
-  aggregateHistory(isin: string | TraderepublicInstrumentData, range: TraderepublicAggregateHistoryLightSub["range"], exchange?: string | TraderepublicHomeInstrumentExchangeData) {
+  async aggregateHistory(isin: string | TraderepublicInstrumentData, range: TraderepublicAggregateHistoryLightSub["range"], exchange?: string | TraderepublicHomeInstrumentExchangeData) {
     if (typeof isin === "object") {
       exchange = isin.exchangeIds[0]
       isin = isin.isin
@@ -656,12 +656,38 @@ export class TraderepublicWebsocket {
       exchange = exchange.exchangeId
     }
 
-    return this._sub({
+    const history = await this._sub({
       type: "aggregateHistoryLight",
       isin: isin,
       exchange: exchange!,
       range,
     }).toPromise()
+
+    if (history.aggregates.length >= 2) {
+      let prevAggregate = history.aggregates[history.aggregates.length - 2]
+      let lastAggregate = history.aggregates[history.aggregates.length - 1]
+
+      if (lastAggregate.time === prevAggregate.time) {
+        history.aggregates.splice(history.aggregates.length - 1, 1)
+
+        prevAggregate = history.aggregates[history.aggregates.length - 2]
+        lastAggregate = history.aggregates[history.aggregates.length - 1]
+      }
+
+      if ((lastAggregate.time - prevAggregate.time) > history.resolution) {
+        history.aggregates.splice(history.aggregates.length - 1, 0, {
+          time: prevAggregate.time + history.resolution,
+          open: String(prevAggregate.close),
+          high: String(Math.max(Number(prevAggregate.close), Number(lastAggregate.open))),
+          low: String(Math.min(Number(prevAggregate.close), Number(lastAggregate.open))),
+          close: String(lastAggregate.open),
+          volume: 0,
+          adjValue: "",
+        })
+      }
+    }
+
+    return history
   }
 
   search(q: string, type: "stock" | "fund" | "derivative" | "crypto" | "bond" = "stock", pageSize = 1, page = 1) {
