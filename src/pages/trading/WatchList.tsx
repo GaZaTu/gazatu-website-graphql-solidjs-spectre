@@ -7,7 +7,7 @@ import { Component, ComponentProps, createMemo, Show } from "solid-js"
 type TickerProps = {
   isin?: string
   href?: string
-  logo?: string
+  logo?: string | URL
   symbol?: string
   name?: string
   open?: boolean
@@ -44,7 +44,7 @@ const Ticker: Component<TickerProps> = props => {
       <div class="tv-site-table__column tv-widget-watch-list__main-column" style={{ "max-width": "55%", "padding-right": "0.5rem" }}>
         <Show when={props.logo}>
           <div class="tv-widget-watch-list__icon">
-            <img class="tv-circle-logo tv-circle-logo--medium" src={props.logo} alt="" />
+            <img class="tv-circle-logo tv-circle-logo--medium" src={String(props.logo)} alt="" />
           </div>
         </Show>
         <div class="tv-widget-watch-list__name">

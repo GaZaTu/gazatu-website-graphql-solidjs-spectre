@@ -5,11 +5,11 @@ import { A } from "@gazatu/solid-spectre/ui/A"
 import { Component, ComponentProps, createMemo, For, Show } from "solid-js"
 
 type Props = ComponentProps<"div"> & {
-  logo?: string
+  logo?: string | URL
   name?: string
   isin?: string
   symbol?: string
-  countryFlag?: string
+  countryFlag?: string | URL
   country?: string
   exchange?: string
   value?: number
@@ -71,7 +71,7 @@ const SymbolInfo: Component<Props> = props => {
           <div class="tv-category-header__content tv-symbol-info-widget__content">
             <a class="tv-category-header__title-line tv-symbol-info-widget__title-line tv-symbol-info-widget__link" href="?" style={{ "pointer-events": "none" }}>
               <Show when={props.logo}>
-                <img class="tv-circle-logo tv-circle-logo--large tv-category-header__icon" src={props.logo} alt="" />
+                <img class="tv-circle-logo tv-circle-logo--large tv-category-header__icon" src={String(props.logo)} alt="" />
               </Show>
               <div class="tv-category-header__title">
                 <div class="tv-symbol-header tv-symbol-header--mobile-adaptive">
@@ -91,7 +91,7 @@ const SymbolInfo: Component<Props> = props => {
                       <Show when={props.exchange || props.countryFlag}>
                         <span class="tv-symbol-header__exchange-container">
                           <Show when={props.countryFlag}>
-                            <img class="tv-circle-logo tv-circle-logo--medium tv-symbol-header__exchange-logo" src={props.countryFlag} alt="" style={{ "margin-top": "-2px" }} />
+                            <img class="tv-circle-logo tv-circle-logo--medium tv-symbol-header__exchange-logo" src={String(props.countryFlag)} alt="" style={{ "margin-top": "-2px" }} />
                           </Show>
                           <Show when={!props.countryFlag}>
                             <span style={{ "font-weight": "bold", "margin-right": "0.5em" }}>@</span>
@@ -121,7 +121,7 @@ const SymbolInfo: Component<Props> = props => {
                       <Show when={props.exchange || props.countryFlag}>
                         <span class="tv-symbol-header__exchange-container">
                           <Show when={props.countryFlag}>
-                            <img class="tv-circle-logo tv-circle-logo--medium tv-symbol-header__exchange-logo" src={props.countryFlag} alt="" style={{ "margin-top": "-2px" }} />
+                            <img class="tv-circle-logo tv-circle-logo--medium tv-symbol-header__exchange-logo" src={String(props.countryFlag)} alt="" style={{ "margin-top": "-2px" }} />
                           </Show>
                           <Show when={!props.countryFlag}>
                             <span style={{ "font-weight": "bold", "margin-right": "0.5em" }}>@</span>

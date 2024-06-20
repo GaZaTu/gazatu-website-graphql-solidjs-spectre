@@ -6,6 +6,31 @@ export interface Observable<T> {
   subscribe(onValue: (value: T) => unknown, onError?: (error: unknown) => unknown): Subscription
 
   toPromise(): Promise<T>
+
+  map<R>(mapper: (value: T) => R): Observable<R>
+}
+
+const createObservable = <T>(subscriber: (emitValue: (value: T) => unknown, emitError: (error: unknown) => unknown) => () => void): Observable<T> => {
+  return {
+    subscribe: (onValue: (data: any) => unknown, onError?: (error: unknown) => unknown) => {
+      return {
+        unsubscribe: subscriber(onValue, onError ?? console.error),
+      }
+    },
+    toPromise() {
+      return new Promise<any>((resolve, reject) => {
+        const sub = this.subscribe(value => {
+          sub.unsubscribe()
+          resolve(value)
+        }, reject)
+      })
+    },
+    map<R>(mapper: (data: any) => R) {
+      return createObservable<R>((emitValue, emitError) => {
+        return this.subscribe(v => emitValue(mapper(v)), emitError).unsubscribe
+      })
+    },
+  }
 }
 
 export type TraderepublicInstrumentSub = {
@@ -311,9 +336,26 @@ export type TraderepublicTickerSub = {
   exchange: string
 }
 
-export type TraderepublicTickerPrice = {
+type _TraderepublicTickerPrice = {
   time: number
   price: string
+  size: number
+}
+
+type _TraderepublicTickerData = {
+  bid: _TraderepublicTickerPrice
+  ask: _TraderepublicTickerPrice
+  last: _TraderepublicTickerPrice
+  pre: _TraderepublicTickerPrice
+  open: _TraderepublicTickerPrice
+  qualityId: "realtime"
+  leverage: unknown
+  delta: unknown
+}
+
+type TraderepublicTickerPrice = {
+  time: number
+  price: number
   size: number
 }
 
@@ -336,7 +378,7 @@ export type TraderepublicAggregateHistoryLightSub = {
   range: "1d" | "5d" | "1m" | "3m" | "1y" | "max"
 }
 
-export type TraderepublicAggregateHistoryLightData = {
+type _TraderepublicAggregateHistoryLightData = {
   expectedClosingTime: number
   aggregates: {
     time: number
@@ -344,6 +386,21 @@ export type TraderepublicAggregateHistoryLightData = {
     high: string
     low: string
     close: string
+    volume: 0
+    adjValue: string
+  }[]
+  resolution: number
+  lastAggregateEndTime: number
+}
+
+export type TraderepublicAggregateHistoryLightData = {
+  expectedClosingTime: number
+  aggregates: {
+    time: number
+    open: number
+    high: number
+    low: number
+    close: number
     volume: 0
     adjValue: string
   }[]
@@ -485,17 +542,110 @@ export type TraderepublicDerivativesData = {
   }
 }
 
+type TraderepublicSub =
+  TraderepublicInstrumentSub |
+  TraderepublicStockDetailsSub |
+  TraderepublicHomeInstrumentExchangeSub |
+  TraderepublicTickerSub |
+  TraderepublicAggregateHistoryLightSub |
+  TraderepublicNeonSearchSub |
+  TraderepublicNeonNewsSub |
+  TraderepublicPerformanceSub |
+  TraderepublicPriceForOrderSub |
+  TraderepublicDerivativesSub
+
+type TraderepublicData =
+  TraderepublicInstrumentData |
+  TraderepublicStockDetailsData |
+  TraderepublicHomeInstrumentExchangeData |
+  _TraderepublicTickerData |
+  _TraderepublicAggregateHistoryLightData |
+  TraderepublicNeonSearchData |
+  TraderepublicNeonNewsData |
+  TraderepublicPerformanceData |
+  TraderepublicPriceForOrderData |
+  TraderepublicDerivativesData
+
+type TradepublicSubToDataMap = {
+  "instrument": TraderepublicInstrumentData
+  "stockDetails": TraderepublicStockDetailsData
+  "homeInstrumentExchange": TraderepublicHomeInstrumentExchangeData
+  "ticker": _TraderepublicTickerData
+  "aggregateHistoryLight": _TraderepublicAggregateHistoryLightData
+  "neonSearch": TraderepublicNeonSearchData
+  "neonNews": TraderepublicNeonNewsData
+  "performance": TraderepublicPerformanceData
+  "priceForOrder": TraderepublicPriceForOrderData
+  "derivatives": TraderepublicDerivativesData
+}
+
+class TraderepublicCache {
+  private static readonly KEY = "TR_CACHE"
+  private static readonly TTL = 1000 * 60 * 60
+
+  private static DATA = {} as Record<string, { ttl: number, val: any }>
+
+  private static LOAD_DONE = false
+
+  private static load() {
+    if (this.LOAD_DONE) {
+      return
+    }
+
+    const json = sessionStorage.getItem(this.KEY)
+    if (!json) {
+      return
+    }
+
+    this.DATA = JSON.parse(json)
+    this.LOAD_DONE = true
+  }
+
+  private static store() {
+    sessionStorage.setItem(this.KEY, JSON.stringify(this.DATA))
+  }
+
+  static put(sub: TraderepublicSub, val: TraderepublicData | null) {
+    this.load()
+
+    const key = JSON.stringify(sub)
+    this.DATA[key] = {
+      ttl: Date.now() + this.TTL,
+      val,
+    }
+
+    this.store()
+  }
+
+  static match<Sub extends TraderepublicSub>(sub: Sub): TradepublicSubToDataMap[Sub["type"]] | null | undefined {
+    this.load()
+
+    for (const key of Object.keys(this.DATA)) {
+      if (this.DATA[key].ttl > Date.now()) {
+        delete this.DATA[key]
+      }
+    }
+
+    const key = JSON.stringify(sub)
+    const result = this.DATA[key]?.val
+
+    this.store()
+
+    return result
+  }
+}
+
 export class TraderepublicWebsocket {
-  static URI = "wss://api.traderepublic.com/" as const
-  static CLIENT_INFO = {
+  private static readonly URI = "wss://api.traderepublic.com/"
+  private static readonly CLIENT_INFO = {
     locale: "en",
     platformId: "webtrading",
     platformVersion: "firefox - 126.0.0",
     clientId: "app.traderepublic.com",
     clientVersion: "3.14.1",
-  } as const
+  }
 
-  private _subscriptions = new Map<number, { sub: any, onValue: (payload: any) => void, onError?: (error: unknown) => unknown }>()
+  private _subscriptions = new Map<number, { sub: any, onValue: (payload: any) => void, onError: (error: unknown) => unknown }>()
   private _counter = 33
   private _socket = undefined as undefined | WebSocket
   private _echo = 0 as any
@@ -515,107 +665,73 @@ export class TraderepublicWebsocket {
     this._socket?.send(str.trim())
   }
 
-  private _sub(sub: TraderepublicInstrumentSub): Observable<TraderepublicInstrumentData>
-  private _sub(sub: TraderepublicStockDetailsSub): Observable<TraderepublicStockDetailsData>
-  private _sub(sub: TraderepublicHomeInstrumentExchangeSub): Observable<TraderepublicHomeInstrumentExchangeData>
-  private _sub(sub: TraderepublicTickerSub): Observable<TraderepublicTickerData>
-  private _sub(sub: TraderepublicAggregateHistoryLightSub): Observable<TraderepublicAggregateHistoryLightData>
-  private _sub(sub: TraderepublicNeonSearchSub): Observable<TraderepublicNeonSearchData>
-  private _sub(sub: TraderepublicNeonNewsSub): Observable<TraderepublicNeonNewsData>
-  private _sub(sub: TraderepublicPerformanceSub): Observable<TraderepublicPerformanceData>
-  private _sub(sub: TraderepublicPriceForOrderSub): Observable<TraderepublicPriceForOrderData>
-  private _sub(sub: TraderepublicDerivativesSub): Observable<TraderepublicDerivativesData>
-  private _sub(sub:
-    TraderepublicInstrumentSub |
-    TraderepublicStockDetailsSub |
-    TraderepublicHomeInstrumentExchangeSub |
-    TraderepublicTickerSub |
-    TraderepublicAggregateHistoryLightSub |
-    TraderepublicNeonSearchSub |
-    TraderepublicNeonNewsSub |
-    TraderepublicPerformanceSub |
-    TraderepublicPriceForOrderSub |
-    TraderepublicDerivativesSub
-  ): Observable<
-    TraderepublicInstrumentData |
-    TraderepublicStockDetailsData |
-    TraderepublicHomeInstrumentExchangeData |
-    TraderepublicTickerData |
-    TraderepublicAggregateHistoryLightData |
-    TraderepublicNeonSearchData |
-    TraderepublicNeonNewsData |
-    TraderepublicPerformanceData |
-    TraderepublicPriceForOrderData |
-    TraderepublicDerivativesData
-  > {
-    return {
-      subscribe: (onValue: (data: any) => unknown, onError?: (error: unknown) => unknown) => {
-        if (
-          sub.type === "ticker" ||
-          sub.type === "aggregateHistoryLight" ||
-          sub.type === "performance"
-        ) {
-          if (!sub.id) {
-            sub.id = `${sub.isin}.${sub.exchange}`
-          }
-        }
+  private _sub<Sub extends TraderepublicSub>(sub: Sub): Observable<TradepublicSubToDataMap[Sub["type"]]> {
+    return createObservable<any>((emitValue, emitError) => {
+      const number = ++this._counter
 
-        const number = ++this._counter
+      this._subscriptions.set(number, {
+        sub,
+        onValue: emitValue,
+        onError: emitError,
+      })
 
-        this._subscriptions.set(number, {
-          sub,
-          onValue,
-          onError,
-        })
+      this.connect().catch(console.error)
+      if (this._connected) {
+        this._send("sub", number, sub)
+      }
 
-        this.connect().catch(console.error)
-        if (this._connected) {
-          this._send("sub", number, sub)
-        }
+      return () => {
+        this._send("unsub", number)
 
-        return {
-          unsubscribe: () => {
-            this._send("unsub", number)
-
-            this._subscriptions.delete(number)
-          },
-        }
-      },
-      toPromise() {
-        return new Promise<any>((resolve, reject) => {
-          const sub = this.subscribe(value => {
-            sub.unsubscribe()
-            resolve(value)
-          }, reject)
-        })
-      },
-    }
-  }
-
-  instrument(isin: string, jurisdiction: string = this._jurisdiction) {
-    return this._sub({
-      type: "instrument",
-      id: isin,
-      jurisdiction,
+        this._subscriptions.delete(number)
+      }
     })
   }
 
-  details(isin: string | TraderepublicInstrumentData, jurisdiction: string = this._jurisdiction) {
+  async instrument(isin: string, jurisdiction: string = this._jurisdiction) {
+    const sub: TraderepublicInstrumentSub = {
+      type: "instrument",
+      id: isin,
+      jurisdiction,
+    }
+
+    const cached = TraderepublicCache.match(sub)
+    if (cached) {
+      return cached
+    }
+
+    const fetched = await this._sub(sub).toPromise()
+    TraderepublicCache.put(sub, fetched)
+    return fetched
+  }
+
+  async details(isin: string | TraderepublicInstrumentData, jurisdiction: string = this._jurisdiction) {
     if (typeof isin === "object") {
       isin = isin.isin
     }
 
-    return this._sub({
+    const sub: TraderepublicStockDetailsSub = {
       type: "stockDetails",
       id: isin,
       jurisdiction,
-    }).toPromise().then(details => {
-      if (!details.isin) {
+    }
+
+    const cached = TraderepublicCache.match(sub)
+    if (cached !== undefined) {
+      return cached ?? undefined
+    }
+
+    const mapData = (data: TraderepublicStockDetailsData): TraderepublicStockDetailsData | undefined => {
+      if (!data.isin) {
         return undefined
       }
 
-      return details
-    })
+      return data
+    }
+
+    const fetched = await this._sub(sub).map(mapData).toPromise()
+    TraderepublicCache.put(sub, fetched ?? null)
+    return fetched
   }
 
   exchange(isin: string | TraderepublicInstrumentData) {
@@ -631,24 +747,46 @@ export class TraderepublicWebsocket {
 
   ticker(isin: string | TraderepublicInstrumentData, exchange?: string | TraderepublicHomeInstrumentExchangeData) {
     if (typeof isin === "object") {
-      exchange = isin.exchangeIds[0]
+      exchange ??= isin.exchangeIds[0]
       isin = isin.isin
     }
 
     if (typeof exchange === "object") {
       exchange = exchange.exchangeId
+    }
+
+    const mapPrice = (price: _TraderepublicTickerPrice): TraderepublicTickerPrice => {
+      return {
+        time: price.time,
+        price: Number(price.price),
+        size: price.size,
+      }
+    }
+
+    const mapData = (data: _TraderepublicTickerData): TraderepublicTickerData => {
+      return {
+        bid: mapPrice(data.bid),
+        ask: mapPrice(data.ask),
+        last: mapPrice(data.last),
+        pre: mapPrice(data.pre),
+        open: mapPrice(data.open),
+        qualityId: data.qualityId,
+        leverage: data.leverage,
+        delta: data.delta,
+      }
     }
 
     return this._sub({
       type: "ticker",
+      id: `${isin}.${exchange}`,
       isin: isin,
       exchange: exchange!,
-    })
+    }).map(mapData)
   }
 
   async aggregateHistory(isin: string | TraderepublicInstrumentData, range: TraderepublicAggregateHistoryLightSub["range"], exchange?: string | TraderepublicHomeInstrumentExchangeData) {
     if (typeof isin === "object") {
-      exchange = isin.exchangeIds[0]
+      exchange ??= isin.exchangeIds[0]
       isin = isin.isin
     }
 
@@ -656,12 +794,30 @@ export class TraderepublicWebsocket {
       exchange = exchange.exchangeId
     }
 
+    const mapData = (data: _TraderepublicAggregateHistoryLightData): TraderepublicAggregateHistoryLightData => {
+      return {
+        expectedClosingTime: data.expectedClosingTime,
+        aggregates: data.aggregates.map(aggregate => ({
+          time: aggregate.time,
+          open: Number(aggregate.open),
+          high: Number(aggregate.high),
+          low: Number(aggregate.low),
+          close: Number(aggregate.close),
+          volume: aggregate.volume,
+          adjValue: aggregate.adjValue,
+        })),
+        resolution: data.resolution,
+        lastAggregateEndTime: data.lastAggregateEndTime,
+      }
+    }
+
     const history = await this._sub({
       type: "aggregateHistoryLight",
+      id: `${isin}.${exchange}`,
       isin: isin,
       exchange: exchange!,
       range,
-    }).toPromise()
+    }).map(mapData).toPromise()
 
     if (history.aggregates.length >= 2) {
       let prevAggregate = history.aggregates[history.aggregates.length - 2]
@@ -677,10 +833,10 @@ export class TraderepublicWebsocket {
       if ((lastAggregate.time - prevAggregate.time) > history.resolution) {
         history.aggregates.splice(history.aggregates.length - 1, 0, {
           time: prevAggregate.time + history.resolution,
-          open: String(prevAggregate.close),
-          high: String(Math.max(Number(prevAggregate.close), Number(lastAggregate.open))),
-          low: String(Math.min(Number(prevAggregate.close), Number(lastAggregate.open))),
-          close: String(lastAggregate.open),
+          open: prevAggregate.close,
+          high: Math.max(prevAggregate.close, lastAggregate.open),
+          low: Math.min(prevAggregate.close, lastAggregate.open),
+          close: lastAggregate.open,
           volume: 0,
           adjValue: "",
         })
@@ -841,6 +997,8 @@ export class TraderepublicWebsocket {
     this._socket = new WebSocket(TraderepublicWebsocket.URI)
 
     try {
+      const regex = /(\d+) (A|E) ?(.*)/
+
       await new Promise<unknown>((resolve, reject) => {
         this._socket!.onerror = ev => reject(ev)
         this._socket!.onopen = resolve
@@ -854,30 +1012,30 @@ export class TraderepublicWebsocket {
           if (messageString === "connected") {
             resolve()
           } else {
-            const regex = /(\d+) (A|E) ?(.*)/
             const match = regex.exec(messageString)
+            if (!match) {
+              return
+            }
 
-            if (match) {
-              const [, number, messageType, payload] = match
-              const subscription = this._subscriptions.get(Number(number))
+            const [, number, messageType, payload] = match
+            const subscription = this._subscriptions.get(Number(number))
 
-              if (subscription) {
-                const parsedPayload = JSON.parse(payload)
+            if (subscription) {
+              const parsedPayload = JSON.parse(payload)
 
-                if (messageType === "A") {
-                  subscription.onValue(parsedPayload)
-                } else {
-                  const { errors: [error] } = parsedPayload as {
-                    errors: {
-                      errorCode: string
-                      errorField: string | null
-                      errorMessage: string
-                      meta: Record<string, unknown>
-                    }[]
-                  }
-
-                  subscription.onError?.(new Error(`${error.errorCode} - ${error.errorMessage}`))
+              if (messageType === "A") {
+                subscription.onValue(parsedPayload)
+              } else {
+                const { errors: [error] } = parsedPayload as {
+                  errors: {
+                    errorCode: string
+                    errorField: string | null
+                    errorMessage: string
+                    meta: Record<string, unknown>
+                  }[]
                 }
+
+                subscription.onError(new Error(`${error.errorCode} - ${error.errorMessage}`))
               }
             }
           }
@@ -943,5 +1101,31 @@ export class TraderepublicWebsocket {
 
   get active() {
     return this.connected && this.hasSubscriptions
+  }
+
+  static createAssetURL(imageId: string | null | undefined) {
+    if (!imageId) {
+      return undefined
+    }
+
+    const origin = "https://assets.traderepublic.com"
+    const path = `/img/${imageId}/dark.min.svg`
+
+    const url = new URL(origin + path)
+    return url
+  }
+
+  static createFlagURL(instrument: TraderepublicInstrumentData | null | undefined) {
+    if (!instrument) {
+      return undefined
+    }
+
+    const country = instrument.tags.find(tag => tag.type === "country")
+    if (!country) {
+      return undefined
+    }
+
+    const url = new URL(country.icon)
+    return url
   }
 }

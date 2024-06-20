@@ -19,12 +19,13 @@ import { centerChildren } from "@gazatu/solid-spectre/util/position"
 import { createAsyncMemo } from "@solid-primitives/memo"
 import { createStorageSignal } from "@solid-primitives/storage"
 import { useNavigate, useSearchParams } from "@solidjs/router"
-import type { BarData, IChartApi, IPriceLine } from "lightweight-charts"
+import type { BarData, IChartApi, IPriceLine, SeriesMarker } from "lightweight-charts"
 import { Component, ComponentProps, For, createEffect, createMemo, createRenderEffect, createSignal, onCleanup } from "solid-js"
-import { Subscription, TraderepublicAggregateHistoryLightSub, TraderepublicDerivativesSub, TraderepublicHomeInstrumentExchangeData, TraderepublicInstrumentData, TraderepublicStockDetailsData, TraderepublicWebsocket } from "../../lib/traderepublic"
+import { Subscription, TraderepublicAggregateHistoryLightData, TraderepublicAggregateHistoryLightSub, TraderepublicDerivativesSub, TraderepublicHomeInstrumentExchangeData, TraderepublicInstrumentData, TraderepublicStockDetailsData, TraderepublicWebsocket } from "../../lib/traderepublic"
 import SymbolInfo from "./SymbolInfo"
 import SymbolSearch from "./SymbolSearch"
 import WatchList from "./WatchList"
+import { analyzeCandles } from "./CandleAnalysis"
 
 const dateFormat = new Intl.DateTimeFormat("en", {
   year: "2-digit",
@@ -70,15 +71,15 @@ const SymbolSearchModal: Component<SymbolSearchModalProps> = props => {
       const results = await props.socket.search(search(), filter(), 10)
       const symbols = await Promise.all(
         results.map(async ({ isin }) => {
-          const instrument = await props.socket.instrument(isin).toPromise()
+          const instrument = await props.socket.instrument(isin)
           // const exchange = await socket.exchange(instrument).toPromise()
           const details = await props.socket.details(instrument)
 
           return {
             isin,
-            symbol: instrument?.intlSymbol || instrument?.homeSymbol,
-            name: details?.company.name ?? instrument?.shortName,
-            logo: instrument.imageId ? `https://assets.traderepublic.com/img/${instrument.imageId}/dark.min.svg` : undefined,
+            symbol: instrument.intlSymbol || instrument.homeSymbol,
+            name: details?.company.name ?? instrument.shortName,
+            logo: TraderepublicWebsocket.createAssetURL(instrument.imageId),
           }
         })
       )
@@ -140,6 +141,11 @@ const SymbolSearchModal: Component<SymbolSearchModalProps> = props => {
       </Modal.Body>
     </Modal>
   )
+}
+
+const intradayHistory = {
+  300: {} as { [isin: string]: TraderepublicAggregateHistoryLightData["aggregates"] | undefined },
+  600: {} as { [isin: string]: TraderepublicAggregateHistoryLightData["aggregates"] | undefined },
 }
 
 const ChartView: Component = props => {
@@ -216,12 +222,17 @@ const ChartView: Component = props => {
       })
 
       for (const { isin } of watchList() ?? []) {
-        const instrument = await socket.instrument(isin).toPromise()
+        const instrument = await socket.instrument(isin)
         const exchange = await socket.exchange(instrument).toPromise()
         const details = await socket.details(instrument)
+        const history = await socket.aggregateHistory(instrument, "1d", exchange)
 
         if (effect.cancelled) {
           return
+        }
+
+        if (!intradayHistory[600][instrument.isin]) {
+          intradayHistory[600][instrument.isin] = history.aggregates
         }
 
         setWatchedInstruments(r => r.map(i => {
@@ -248,11 +259,47 @@ const ChartView: Component = props => {
                 return i
               }
 
+              for (const [key, history] of Object.entries(intradayHistory)) {
+                const barTimeToLive = Number(key)
+                const currentHistory = history[i.isin]
+                if (!currentHistory) {
+                  continue
+                }
+
+                const currentBar = currentHistory[currentHistory.length - 1]
+
+                if ((data.bid.time - (currentBar?.time ?? 0)) >= (barTimeToLive * 1000)) {
+                  if (currentBar) {
+                    currentHistory[currentHistory.length - 1] = {
+                      ...currentBar,
+                      close: data.last.price,
+                    }
+                  }
+
+                  currentHistory.push({
+                    time: data.bid.time,
+                    open: data.bid.price,
+                    high: data.bid.price,
+                    low: data.bid.price,
+                    close: data.bid.price,
+                    volume: 0,
+                    adjValue: "0",
+                  })
+                } else {
+                  currentHistory[currentHistory.length - 1] = {
+                    ...currentBar,
+                    close: data.bid.price,
+                    low: Math.min(currentBar.low, data.bid.price),
+                    high: Math.max(currentBar.high, data.bid.price),
+                  }
+                }
+              }
+
               return {
                 ...i,
                 value: {
-                  current: Number(data.bid.price),
-                  previous: Number(data.pre.price),
+                  current: data.bid.price,
+                  previous: data.pre.price,
                 },
               }
             }))
@@ -358,6 +405,7 @@ const ChartView: Component = props => {
       crosshairMarkerVisible: false,
       priceLineVisible: false,
       lastValueVisible: false,
+      color: "#aaffff77",
     })
 
     let averageDirectionalIndexData = new ADX(0)
@@ -380,8 +428,10 @@ const ChartView: Component = props => {
     const series = chart.addCandlestickSeries({
       // fdm
     })
+    const seriesMarkers = [] as SeriesMarker<any>[]
 
     let currentBar = { time: 0 } as BarData
+    let previousBar = { time: 0 } as BarData
     let previousClose: IPriceLine | undefined
 
     void (async () => {
@@ -389,27 +439,18 @@ const ChartView: Component = props => {
         return
       }
 
-      const instrument = await new Promise<TraderepublicInstrumentData>((resolve, reject) => (
-        socket.instrument(isin).subscribe(instrument => {
+      const instrument = await socket.instrument(isin)
+      setInstrument(instrument)
+
+      const exchange = await new Promise<TraderepublicHomeInstrumentExchangeData>(resolve => {
+        socket.exchange(instrument).subscribe(exchange => {
           if (effect.cancelled) {
-            reject()
             return
           }
 
-          setInstrument(instrument)
-          resolve(instrument)
+          setExchange(exchange)
+          resolve(exchange)
         })
-      ))
-      if (!instrument) {
-        return
-      }
-
-      socket.exchange(instrument).subscribe(exchange => {
-        if (effect.cancelled) {
-          return
-        }
-
-        setExchange(exchange)
       })
 
       socket.details(instrument).then(details => {
@@ -427,13 +468,65 @@ const ChartView: Component = props => {
       let barTimeToLive = 0
       let priceBeforeChart = 0
 
-      const history = await socket.aggregateHistory(instrument, range === "5min" ? "1d" : range!)
+      const updateMarkers = (_candles: (Parameters<typeof analyzeCandles>[0][number] & { time: number })[], mapTime = mapUnixToUTC) => {
+        const candles = analyzeCandles(_candles)
+        candles.sort((a, b) => a.time - b.time)
 
-      if (effect.cancelled) {
-        return
+        for (const candle of candles) {
+          const time = mapTime(candle.time)
+          const pattern = candle.patterns[0]
+          const text = pattern.name
+
+          if (pattern.type === "bullish") {
+            seriesMarkers.push({
+              id: time,
+              time,
+              position: "belowBar",
+              color: "green",
+              shape: "arrowUp",
+              text,
+              size: 0.6,
+            })
+          } else {
+            seriesMarkers.push({
+              id: time,
+              time,
+              position: "aboveBar",
+              color: "red",
+              shape: "arrowDown",
+              text,
+              size: 0.6,
+            })
+          }
+        }
+
+        series.setMarkers(seriesMarkers)
       }
 
-      priceBeforeChart = Number(history.aggregates[0]?.close ?? 0)
+      const history = {
+        resolution: 0,
+        aggregates: [] as TraderepublicAggregateHistoryLightData["aggregates"],
+      }
+
+      if (range === "5min" || range === "1d") {
+        const key = (range === "5min") ? 300 : 600
+        const currentHistory = intradayHistory[key][instrument.isin]
+        if (currentHistory?.length) {
+          history.aggregates = currentHistory
+          history.resolution = key * 1000
+        }
+      }
+
+      if (!history.aggregates.length) {
+        const { resolution, aggregates } = await socket.aggregateHistory(instrument, range === "5min" ? "1d" : range!, exchange)
+        Object.assign(history, { resolution, aggregates })
+
+        if (effect.cancelled) {
+          return
+        }
+      }
+
+      priceBeforeChart = history.aggregates[0]?.close ?? 0
       barTimeToLive = history.resolution / 1000
       if (range === "5min") {
         barTimeToLive /= 2
@@ -442,12 +535,13 @@ const ChartView: Component = props => {
       for (const aggregate of history.aggregates) {
         const utcTimestamp = mapUnixToUTC(aggregate.time)
 
+        previousBar = currentBar
         currentBar = {
           time: utcTimestamp,
-          open: Number(aggregate.open),
-          close: Number(aggregate.close),
-          low: Number(aggregate.low),
-          high: Number(aggregate.high),
+          open: aggregate.open,
+          close: aggregate.close,
+          low: aggregate.low,
+          high: aggregate.high,
         }
 
         if (range === "5min") {
@@ -463,9 +557,13 @@ const ChartView: Component = props => {
         series.update(currentBar)
       }
 
+      if (range === "1d" || range === "5d" || range === "1m" || range === "3m") {
+        updateMarkers(history.aggregates.slice(history.aggregates.length / 2))
+      }
+
       if (range === "5d" || range === "1m") {
         const begin = history.aggregates[0].time
-        const end = history.lastAggregateEndTime
+        const end = history.aggregates[history.aggregates.length - 1].time
         const timePeriodInDays = Math.ceil((end - begin) / (24 * 60 * 60 * 1000))
         const timePeriod = Math.max(Math.min(timePeriodInDays, 14), 7)
 
@@ -475,13 +573,13 @@ const ChartView: Component = props => {
         for (const aggregate of history.aggregates) {
           const time = mapUnixToUTC(aggregate.time)
 
-          const smaValue = movingAverageData.nextValue(Number(aggregate.close))
+          const smaValue = movingAverageData.nextValue(aggregate.close)
           movingAverageSeries.update({
             time,
             value: smaValue ?? undefined,
           })
 
-          const adxValue = averageDirectionalIndexData.nextValue(Number(aggregate.high), Number(aggregate.low), Number(aggregate.close))
+          const adxValue = averageDirectionalIndexData.nextValue(aggregate.high, aggregate.low, aggregate.close)
           averageDirectionalIndexSeries.update({
             time,
             value: adxValue?.adx ?? undefined,
@@ -520,9 +618,9 @@ const ChartView: Component = props => {
           const utcTimestamp = mapUnixToUTC(data.bid.time)
 
           if (!previousClose) {
-            priceBeforeChart = priceBeforeChart || Number(data.pre.price)
+            priceBeforeChart = priceBeforeChart || data.pre.price
             if (range === "1d") {
-              priceBeforeChart = Number(data.pre.price)
+              priceBeforeChart = data.pre.price
             }
 
             previousClose = series.createPriceLine({
@@ -544,28 +642,27 @@ const ChartView: Component = props => {
           if ((utcTimestamp - (currentBar.time as any)) >= barTimeToLive) {
             currentBar = {
               ...currentBar,
-              close: Number(data.last.price),
+              close: data.last.price,
             }
-
-            // TODO
 
             series.update({
               ...currentBar,
             })
 
+            previousBar = currentBar
             currentBar = {
               time: utcTimestamp,
-              open: Number(data.bid.price),
-              close: Number(data.bid.price),
-              low: Number(data.bid.price),
-              high: Number(data.bid.price),
+              open: data.bid.price,
+              close: data.bid.price,
+              low: data.bid.price,
+              high: data.bid.price,
             }
           } else {
             currentBar = {
               ...currentBar,
-              close: Number(data.bid.price),
-              low: Math.min(currentBar.low, Number(data.bid.price)),
-              high: Math.max(currentBar.high, Number(data.bid.price)),
+              close: data.bid.price,
+              low: Math.min(currentBar.low, data.bid.price),
+              high: Math.max(currentBar.high, data.bid.price),
             }
           }
 
@@ -573,6 +670,15 @@ const ChartView: Component = props => {
             ...v,
             current: currentBar.close,
           }))
+
+          for (const candle of [previousBar, currentBar]) {
+            const index = seriesMarkers.findIndex(m => m.time === candle.time)
+            if (index !== -1) {
+              seriesMarkers.splice(index, 1)
+            }
+          }
+
+          updateMarkers([previousBar as any, currentBar as any], time => time)
 
           series.update({
             ...currentBar,
@@ -887,8 +993,8 @@ const ChartView: Component = props => {
             name={details()?.company.name ?? instrument()?.shortName}
             isin={instrument()?.isin}
             symbol={instrument()?.intlSymbol || instrument()?.homeSymbol}
-            logo={instrument()?.imageId ? `https://assets.traderepublic.com/img/${instrument()?.imageId}/dark.min.svg` : undefined}
-            countryFlag={instrument()?.tags.find(tag => tag.type === "country")?.icon}
+            logo={TraderepublicWebsocket.createAssetURL(instrument()?.imageId)}
+            countryFlag={TraderepublicWebsocket.createFlagURL(instrument())}
             exchange={exchange()?.exchangeId}
             value={value().current}
             currency={exchange()?.currency.id}
@@ -956,9 +1062,9 @@ const ChartView: Component = props => {
 
               return (
                 <Column.Row>
-                  <Column xxl={2} md={3}>
+                  {/* <Column xxl={2} md={3}>
                     <TimeRangeLabel t="5min" />
-                  </Column>
+                  </Column> */}
 
                   <Column xxl={10} md={9}>
                     <TimeRangeLabel t="1d" />
@@ -984,7 +1090,7 @@ const ChartView: Component = props => {
                   // symbol={`${i.data?.intlSymbol || i.data?.homeSymbol || i.isin}${(i.buyIn && i.shares) ? ` [x${i.shares} @ ${i.buyIn}]` : ""}`}
                   symbol={i.data?.intlSymbol || i.data?.homeSymbol || i.isin}
                   name={i.details?.company.name ?? i.data?.shortName}
-                  logo={i.data?.imageId ? `https://assets.traderepublic.com/img/${i.data?.imageId}/dark.min.svg` : undefined}
+                  logo={TraderepublicWebsocket.createAssetURL(i.data?.imageId)}
                   open={i.exchange?.open}
                   value={i.value.current}
                   // valueAtPreviousClose={(i.buyIn && i.shares) ? i.buyIn : i.value.previous}

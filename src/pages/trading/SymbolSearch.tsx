@@ -10,7 +10,7 @@ import { Table } from "@gazatu/solid-spectre/ui/Table"
 import { createTableState, tableOnGlobalFilterChange } from "@gazatu/solid-spectre/ui/Table.Helpers"
 import { Tile } from "@gazatu/solid-spectre/ui/Tile"
 import { centerChildren } from "@gazatu/solid-spectre/util/position"
-import { Component, ComponentProps, createEffect, For } from "solid-js"
+import { Component, ComponentProps, For, Show, createEffect, createSignal } from "solid-js"
 
 type TradingFilter = {
   id: string
@@ -22,7 +22,7 @@ type TradingSymbol = {
   isin?: string
   symbol?: string
   name?: string
-  logo?: string
+  logo?: string | URL
 }
 
 type Props = ComponentProps<"div"> & {
@@ -48,38 +48,31 @@ const SymbolSearch: Component<Props> = props => {
         header: "Security",
         cell: (props) => (
           <Tile compact>
-            <Tile.Icon>
-              <Figure>
-                <Img src={props.row.original.logo} />
-              </Figure>
-            </Tile.Icon>
+            <Show when={props.row.original.logo}>
+              <Tile.Icon>
+                <Figure>
+                  <Img src={String(props.row.original.logo)} />
+                </Figure>
+              </Tile.Icon>
+            </Show>
             <Tile.Body>
-              <Tile.Title>{props.row.original.name ?? props.row.original.symbol}</Tile.Title>
-              <Tile.Subtitle>{props.row.original.isin}</Tile.Subtitle>
+              <Tile.Title>
+                <Column.Row>
+                  <Column xxl={2}>{props.row.original.symbol}</Column>
+                  <Column>{props.row.original.name}</Column>
+                </Column.Row>
+              </Tile.Title>
+              <Tile.Subtitle>
+                <Column.Row>
+                  <Column xxl={2} />
+                  <Column>{props.row.original.isin}</Column>
+                </Column.Row>
+              </Tile.Subtitle>
             </Tile.Body>
           </Tile>
         ),
         enableSorting: false,
       },
-      // {
-      //   accessorKey: "symbol",
-      //   header: "SYMBOL",
-      //   meta: { compact: true },
-      //   maxSize: 100,
-      //   enableSorting: false,
-      // },
-      // {
-      //   accessorKey: "description",
-      //   header: "DESCRIPTION",
-      //   enableSorting: false,
-      // },
-      // {
-      //   accessorKey: "type",
-      //   header: "TYPE",
-      //   meta: { compact: true },
-      //   maxSize: 100,
-      //   enableSorting: false,
-      // },
     ],
     state: tableState,
     onGlobalFilterChange: tableOnGlobalFilterChange(setTableState),
@@ -90,8 +83,13 @@ const SymbolSearch: Component<Props> = props => {
     props.onSearchChange?.(tableState.globalFilter)
   })
 
+  const [containerRef, setContainerRef] = createSignal<HTMLElement>()
+  createEffect(() => {
+    containerRef()?.querySelector("input")?.focus()
+  })
+
   return (
-    <div {...props}>
+    <div ref={setContainerRef} {...props}>
       <Table context={table} loading={props.loading} loadingSize="sm" striped hidePagination onclickRow={row => props.onSymbolClick?.(row.original)} toolbar={
         <Column.Row class={`${centerChildren(true)}`} style={{ height: "100%" }} gaps="sm">
           <For each={props.filters}>
